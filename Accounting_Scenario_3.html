@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Level Accounting Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .quiz-container {
+            display: grid;
+            grid-template-columns: 240px 1fr 240px;
+            gap: 24px;
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+        }
+        .scenario-tracker .scenario {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .scenario-tracker .scenario.active {
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 600;
+            border-color: #4f46e5;
+        }
+        .scenario-tracker .scenario:not(.active):hover {
+            background-color: #f9fafb;
+        }
+        .question-area h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #111827;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+        }
+        .data-section {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .data-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        .data-table {
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .data-table th, .data-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .data-table th {
+            background-color: #f9fafb;
+        }
+        .data-table td:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+        .adjustment-list {
+            list-style-type: lower-alpha;
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .fill-in-the-blank-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .fill-in-the-blank-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .fill-in-the-blank-table td:last-child {
+            text-align: right;
+        }
+        .fill-in-the-blank-table input {
+            width: 140px;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: right;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .fill-in-the-blank-table input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+        .submit-btn {
+            background: linear-gradient(90deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 10px rgba(0, 0, 0, 0.1);
+        }
+        .results-screen { display: none; }
+        .result-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background-color: #f9fafb; padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .summary-card h4 { font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
+        .summary-card p { font-size: 2rem; font-weight: 700; }
+        .correct { color: #10b981; }
+        .incorrect { color: #ef4444; }
+        .explanation-table .correct-answer { color: #10b981; font-weight: 600; }
+        .explanation-table .incorrect-answer { color: #ef4444; text-decoration: line-through; margin-right: 8px; }
+        .explanation-details { background-color: #fefce8; border-left: 4px solid #facc15; padding: 1rem; margin-top: 0.5rem; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-view" class="quiz-container">
+        <!-- Scenario Tracker (Left) -->
+        <aside class="scenario-tracker-container">
+            <div class="card">
+                <h3 class="font-bold text-lg mb-4">Scenarios</h3>
+                <div id="scenario-tracker" class="scenario-tracker"></div>
+            </div>
+        </aside>
+
+        <!-- Main Question Area (Center) -->
+        <main id="question-area" class="card">
+            <!-- Question content will be injected here -->
+        </main>
+
+        <!-- Progress & Timer (Right) -->
+        <aside class="progress-container">
+            <div class="card">
+                <h3 class="font-bold text-lg mb-4">Quiz Status</h3>
+                <div class="text-center mb-6">
+                    <div class="text-gray-500 text-sm">Total Time Remaining</div>
+                    <div id="timer" class="text-3xl font-bold text-gray-800">120:00</div>
+                </div>
+                <h4 class="font-semibold text-md mb-3">Progress</h4>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                <p id="progress-text" class="text-center text-sm text-gray-600">0 of 4 scenarios attempted</p>
+                <div class="mt-6">
+                    <button id="flag-btn" class="w-full text-center py-2 px-4 border border-amber-500 text-amber-600 rounded-lg hover:bg-amber-50 transition mb-4">🚩 Flag for Review</button>
+                    <button id="submit-btn-main" class="submit-btn">Submit Quiz</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-view" class="results-screen max-w-5xl mx-auto p-8">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Quiz Results & Analysis</h2>
+            <div id="result-summary" class="result-summary-grid"></div>
+            <div id="detailed-explanations"></div>
+            <div class="mt-8">
+                 <h3 class="text-xl font-bold mb-3">Suggested Topics for Review</h3>
+                 <div id="review-topics" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>Prepared by:</p>
+        <p class="font-semibold">K M Mahafuzul Alam</p>
+        <div class="flex justify-center items-center gap-4 mt-2">
+            <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="hover:text-blue-600">🔗 LinkedIn</a>
+            <span>📞 01728-928984</span>
+            <span>📧 kmmhafuzulalam@gmail.com</span>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const quizData = [
+            {
+                id: 1,
+                title: "Statement of Cash Flows",
+                tricky: true,
+                topic: "Cash Flow Analysis (IAS 7)",
+                scenario: `
+                    <h3>Scenario</h3>
+                    <p class="text-sm text-gray-600 mb-4">The following are the summarized financial statements of ABC Limited.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-semibold mb-2">Statement of Financial Position (Extracts)</h4>
+                            <table class="data-table">
+                                <thead><tr><th>Particulars</th><th>30 June 2020</th><th>30 June 2019</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Property, plant and equipment</td><td>2,543,000</td><td>2,401,000</td></tr>
+                                    <tr><td>Intangibles</td><td>550,000</td><td>584,000</td></tr>
+                                    <tr><td>Inventories</td><td>685,000</td><td>598,000</td></tr>
+                                    <tr><td>Trade receivables</td><td>480,000</td><td>457,000</td></tr>
+                                    <tr><td>Trade payables</td><td>749,000</td><td>427,000</td></tr>
+                                    <tr><td>Income tax payables</td><td>222,000</td><td>140,000</td></tr>
+                                    <tr><td>Borrowings</td><td>500,000</td><td>1,000,000</td></tr>
+                                    <tr><td>Retained earnings</td><td>1,785,000</td><td>1,311,000</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">Statement of Profit or Loss</h4>
+                            <table class="data-table">
+                                <tbody>
+                                    <tr><td>Revenue</td><td>5,762,000</td></tr>
+                                    <tr><td>Cost of Sales</td><td>(4,630,000)</td></tr>
+                                    <tr><td><strong>Gross Profit</strong></td><td><strong>1,132,000</strong></td></tr>
+                                    <tr><td>Distribution cost</td><td>(236,000)</td></tr>
+                                    <tr><td>Administrative expenses</td><td>(121,000)</td></tr>
+                                    <tr><td><strong>Profit from operation</strong></td><td><strong>769,000</strong></td></tr>
+                                    <tr><td>Investment income</td><td>55,000</td></tr>
+                                    <tr><td>Finance cost</td><td>(64,000)</td></tr>
+                                    <tr><td><strong>Profit before tax</strong></td><td><strong>756,000</strong></td></tr>
+                                    <tr><td>Income tax expenses</td><td>(232,000)</td></tr>
+                                    <tr><td><strong>Net profit after tax</strong></td><td><strong>524,000</strong></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `,
+                adjustments: `
+                    <h3>Adjustments</h3>
+                    <ol class="adjustment-list">
+                        <li>During the year, plant with a carrying amount of Taka 326,000 was sold for Taka 424,000.</li>
+                        <li>Depreciation for the year on PPE was Taka 948,000. Amortisation on intangibles was Taka 21,000.</li>
+                        <li>Included in trade and other receivables is Taka 25,000 in relation to investment income. The corresponding figure for 2019 was Taka 15,000.</li>
+                        <li>Dividends paid during the year amounted to Taka 350,000.</li>
+                        <li>New investments of Taka 406,000 were purchased during the year.</li>
+                    </ol>
+                `,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Prepare the Statement of Cash Flows by filling in the missing values.</p>`,
+                blanks: [
+                    { label: "Profit before tax", key: "pbt", solution: 756000 },
+                    { label: "Depreciation", key: "dep", solution: 948000 },
+                    { label: "Amortisation of intangible assets", key: "amort", solution: 21000 },
+                    { label: "Gain on sale of property, plant and equipment", key: "gain_ppe", solution: -98000 },
+                    { label: "Finance costs", key: "fin_cost", solution: 64000 },
+                    { label: "Increase in inventories", key: "inv", solution: -87000 },
+                    { label: "Increase in trade and other receivables", key: "rec", solution: -23000 },
+                    { label: "Increase in trade payables", key: "pay", solution: 322000 },
+                    { label: "Cash generated from operations", key: "cgo", solution: 1903000 },
+                    { label: "Interest paid", key: "int_paid", solution: -64000 },
+                    { label: "Tax paid", key: "tax_paid", solution: -150000 },
+                    { label: "Net cash flows from operating activities", key: "net_op", solution: 1689000 },
+                    { label: "Purchase of property, plant and equipment", key: "pur_ppe", solution: -1416000 },
+                    { label: "Proceeds from sale of property, plant and equipment", key: "sale_ppe", solution: 424000 },
+                    { label: "Purchase of investments", key: "pur_inv", solution: -406000 },
+                    { label: "Net cash flows from investing activities", key: "net_inv", solution: -1398000 },
+                    { label: "Proceeds from issue of share capital", key: "share_cap", solution: 0 },
+                    { label: "Movements in borrowings", key: "borrow", solution: -500000 },
+                    { label: "Dividends paid", key: "div_paid", solution: -350000 },
+                    { label: "Net cash flows from financing activities", key: "net_fin", solution: -850000 },
+                    { label: "Net increase in cash and cash equivalents", key: "net_cash", solution: -559000 },
+                ]
+            },
+            {
+                id: 2,
+                title: "Statement of Financial Position",
+                tricky: false,
+                topic: "Balance Sheet Preparation (IAS 1)",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">Beta Corp has the following account balances as at December 31, 2022.</p>
+                    <table class="data-table"><thead><tr><th>Account</th><th>Amount (Taka)</th></tr></thead><tbody>
+                    <tr><td>Land at cost</td><td>5,000,000</td></tr><tr><td>Buildings at cost</td><td>8,000,000</td></tr><tr><td>Accumulated Depreciation - Buildings</td><td>1,600,000</td></tr><tr><td>Patents</td><td>750,000</td></tr><tr><td>Inventory</td><td>980,000</td></tr><tr><td>Trade Receivables</td><td>1,240,000</td></tr><tr><td>Allowance for Doubtful Debts</td><td>50,000</td></tr><tr><td>Cash at Bank</td><td>460,000</td></tr><tr><td>Share Capital</td><td>10,000,000</td></tr><tr><td>Trade Payables</td><td>890,000</td></tr><tr><td>10% Bank Loan (repayable 2025)</td><td>2,000,000</td></tr>
+                    </tbody></table>`,
+                adjustments: `<h3>Adjustments</h3><p class="text-sm text-gray-600 mb-2">No adjustments are required. Prepare the statement from the balances provided.</p>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Prepare the Statement of Financial Position by calculating the subtotals and totals.</p>`,
+                blanks: [
+                    { label: "Carrying Amount of Buildings", key: "bld_cv", solution: 6400000 },
+                    { label: "Total Non-Current Assets", key: "total_nca", solution: 12150000 },
+                    { label: "Net Trade Receivables", key: "net_rec", solution: 1190000 },
+                    { label: "Total Current Assets", key: "total_ca", solution: 2630000 },
+                    { label: "Total Assets", key: "total_assets", solution: 14780000 },
+                    { label: "Total Equity", key: "total_equity", solution: 11890000 },
+                    { label: "Total Liabilities", key: "total_liab", solution: 2890000 },
+                    { label: "Total Equity and Liabilities", key: "total_eq_liab", solution: 14780000 },
+                ]
+            },
+            {
+                id: 3,
+                title: "Profit and Loss Statement",
+                tricky: false,
+                topic: "Income Statement Analysis",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">Gamma Trading provides the following trial balance extracts for the year ended 31 March 2023.</p>
+                    <table class="data-table"><thead><tr><th>Account</th><th>Amount (Taka)</th></tr></thead><tbody>
+                    <tr><td>Revenue</td><td>8,500,000</td></tr><tr><td>Opening Inventory</td><td>700,000</td></tr><tr><td>Purchases</td><td>4,200,000</td></tr><tr><td>Salaries</td><td>1,100,000</td></tr><tr><td>Rent Expense</td><td>600,000</td></tr><tr><td>Interest on Loan</td><td>90,000</td></tr>
+                    </tbody></table>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>Closing inventory was valued at Taka 950,000.</li>
+                        <li>Depreciation on office equipment (cost Taka 2,000,000) is to be charged at 10% per annum on a straight-line basis.</li>
+                        <li>50% of the rent expense relates to the sales department, and the other 50% to administration.</li>
+                        <li>The corporate tax rate is 30%.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Calculate the missing figures to complete the Statement of Profit or Loss.</p>`,
+                blanks: [
+                    { label: "Cost of Sales", key: "cos", solution: 3950000 },
+                    { label: "Gross Profit", key: "gp", solution: 4550000 },
+                    { label: "Distribution Costs", key: "dist_cost", solution: 300000 },
+                    { label: "Administrative Expenses", key: "admin_exp", solution: 1600000 },
+                    { label: "Profit from Operations", key: "pfo", solution: 2650000 },
+                    { label: "Profit Before Tax", key: "pbt2", solution: 2560000 },
+                    { label: "Income Tax Expense", key: "tax", solution: -768000 },
+                    { label: "Net Profit for the Year", key: "np", solution: 1792000 },
+                ]
+            },
+            {
+                id: 4,
+                title: "Adjusted Trial Balance",
+                tricky: true,
+                topic: "Adjusting Entries & Trial Balance",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">The unadjusted trial balance for Delta Services as at year-end includes the following balances:</p>
+                    <table class="data-table"><thead><tr><th>Account</th><th>Amount (Taka)</th></tr></thead><tbody>
+                    <tr><td>Supplies</td><td>8,000</td></tr><tr><td>Prepaid Insurance (for 12 months from Jan 1)</td><td>24,000</td></tr><tr><td>Salaries Expense</td><td>250,000</td></tr><tr><td>Unearned Revenue</td><td>40,000</td></tr><tr><td>Service Revenue</td><td>600,000</td></tr>
+                    </tbody></table>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>A count of supplies reveals Taka 3,000 remaining on hand at year-end (Dec 31).</li>
+                        <li>The insurance policy was paid on January 1. It is now December 31.</li>
+                        <li>Salaries of Taka 15,000 have been earned by employees but not yet paid or recorded.</li>
+                        <li>Of the unearned revenue, Taka 25,000 has now been earned.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Calculate the final adjusted balances for the specified accounts.</p>`,
+                blanks: [
+                    { label: "Adjusted Supplies Expense for the year?", key: "sup_exp", solution: 5000 },
+                    { label: "Adjusted Prepaid Insurance balance?", key: "prep_ins", solution: 0 },
+                    { label: "Adjusted Salaries Expense for the year?", key: "sal_exp", solution: 265000 },
+                    { label: "Adjusted Service Revenue for the year?", key: "serv_rev", solution: 625000 },
+                    { label: "Adjusted Unearned Revenue balance?", key: "unearn_rev", solution: 15000 },
+                ]
+            }
+        ];
+
+        let currentScenarioIndex = 0;
+        let userAnswers = {};
+        let timerInterval;
+        let timeLeft = 120 * 60; // 120 minutes total
+
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const questionArea = document.getElementById('question-area');
+        const scenarioTracker = document.getElementById('scenario-tracker');
+        const timerDisplay = document.getElementById('timer');
+        const mainSubmitBtn = document.getElementById('submit-btn-main');
+        mainSubmitBtn.onclick = showResults;
+
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const flagBtn = document.getElementById('flag-btn');
+
+        function startQuiz() {
+            renderScenarios();
+            renderQuestion(currentScenarioIndex);
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function renderScenarios() {
+            scenarioTracker.innerHTML = '';
+            quizData.forEach((scenario, index) => {
+                const scenarioEl = document.createElement('div');
+                scenarioEl.className = `scenario ${index === currentScenarioIndex ? 'active' : ''}`;
+                scenarioEl.innerHTML = `<span>${scenario.tricky ? '⚠' : '✅'} ${scenario.title}</span>`;
+                if (scenario.isFlagged) {
+                     scenarioEl.innerHTML += ' <span class="text-amber-400 float-right">🚩</span>';
+                }
+                scenarioEl.onclick = () => navigateToScenario(index);
+                scenarioTracker.appendChild(scenarioEl);
+            });
+        }
+        
+        function renderQuestion(index) {
+            saveCurrentAnswers();
+            currentScenarioIndex = index;
+            const scenario = quizData[index];
+            questionArea.innerHTML = ''; // Clear previous question
+
+            let content = `
+                <h2 class="flex justify-between items-center">
+                    <span>${scenario.title}</span>
+                    <span class="text-sm font-medium bg-indigo-100 text-indigo-700 py-1 px-3 rounded-full">${scenario.topic}</span>
+                </h2>
+                <div class="data-section">${scenario.scenario}</div>
+                <div class="data-section">${scenario.adjustments}</div>
+                <div class="data-section">
+                    ${scenario.task}
+                    <table class="fill-in-the-blank-table"><tbody>
+            `;
+
+            scenario.blanks.forEach(blank => {
+                const savedValue = userAnswers[scenario.id]?.[blank.key] || '';
+                content += `
+                    <tr>
+                        <td>${blank.label}</td>
+                        <td><input type="number" id="${blank.key}" data-scenario-id="${scenario.id}" data-key="${blank.key}" placeholder="Enter value" value="${savedValue}"></td>
+                    </tr>`;
+            });
+
+            content += `</tbody></table></div>`;
+            questionArea.innerHTML = content;
+            
+            document.querySelectorAll(`#question-area input`).forEach(input => {
+                input.addEventListener('input', saveCurrentAnswers);
+            });
+
+            renderScenarios();
+            updateProgress();
+            updateFlagButton();
+        }
+        
+        function saveCurrentAnswers() {
+            const scenario = quizData[currentScenarioIndex];
+            if (!userAnswers[scenario.id]) {
+                userAnswers[scenario.id] = {};
+            }
+            document.querySelectorAll(`#question-area input`).forEach(input => {
+                const key = input.dataset.key;
+                if (input.value !== '') {
+                    userAnswers[scenario.id][key] = input.value;
+                }
+            });
+        }
+        
+        function navigateToScenario(index) {
+            if (index >= 0 && index < quizData.length) {
+                renderQuestion(index);
+            }
+        }
+
+        function updateProgress() {
+            const attemptedScenarios = Object.keys(userAnswers).filter(id => 
+                Object.values(userAnswers[id]).some(val => val !== '')
+            ).length;
+            
+            const progressPercentage = (attemptedScenarios / quizData.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `${attemptedScenarios} of ${quizData.length} scenarios attempted`;
+        }
+
+        function toggleFlag() {
+            quizData[currentScenarioIndex].isFlagged = !quizData[currentScenarioIndex].isFlagged;
+            updateFlagButton();
+            renderScenarios();
+        }
+
+        function updateFlagButton() {
+            const scenario = quizData[currentScenarioIndex];
+            if (scenario.isFlagged) {
+                flagBtn.innerHTML = '🚩 Unflag Scenario';
+                flagBtn.classList.add('bg-amber-100');
+            } else {
+                flagBtn.innerHTML = '🚩 Flag for Review';
+                flagBtn.classList.remove('bg-amber-100');
+            }
+        }
+        
+        function showResults() {
+            clearInterval(timerInterval);
+            saveCurrentAnswers();
+            quizView.style.display = 'none';
+            resultsView.style.display = 'block';
+
+            let totalCorrect = 0;
+            let totalQuestions = 0;
+            let detailedHtml = '';
+            const topicsToReview = new Set();
+
+            quizData.forEach(scenario => {
+                totalQuestions += scenario.blanks.length;
+                detailedHtml += `<div class="mb-8 p-4 border rounded-lg"><h3 class="text-xl font-bold mb-3">${scenario.tricky ? '⚠' : '✅'} ${scenario.title} - <span class="text-base font-medium text-indigo-600">${scenario.topic}</span></h3><table class="w-full explanation-table"><tbody>`;
+
+                scenario.blanks.forEach(blank => {
+                    const userAnswer = parseFloat(userAnswers[scenario.id]?.[blank.key] || NaN);
+                    const correctAnswer = blank.solution;
+                    const isCorrect = userAnswer === correctAnswer;
+
+                    if (isCorrect) totalCorrect++;
+                    else topicsToReview.add(scenario.topic);
+                    
+                    detailedHtml += `<tr><td class="py-2">${blank.label}</td><td class="text-right py-2">${!isCorrect ? `<span class="incorrect-answer">${isNaN(userAnswer) ? 'Not Answered' : userAnswer.toLocaleString()}</span>` : ''}<span class="correct-answer">${correctAnswer.toLocaleString()}</span></td></tr>`;
+                    if (!isCorrect) detailedHtml += `<tr><td colspan="2"><div class="explanation-details"><strong>Explanation:</strong> ${getExplanation(blank.key)}</div></td></tr>`;
+                });
+                detailedHtml += `</tbody></table></div>`;
+            });
+            
+            const percentCorrect = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+            const percentIncorrect = 100 - percentCorrect;
+
+            document.getElementById('result-summary').innerHTML = `<div class="summary-card"><h4>Correct</h4><p class="correct">${percentCorrect.toFixed(1)}%</p></div><div class="summary-card"><h4>Incorrect</h4><p class="incorrect">${percentIncorrect.toFixed(1)}%</p></div><div class="summary-card"><h4>Score</h4><p class="text-gray-700">${totalCorrect}/${totalQuestions}</p></div>`;
+            document.getElementById('detailed-explanations').innerHTML = detailedHtml;
+            
+            const reviewTopicsEl = document.getElementById('review-topics');
+            reviewTopicsEl.innerHTML = '';
+            if (topicsToReview.size > 0) {
+                topicsToReview.forEach(topic => {
+                    reviewTopicsEl.innerHTML += `<span class="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">${topic}</span>`;
+                });
+            } else {
+                reviewTopicsEl.innerHTML = `<span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">Excellent work! No specific topics for review.</span>`;
+            }
+        }
+
+        function getExplanation(key) {
+            const explanations = {
+                'gain_ppe': 'Proceeds (424,000) - Carrying Amount (326,000) = 98,000 Gain. It is deducted from PBT as it is an investing activity.',
+                'cgo': 'Sum of PBT and all non-cash adjustments and working capital changes.',
+                'tax_paid': 'Income tax expense (232,000) - Increase in income tax payables (222,000-140,000=82,000) = 150,000.',
+                'pur_ppe': 'Ending PPE (2,543,000) - Beginning PPE (2,401,000) + Depreciation (948,000) - Carrying Amount of Sold Asset (326,000) = 1,416,000.',
+                'div_paid': 'Given directly in the adjustments.',
+                'bld_cv': 'Cost (8,000,000) - Accumulated Depreciation (1,600,000) = 6,400,000.',
+                'total_nca': 'Land (5,000,000) + Buildings CV (6,400,000) + Patents (750,000) = 12,150,000.',
+                'net_rec': 'Receivables (1,240,000) - Allowance (50,000) = 1,190,000.',
+                'total_ca': 'Inventory (980,000) + Net Receivables (1,190,000) + Cash (460,000) = 2,630,000.',
+                'total_assets': 'Total NCA (12,150,000) + Total CA (2,630,000) = 14,780,000.',
+                'total_equity': 'Assets - Liabilities. Retained Earnings is the balancing figure. Here, it is (14,780,000 - 890,000 - 2,000,000) = 11,890,000.',
+                'cos': 'Opening Inv (700,000) + Purchases (4,200,000) - Closing Inv (950,000) = 3,950,000.',
+                'gp': 'Revenue (8,500,000) - COS (3,950,000) = 4,550,000.',
+                'dist_cost': '50% of Rent (600,000 * 0.5) = 300,000.',
+                'admin_exp': 'Salaries (1,100,000) + Rent (300,000) + Depreciation (2,000,000 * 10% = 200,000) = 1,600,000.',
+                'pbt2': 'Gross Profit - All operating expenses - Finance Costs.',
+                'tax': 'PBT (2,560,000) * 30% = 768,000.',
+                'sup_exp': 'Beginning (8,000) - Ending (3,000) = 5,000 used.',
+                'prep_ins': 'The full 12-month policy has expired, so the remaining prepaid balance is 0.',
+                'sal_exp': 'Paid (250,000) + Accrued (15,000) = 265,000 total expense.',
+                'serv_rev': 'Initial (600,000) + Revenue now earned (25,000) = 625,000.',
+                'unearn_rev': 'Beginning (40,000) - Earned (25,000) = 15,000 remaining.',
+            };
+            return explanations[key] || "No specific explanation available.";
+        }
+
+        flagBtn.addEventListener('click', toggleFlag);
+        startQuiz();
+    });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Technology & Finance Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .question-tracker-item {
+            transition: all 0.3s ease-in-out;
+        }
+        .question-tracker-item.active {
+            background-color: #3B82F6;
+            color: white;
+            transform: scale(1.1);
+        }
+        .question-tracker-item.answered {
+            background-color: #10B981;
+            color: white;
+        }
+        .question-tracker-item.flagged {
+            background-color: #F59E0B;
+            color: white;
+            box-shadow: 0 0 0 2px #F59E0B;
+        }
+        .explanation {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        .modal {
+            transition: opacity 0.3s ease;
+        }
+        .btn {
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container mx-auto p-4 max-w-6xl">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Business Technology & Finance</h1>
+
+        <div id="start-screen" class="text-center bg-white p-10 rounded-xl shadow-md">
+            <h2 class="text-2xl font-bold mb-4">Chapter 3: Organisational and business structures Quiz</h2>
+            <p class="text-gray-600 mb-8">This is a 50-question quiz to test your knowledge. You will have 45 minutes to complete it. Press the button to begin.</p>
+            <button id="start-btn" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg text-lg">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" class="hidden flex-col lg:flex-row gap-6">
+            <!-- Left Side: Question Tracker -->
+            <div class="lg:w-1/4">
+                <div class="bg-white p-4 rounded-xl shadow-md sticky top-4">
+                    <h2 class="font-bold text-lg mb-3 text-gray-700">Question Tracker</h2>
+                    <div id="question-tracker" class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2">
+                        <!-- Tracker items will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Quiz -->
+            <div class="lg:w-3/4">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center mb-4 border-b pb-4">
+                        <div id="timer" class="text-2xl font-bold text-indigo-600">45:00</div>
+                        <button id="flag-btn" class="btn bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 4.4A1 1 0 0116 14H6a1 1 0 01-1-1V6z" clip-rule="evenodd" /></svg>
+                            <span id="flag-btn-text">Flag for Review</span>
+                        </button>
+                    </div>
+                    <div id="quiz-content" class="min-h-[200px]">
+                        <!-- Quiz questions will be displayed here -->
+                    </div>
+                    <div class="mt-6 flex justify-between">
+                        <button id="prev-btn" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg">Previous</button>
+                        <button id="next-btn" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg">Next</button>
+                        <button id="submit-btn" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div id="confirm-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center">
+            <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md mx-4">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Submission</h3>
+                <p id="confirm-text" class="text-gray-600 mb-6">Are you sure you want to submit?</p>
+                <div class="flex justify-end gap-4">
+                    <button id="cancel-submit-btn" class="btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg">Cancel</button>
+                    <button id="confirm-submit-btn" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg">Submit Anyway</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Modal -->
+        <div id="results-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full hidden z-40">
+            <div class="relative top-10 mx-auto p-5 border w-11/12 md:max-w-3xl lg:max-w-4xl shadow-lg rounded-xl bg-white">
+                <div class="mt-3 text-center">
+                    <h3 class="text-2xl leading-6 font-bold text-gray-900 mb-4">Quiz Results</h3>
+                    <div class="mt-2 px-4 sm:px-7 py-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="bg-blue-100 p-4 rounded-lg"><p id="score" class="text-xl font-bold text-blue-800"></p></div>
+                            <div class="bg-red-100 p-4 rounded-lg"><p id="incorrect-percentage" class="text-lg text-red-800 font-semibold"></p></div>
+                        </div>
+                        
+                        <div class="my-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="font-bold text-lg text-gray-700 mb-4">Topic Performance</h4>
+                            <canvas id="topicChart"></canvas>
+                        </div>
+
+                        <div id="practice-topics" class="mt-6 text-left bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg text-gray-700">Topics to practice</h4>
+                            <ul id="practice-list" class="list-disc list-inside mt-2 text-gray-600"></ul>
+                        </div>
+
+                        <div id="results-details" class="mt-6 text-left max-h-[50vh] overflow-y-auto pr-2">
+                           <!-- Detailed results will be shown here -->
+                        </div>
+                    </div>
+                    <div class="items-center px-4 py-3 mt-4">
+                        <button id="close-modal-btn" class="btn px-6 py-3 bg-blue-500 text-white text-base font-medium rounded-lg w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            Review Complete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="text-center text-gray-500 mt-10 pb-6 text-sm">
+        Prepared by:<br>
+        🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-500 hover:underline">K. M. Mahafuzul Alam</a><br>
+        📞 WhatsApp: 01728-928984 | 📧 Email: kmmhafuzulalam@gmail.com
+    </footer>
+
+    <script>
+        const quizData = [
+            // Standard MCQs - Single Answer
+            { question: "According to Mintzberg, which building block consists of people directly involved in converting inputs to outputs?", options: ["Strategic Apex", "Technostructure", "Operating Core", "Support Staff"], correct: 2, topic: "Organisational Structure", type: "single" },
+            { question: "Which organisational structure groups jobs by common features like production, marketing, and finance?", options: ["Matrix Structure", "Divisional Structure", "Functional Structure", "Entrepreneurial Structure"], correct: 2, topic: "Types of Structure", type: "single" },
+            { question: "In a highly centralised organisation, where is decision-making authority concentrated?", options: ["At lower levels of the hierarchy", "Among all employees equally", "With middle managers", "At the strategic apex (top management)"], correct: 3, topic: "Centralisation & Decentralisation", type: "single" },
+            { question: "An organisation with a large number of management levels and narrow spans of control is described as:", options: ["Flat", "Organic", "Tall", "Decentralised"], correct: 2, topic: "Span of Control", type: "single" },
+            { question: "An 'organic' organisation is best suited for which type of environment?", options: ["Static and simple", "Dynamic and fast-changing", "Stable and predictable", "Heavily regulated"], correct: 1, topic: "Mechanistic vs. Organic", type: "single" },
+            { question: "What is the main legal distinction of a sole tradership?", options: ["The owner has limited liability", "The business is a separate legal entity", "There is no legal distinction between the owner and the business", "It must have at least two owners"], correct: 2, topic: "Business Structures", type: "single" },
+            { question: "A major advantage of forming a limited company is:", options: ["Minimal legal regulations", "No requirement to file financial statements publicly", "Limited liability for its shareholders", "Informal constitution"], correct: 2, topic: "Business Structures", type: "single" },
+            { question: "A franchise, where one company gives another permission to sell a product or use a brand name, is a form of:", options: ["Joint Venture", "Strategic Alliance", "Licensing Agreement", "Group Structure"], correct: 2, topic: "Alliances", type: "single" },
+            { question: "The chain of command from the most senior to the most junior employee is known as the:", options: ["Span of Control", "Scalar Chain", "Management Hierarchy", "Technostructure"], correct: 1, topic: "Span of Control", type: "single" },
+            { question: "Which of Mintzberg's building blocks is responsible for standardising work processes and techniques?", options: ["Support Staff", "Middle Line", "Technostructure", "Operating Core"], correct: 2, topic: "Organisational Structure", type: "single" },
+            { question: "Which of the following has unlimited liability for the business's debts?", options: ["A shareholder in a public limited company", "A member of a Limited Liability Partnership (LLP)", "A sole trader", "A shareholder in a private limited company"], correct: 2, topic: "Business Structures", type: "single" },
+            { question: "What does 'perpetual succession' mean in the context of a company?", options: ["Directors are appointed for life", "The company continues to exist even if ownership changes", "Profits are reinvested every year", "The company must operate in the same industry forever"], correct: 1, topic: "Business Structures", type: "single" },
+            
+            // Standard MCQs - Multiple Answers
+            { question: "Which two of the following are advantages of a divisional structure?", options: ["It is very efficient for single-product businesses", "It is flexible in adapting to growth and diversification", "It reduces the number of levels of management", "Functional heads may build empires"], correct: [1, 2], topic: "Types of Structure", type: "multiple" },
+            { question: "Which three of the following are classical principles of organisational structure mentioned by theorists like Fayol?", options: ["Multi-skilling", "Unity of command", "Scalar chain", "Division of work"], correct: [1, 2, 3], topic: "Organisational Structure", type: "multiple" },
+            { question: "A mechanistic organisation (bureaucracy) is characterised by which two of the following?", options: ["Flexible job descriptions", "A high degree of specialisation", "A network structure of control", "A clear hierarchy of roles"], correct: [1, 3], topic: "Mechanistic vs. Organic", type: "multiple" },
+            { question: "Which two of the following are disadvantages of a general partnership?", options: ["Limited liability for partners", "Partners are jointly and severally liable for the firm's debts", "The business has perpetual succession", "The partnership may be dissolved if one partner dies"], correct: [1, 3], topic: "Business Structures", type: "multiple" },
+            { question: "Decentralisation is likely to be more effective under which three of the following conditions?", options: ["The leadership style is authoritative", "The organisation is large and geographically spread", "Managers at lower levels are able and skilled", "The business operates in a single, stable market"], correct: [1, 2], topic: "Centralisation & Decentralisation", type: "multiple" },
+
+            // Standard MCQs - All/None of the above
+            { question: "Which of the following are features of a limited company?", options: ["It is a separate legal entity", "Shareholders have limited liability", "It has perpetual succession", "All of the above"], correct: 3, topic: "Business Structures", type: "all-of-the-above" },
+            { question: "Which of the following accounts normally has a credit balance in classical bookkeeping?", options: ["Purchases", "Carriage outwards", "Sales returns", "None of the above"], correct: 3, topic: "Business Structures", type: "none-of-the-above" },
+            { question: "The management hierarchy in a typical organisation includes:", options: ["Top managers", "Middle managers", "First-line managers", "All of the above"], correct: 3, topic: "Organisational Structure", type: "all-of-the-above" },
+            { question: "Which of the following business structures offers limited liability to all its owners?", options: ["Sole tradership", "General partnership", "A book club", "None of the above"], correct: 3, topic: "Business Structures", type: "none-of-the-above" },
+
+            // Standard MCQs - Fill in the blank
+            { question: "A tall business structure has a ______ scalar chain and ______ spans of control.", options: ["short, wide", "long, narrow", "long, wide", "short, narrow"], correct: 1, topic: "Span of Control", type: "single" },
+            { question: "An organisation's values, beliefs, and traditions are referred to by Mintzberg as its ______.", options: ["technostructure", "support staff", "ideology", "strategic apex"], correct: 2, topic: "Organisational Structure", type: "single" },
+            { question: "In a general partnership, partners have ______ liability for the business's debts.", options: ["limited", "no", "unlimited", "proportional"], correct: 2, topic: "Business Structures", type: "single" },
+            { question: "A ______ organisation is flexible and adaptive, suitable for fast-changing environments.", options: ["mechanistic", "bureaucratic", "tall", "organic"], correct: 3, topic: "Mechanistic vs. Organic", type: "single" },
+
+            // Scenario/Case-based MCQs
+            { question: "Scenario: A small, fast-growing tech startup with 15 employees is run by its founder, who makes all key decisions. The structure is informal. Which organisational structure best describes this company?", options: ["Divisional", "Matrix", "Entrepreneurial", "Functional"], correct: 2, topic: "Types of Structure", type: "scenario" },
+            { question: "Scenario: Global Corp Inc. is a massive conglomerate with separate, autonomous business units for consumer electronics, automotive parts, and financial services. Each unit is responsible for its own profits. This is an example of a:", options: ["Functional structure", "Divisional structure", "Matrix structure", "Simple structure"], correct: 1, topic: "Types of Structure", type: "scenario" },
+            { question: "Scenario: An engineering firm assigns its engineers to specific projects. An engineer reports to both their Head of Engineering (functional manager) and a Project Manager for the duration of the project. This dual reporting is a key feature of which structure?", options: ["Functional", "Divisional", "Matrix", "Entrepreneurial"], correct: 2, topic: "Types of Structure", type: "scenario" },
+            { question: "Scenario: Two international airlines agree to share resources, cross-book passengers, and coordinate schedules to expand their global reach without forming a new company. This arrangement is best described as a:", options: ["Joint Venture", "Group Structure", "Licensing Agreement", "Strategic Alliance"], correct: 3, topic: "Alliances", type: "scenario" },
+            { question: "Scenario: A successful sole trader is concerned about personal liability for growing business debts and wants to raise capital for expansion. Which of the following would be the most logical next step?", options: ["Forming a general partnership", "Hiring more employees", "Incorporating the business into a limited company", "Taking out a personal loan"], correct: 2, topic: "Business Structures", type: "scenario" },
+            { question: "Scenario: A manager at a retail company directly supervises 15 cashiers who all perform the same routine tasks. From this information, we can infer that the manager has a:", options: ["Narrow span of control", "Wide span of control", "Position in the strategic apex", "Role in the technostructure"], correct: 1, topic: "Span of Control", type: "scenario" },
+            { question: "Scenario: A government agency responsible for processing passport applications operates with strict rules, a clear hierarchy, and highly specialised roles. This organisation can be described as:", options: ["Organic", "Adhocracy", "Mechanistic", "Entrepreneurial"], correct: 2, topic: "Mechanistic vs. Organic", type: "scenario" },
+            { question: "Scenario: Three friends decide to start a small catering business. They agree to share profits and losses equally and are all involved in the day-to-day running. They do not want the complexity and publicity of forming a company. Which structure have they most likely chosen?", options: ["Sole Tradership", "Limited Liability Partnership (LLP)", "Public Limited Company (PLC)", "General Partnership"], correct: 3, topic: "Business Structures", type: "scenario" },
+            { question: "Scenario: A company's board decides to give regional managers more authority to make purchasing and hiring decisions to respond faster to local market needs. This is a move towards:", options: ["Centralisation", "A taller structure", "Decentralisation", "A mechanistic structure"], correct: 2, topic: "Centralisation & Decentralisation", type: "scenario" },
+            { question: "Scenario: A parent company owns 100% of the shares in three other companies, allowing it to move funds and resources between them. This business structure is known as a:", options: ["Joint Venture", "Strategic Alliance", "Franchise", "Group"], correct: 3, topic: "Alliances", type: "scenario" },
+
+            // Mathematical/Calculation-based MCQs
+            { question: "A UK public company (plc) must have a minimum issued share capital of:", options: ["£10,000", "£25,000", "£50,000", "£100,000"], correct: 2, topic: "Business Structures", type: "calculation" },
+            { question: "Of the minimum issued share capital for a UK plc, what is the minimum percentage that must be paid up at registration?", options: ["10%", "25%", "50%", "100%"], correct: 1, topic: "Business Structures", type: "calculation" },
+            { question: "A manager supervises two teams. Team A has 5 members and Team B has 4 members. The manager also has a personal assistant. What is the manager's span of control?", options: ["2", "9", "10", "Cannot be determined"], correct: 2, topic: "Span of Control", type: "calculation" },
+            { question: "A business has a flat structure with 1 chief executive and 7 managers who report directly to the chief executive. Each of these managers supervises 8 operational staff. How many people are in the entire business?", options: ["16", "56", "64", "65"], correct: 3, topic: "Span of Control", type: "calculation" },
+            { question: "A UK public company must have at least how many directors?", options: ["One", "Two", "Three", "Five"], correct: 1, topic: "Business Structures", type: "calculation" },
+            
+            // More mixed questions to reach 50
+            { question: "Which of the following is an advantage of a bureaucracy?", options: ["It is highly innovative", "It is efficient for standardised, routine tasks", "It adapts quickly to change", "It encourages personal development of staff"], correct: 1, topic: "Mechanistic vs. Organic", type: "single" },
+            { question: "The part of the organisation that provides ancillary services like PR, legal counsel, and a cafeteria is the:", options: ["Operating Core", "Technostructure", "Support Staff", "Middle Line"], correct: 2, topic: "Organisational Structure", type: "single" },
+            { question: "Which two of the following are disadvantages of a company structure compared to a sole tradership?", options: ["Unlimited liability for owners", "Separation of ownership and control", "Less ability to raise finance", "Publicity of financial information"], correct: [1, 3], topic: "Business Structures", type: "multiple" },
+            { question: "The principle of 'unity of command' states that a subordinate should:", options: ["Have only one boss", "Be part of a unified team", "Command respect from their peers", "Follow the company's single strategic plan"], correct: 0, topic: "Organisational Structure", type: "single" },
+            { question: "A Limited Liability Partnership (LLP) offers the benefit of:", options: ["No publicity requirements", "Limited liability for its members and the flexibility of a partnership", "Unlimited liability for its members", "The ability to issue shares to the public"], correct: 1, topic: "Business Structures", type: "single" },
+            { question: "Which of the following is NOT a form of business alliance?", options: ["Joint Venture", "Licence", "Strategic Alliance", "Sole Tradership"], correct: 3, topic: "Alliances", type: "single" },
+            { question: "A flat organisation is characterised by:", options: ["A long scalar chain", "Narrow spans of control", "Many hierarchical levels", "Wide spans of control"], correct: 3, topic: "Span of Control", type: "single" }
+        ];
+
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let flaggedQuestions = new Array(quizData.length).fill(false);
+        let timerInterval;
+        let topicChart = null;
+        
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const quizContainer = document.getElementById('quiz-container');
+
+        const quizContentEl = document.getElementById('quiz-content');
+        const questionTrackerEl = document.getElementById('question-tracker');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        const flagBtnText = document.getElementById('flag-btn-text');
+        const timerEl = document.getElementById('timer');
+        
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmText = document.getElementById('confirm-text');
+        const cancelSubmitBtn = document.getElementById('cancel-submit-btn');
+        const confirmSubmitBtn = document.getElementById('confirm-submit-btn');
+
+        const resultsModal = document.getElementById('results-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            quizContainer.classList.add('flex');
+            startTimer(45 * 60); // 45 minute timer
+            loadQuestion();
+        }
+
+        function startTimer(duration) {
+            let timer = duration, minutes, seconds;
+            timerInterval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                timerEl.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function buildQuestionTracker() {
+            questionTrackerEl.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const trackerItem = document.createElement('div');
+                trackerItem.textContent = index + 1;
+                trackerItem.classList.add('question-tracker-item', 'p-2', 'text-center', 'border', 'rounded-md', 'cursor-pointer', 'font-medium');
+                if (index === currentQuestion) trackerItem.classList.add('active');
+                if (userAnswers[index] !== null && (!Array.isArray(userAnswers[index]) || userAnswers[index].length > 0)) trackerItem.classList.add('answered');
+                if (flaggedQuestions[index]) trackerItem.classList.add('flagged');
+                
+                trackerItem.addEventListener('click', () => {
+                    currentQuestion = index;
+                    loadQuestion();
+                });
+                questionTrackerEl.appendChild(trackerItem);
+            });
+        }
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            let optionsHtml = '';
+
+            const inputType = q.type === 'multiple' ? 'checkbox' : 'radio';
+            const savedAnswer = userAnswers[currentQuestion];
+
+            q.options.forEach((option, index) => {
+                let isChecked = '';
+                if (savedAnswer !== null) {
+                    if (q.type === 'multiple') {
+                        if (savedAnswer.includes(index)) isChecked = 'checked';
+                    } else {
+                         if (savedAnswer === index) isChecked = 'checked';
+                    }
+                }
+
+                optionsHtml += `
+                    <label class="block mt-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-blue-50 has-[:checked]:border-blue-400">
+                        <input type="${inputType}" name="option" value="${index}" class="mr-3" ${isChecked}>
+                        ${option}
+                    </label>
+                `;
+            });
+            
+            quizContentEl.innerHTML = `
+                <h2 class="text-xl font-semibold mb-2 text-gray-800">Question ${currentQuestion + 1} of ${quizData.length}</h2>
+                <p class="mb-4 text-gray-700 text-lg">${q.question}</p>
+                <div>${optionsHtml}</div>
+            `;
+            
+            const inputs = quizContentEl.querySelectorAll('input');
+            inputs.forEach(input => input.addEventListener('change', saveAnswer));
+
+            updateNavButtons();
+            buildQuestionTracker();
+            updateFlagButton();
+        }
+        
+        function saveAnswer() {
+            const q = quizData[currentQuestion];
+            if (q.type === 'multiple') {
+                const checkedBoxes = quizContentEl.querySelectorAll('input[type="checkbox"]:checked');
+                userAnswers[currentQuestion] = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+            } else {
+                const selectedOption = quizContentEl.querySelector('input[name="option"]:checked');
+                userAnswers[currentQuestion] = selectedOption ? parseInt(selectedOption.value) : null;
+            }
+            buildQuestionTracker();
+        }
+
+        function updateNavButtons() {
+            prevBtn.disabled = currentQuestion === 0;
+            prevBtn.classList.toggle('opacity-50', currentQuestion === 0);
+            nextBtn.disabled = currentQuestion === quizData.length - 1;
+            nextBtn.classList.toggle('opacity-50', currentQuestion === quizData.length - 1);
+        }
+        
+        function updateFlagButton() {
+            if (flaggedQuestions[currentQuestion]) {
+                flagBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+                flagBtn.classList.remove('bg-yellow-400', 'hover:bg-yellow-500');
+                flagBtnText.textContent = 'Unflag';
+            } else {
+                flagBtn.classList.add('bg-yellow-400', 'hover:bg-yellow-500');
+                flagBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+                flagBtnText.textContent = 'Flag for Review';
+            }
+        }
+
+        function toggleFlag() {
+            flaggedQuestions[currentQuestion] = !flaggedQuestions[currentQuestion];
+            updateFlagButton();
+            buildQuestionTracker();
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            let score = 0;
+            let incorrectCount = 0;
+            let resultsDetailsHtml = '';
+            const topicStats = {};
+
+            quizData.forEach((q, index) => {
+                if (!topicStats[q.topic]) {
+                    topicStats[q.topic] = { correct: 0, total: 0 };
+                }
+                topicStats[q.topic].total++;
+
+                let isCorrect = false;
+                const userAnswer = userAnswers[index];
+                
+                if (q.type === 'multiple') {
+                    const correctAnswers = q.correct;
+                    isCorrect = userAnswer && userAnswer.length === correctAnswers.length && userAnswer.every(val => correctAnswers.includes(val)) && correctAnswers.every(val => userAnswer.includes(val));
+                } else {
+                    isCorrect = userAnswer === q.correct;
+                }
+
+                if (isCorrect) {
+                    score++;
+                    topicStats[q.topic].correct++;
+                } else {
+                    incorrectCount++;
+                }
+                
+                let correctAnswerText;
+                if (q.type === 'multiple') {
+                    correctAnswerText = q.correct.map(i => q.options[i]).join(', ');
+                } else if (q.type === 'all-of-the-above' || q.type === 'none-of-the-above') {
+                    correctAnswerText = q.options[q.correct];
+                }
+                else {
+                    correctAnswerText = q.options[q.correct];
+                }
+
+                let userAnswerText = 'Not Answered';
+                if(userAnswer !== null && (Array.isArray(userAnswer) ? userAnswer.length > 0 : true)) {
+                    if (q.type === 'multiple') {
+                        userAnswerText = userAnswer.map(i => q.options[i]).join(', ');
+                    } else {
+                        userAnswerText = q.options[userAnswer];
+                    }
+                }
+
+                resultsDetailsHtml += `
+                    <div class="p-4 mb-4 border rounded-lg ${isCorrect ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}">
+                        <p class="font-bold text-gray-800">Q${index + 1}: ${q.question}</p>
+                        <p class="mt-2">Your Answer: <span class="font-semibold ${isCorrect ? 'text-green-700' : 'text-red-700'}">${userAnswerText}</span></p>
+                        ${!isCorrect ? `<p>Correct Answer: <span class="font-semibold text-green-700">${correctAnswerText}</span></p>` : ''}
+                        <div class="explanation">
+                            <strong>Explanation:</strong> This question relates to the topic of <strong>${q.topic}</strong>. The correct answer is based on the principles of business and organisational structures.
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('score').textContent = `Your Score: ${score} / ${quizData.length}`;
+            const incorrectPercentage = (incorrectCount / quizData.length) * 100;
+            document.getElementById('incorrect-percentage').textContent = `Incorrect Answers: ${incorrectPercentage.toFixed(1)}%`;
+
+            const practiceList = document.getElementById('practice-list');
+            practiceList.innerHTML = '';
+            
+            const topicLabels = Object.keys(topicStats);
+            const topicScores = topicLabels.map(topic => {
+                const percentage = (topicStats[topic].correct / topicStats[topic].total) * 100;
+                if (percentage < 70) {
+                    const li = document.createElement('li');
+                    li.textContent = `${topic} (Score: ${percentage.toFixed(0)}%)`;
+                    practiceList.appendChild(li);
+                }
+                return percentage;
+            });
+
+            if (practiceList.children.length === 0) {
+                 practiceList.innerHTML = '<li>Great job! No specific topics need review.</li>';
+            }
+            
+            document.getElementById('results-details').innerHTML = resultsDetailsHtml;
+            
+            const ctx = document.getElementById('topicChart').getContext('2d');
+            if(topicChart) topicChart.destroy();
+            topicChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topicLabels,
+                    datasets: [{
+                        label: 'Topic Performance (%)',
+                        data: topicScores,
+                        backgroundColor: topicScores.map(p => p >= 70 ? 'rgba(22, 163, 74, 0.7)' : p >= 50 ? 'rgba(245, 158, 11, 0.7)' : 'rgba(239, 68, 68, 0.7)'),
+                        borderColor: topicScores.map(p => p >= 70 ? 'rgba(22, 163, 74, 1)' : p >= 50 ? 'rgba(245, 158, 11, 1)' : 'rgba(239, 68, 68, 1)'),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: { x: { beginAtZero: true, max: 100, ticks: { callback: value => value + "%" } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            resultsModal.classList.remove('hidden');
+            resultsModal.style.opacity = 1;
+        }
+
+        function submitQuiz() {
+            const unansweredCount = userAnswers.filter(a => a === null || (Array.isArray(a) && a.length === 0)).length;
+            if (unansweredCount > 0) {
+                confirmText.textContent = `You have ${unansweredCount} unanswered questions. Are you sure you want to submit?`;
+                confirmModal.classList.remove('hidden');
+                confirmModal.style.opacity = 1;
+            } else {
+                showResults();
+            }
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startQuiz);
+        prevBtn.addEventListener('click', () => { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } });
+        nextBtn.addEventListener('click', () => { if (currentQuestion < quizData.length - 1) { currentQuestion++; loadQuestion(); } });
+        submitBtn.addEventListener('click', submitQuiz);
+        flagBtn.addEventListener('click', toggleFlag);
+        
+        cancelSubmitBtn.addEventListener('click', () => {
+            confirmModal.style.opacity = 0;
+            setTimeout(() => confirmModal.classList.add('hidden'), 300);
+        });
+        
+        confirmSubmitBtn.addEventListener('click', () => {
+            confirmModal.style.opacity = 0;
+            setTimeout(() => confirmModal.classList.add('hidden'), 300);
+            showResults();
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            resultsModal.style.opacity = 0;
+            setTimeout(() => resultsModal.classList.add('hidden'), 300);
+        });
+
+    </script>
+</body>
+</html>

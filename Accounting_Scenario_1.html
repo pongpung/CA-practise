@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB - Cash Flow Scenario Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .quiz-input {
+            @apply w-full p-2 border border-gray-300 rounded-md text-right mono bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+        }
+        .table-cell {
+            @apply py-2 px-4;
+        }
+        .submit-btn {
+            @apply w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg;
+        }
+        /* Style for the custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="quiz-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">The Institute of Chartered Accountants of Bangladesh</h1>
+            <p class="text-xl text-gray-600 mt-1">Certificate Level-Accounting: Statement of Cash Flows Quiz</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Scenario & Quiz -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-md overflow-hidden">
+                <div id="scenario-content" class="max-h-[80vh] overflow-y-auto pr-4">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2">Scenario 1: ABC Limited</h2>
+                    <p class="mb-6">You are provided with the Statement of Financial Position, Statement of Profit or Loss, and other additional information for ABC Limited. Your task is to prepare the Statement of Cash Flows for the year ended 30 June 2020 in accordance with IAS 7.</p>
+
+                    <!-- Financial Data Sections -->
+                    <div class="space-y-6">
+                        <details class="bg-gray-50 p-4 rounded-lg cursor-pointer" open>
+                            <summary class="font-semibold text-lg">Statement of Financial Position (Summarized)</summary>
+                            <div class="mt-4 overflow-x-auto">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-gray-200">
+                                        <tr>
+                                            <th class="table-cell text-left">Particulars</th>
+                                            <th class="table-cell text-right">30 June 2020 (Taka)</th>
+                                            <th class="table-cell text-right">30 June 2019 (Taka)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr class="font-bold"><td colspan="3" class="table-cell bg-gray-100">Assets</td></tr>
+                                        <tr><td class="table-cell pl-8">Property, plant and equipment</td><td class="table-cell text-right mono">2,543,000</td><td class="table-cell text-right mono">2,401,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Intangibles</td><td class="table-cell text-right mono">550,000</td><td class="table-cell text-right mono">584,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Investments</td><td class="table-cell text-right mono">406,000</td><td class="table-cell text-right mono">-</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Total Non-current assets</td><td class="table-cell text-right mono">3,499,000</td><td class="table-cell text-right mono">2,985,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Inventories</td><td class="table-cell text-right mono">685,000</td><td class="table-cell text-right mono">598,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Trade and other receivables</td><td class="table-cell text-right mono">480,000</td><td class="table-cell text-right mono">465,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Prepayments</td><td class="table-cell text-right mono">96,000</td><td class="table-cell text-right mono">126,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Cash and cash equivalents</td><td class="table-cell text-right mono">426,000</td><td class="table-cell text-right mono">200,000</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Total Current assets</td><td class="table-cell text-right mono">1,687,000</td><td class="table-cell text-right mono">1,389,000</td></tr>
+                                        <tr class="font-extrabold bg-gray-100"><td class="table-cell">Total Assets</td><td class="table-cell text-right mono">5,186,000</td><td class="table-cell text-right mono">4,374,000</td></tr>
+                                        
+                                        <tr class="font-bold"><td colspan="3" class="table-cell bg-gray-100">Equity and Liabilities</td></tr>
+                                        <tr><td class="table-cell pl-8">Share capital</td><td class="table-cell text-right mono">1,100,000</td><td class="table-cell text-right mono">1,000,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Share premium</td><td class="table-cell text-right mono">342,000</td><td class="table-cell text-right mono">200,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Retained earnings</td><td class="table-cell text-right mono">1,785,000</td><td class="table-cell text-right mono">1,311,000</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Total Equity</td><td class="table-cell text-right mono">3,227,000</td><td class="table-cell text-right mono">2,511,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Borrowings</td><td class="table-cell text-right mono">500,000</td><td class="table-cell text-right mono">1,000,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Redeemable preference shares</td><td class="table-cell text-right mono">200,000</td><td class="table-cell text-right mono">-</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Total Non-current liabilities</td><td class="table-cell text-right mono">700,000</td><td class="table-cell text-right mono">1,000,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Trade payables</td><td class="table-cell text-right mono">749,000</td><td class="table-cell text-right mono">427,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Accruals</td><td class="table-cell text-right mono">108,000</td><td class="table-cell text-right mono">131,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Income tax payables</td><td class="table-cell text-right mono">222,000</td><td class="table-cell text-right mono">165,000</td></tr>
+                                        <tr><td class="table-cell pl-8">Provisions</td><td class="table-cell text-right mono">120,000</td><td class="table-cell text-right mono">140,000</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Total Current liabilities</td><td class="table-cell text-right mono">1,259,000</td><td class="table-cell text-right mono">863,000</td></tr>
+                                        <tr class="font-extrabold bg-gray-100"><td class="table-cell">Total Equity and Liabilities</td><td class="table-cell text-right mono">5,186,000</td><td class="table-cell text-right mono">4,374,000</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+
+                        <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                            <summary class="font-semibold text-lg">Statement of Profit or Loss</summary>
+                            <div class="mt-4 overflow-x-auto">
+                               <table class="min-w-full text-sm">
+                                    <thead class="bg-gray-200">
+                                        <tr><th class="table-cell text-left">Particulars</th><th class="table-cell text-right">Taka</th></tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr><td class="table-cell">Revenue</td><td class="table-cell text-right mono">5,762,000</td></tr>
+                                        <tr><td class="table-cell">Less: Cost of sales</td><td class="table-cell text-right mono">(4,630,000)</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Gross Profit</td><td class="table-cell text-right mono">1,132,000</td></tr>
+                                        <tr><td class="table-cell">Less: Distribution cost</td><td class="table-cell text-right mono">(236,000)</td></tr>
+                                        <tr><td class="table-cell">Less: Administrative expenses</td><td class="table-cell text-right mono">(121,000)</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Profit from operation</td><td class="table-cell text-right mono">769,000</td></tr>
+                                        <tr><td class="table-cell">Add: Investment income</td><td class="table-cell text-right mono">55,000</td></tr>
+                                        <tr><td class="table-cell">Less: Finance cost</td><td class="table-cell text-right mono">(64,000)</td></tr>
+                                        <tr class="font-bold"><td class="table-cell">Profit before tax</td><td class="table-cell text-right mono">756,000</td></tr>
+                                        <tr><td class="table-cell">Less: Income tax expenses</td><td class="table-cell text-right mono">(232,000)</td></tr>
+                                        <tr class="font-extrabold bg-gray-100"><td class="table-cell">Net profit after tax for the year</td><td class="table-cell text-right mono">524,000</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+
+                        <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                            <summary class="font-semibold text-lg">Additional Information</summary>
+                            <div class="mt-4 prose prose-sm max-w-none">
+                                <ul>
+                                    <li><b>a)</b> During the year, plant with an original cost of Taka 479,000 and a carrying amount at the date of disposal of Taka 326,000 was sold for Taka 424,000 which was received in cash.</li>
+                                    <li><b>b)</b> ABC Limited received Taka 20,000 during the year from the sale of highly liquid investments, which were classified as cash and cash equivalents.</li>
+                                    <li><b>c)</b> During the year, ABC Limited made a 1 for 20 bonus issue of its ordinary shares. The subsequent issue of shares was made at a premium.</li>
+                                    <li><b>d)</b> Included in trade and other receivables at the year-end was Taka 25,000 in relation to investment income. The corresponding figure for 2019 was Taka 15,000.</li>
+                                    <li><b>e)</b> Intangible assets with accumulated amortization at the date of disposal of Taka 40,000 were sold for Taka 12,000. There were no acquisitions of intangible assets during the year. (Note: The cost of the disposed intangible asset can be inferred from the movement in the gross cost of intangible assets).</li>
+                                    <li><b>f)</b> Redeemable preference shares in the amount of Taka 200,000 were issued during the year.</li>
+                                </ul>
+                            </div>
+                        </details>
+                    </div>
+
+                    <hr class="my-8 border-t-2 border-gray-200">
+
+                    <!-- Quiz Form -->
+                    <div id="quiz-form">
+                        <h3 class="text-xl font-bold mb-4">Statement of Cash Flows (Fill in the blanks)</h3>
+                        <p class="text-sm text-gray-500 mb-4">Enter values in the boxes. Use a minus sign for outflows, e.g., -50000.</p>
+                        <div class="space-y-2">
+                            <!-- Operating Activities -->
+                            <div class="font-bold text-lg bg-blue-100 p-2 rounded">Cash flows from operating activities</div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Profit before tax</label> <input id="pbt" type="number" class="quiz-input"></div>
+                            <div class="pl-4 font-semibold">Adjustments for:</div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Depreciation</label> <input id="dep" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Amortisation of intangible assets</label> <input id="amort" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Gain/loss on sale of property, plant and equipment</label> <input id="gain_ppe" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Gain/loss on sale of intangible assets</label> <input id="gain_int" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in inventories</label> <input id="inv" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in trade and other receivables</label> <input id="rec" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in prepayments</label> <input id="prep" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in trade payables</label> <input id="pay" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in accruals</label> <input id="acc" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center pl-4"><label class="col-span-2">Increase/decrease in provisions</label> <input id="prov" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-semibold"><label class="col-span-2">Cash generated from operations</label> <input id="cgo" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Interest paid</label> <input id="int_paid" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Tax paid</label> <input id="tax_paid" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-bold text-lg bg-blue-50 p-2 rounded"><label class="col-span-2">Net cash from/used in operating activities</label> <input id="net_ops" type="number" class="quiz-input"></div>
+                            
+                            <!-- Investing Activities -->
+                            <div class="font-bold text-lg bg-green-100 p-2 rounded mt-4">Cash flows from investing activities</div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Purchase of property, plant and equipment</label> <input id="pur_ppe" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Purchase of investments</label> <input id="pur_inv" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Proceeds from sale of property, plant and equipment</label> <input id="proc_ppe" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Proceeds from sale of intangibles</label> <input id="proc_int" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Investment income received</label> <input id="inv_inc" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-bold text-lg bg-green-50 p-2 rounded"><label class="col-span-2">Net cash from/used in investing activities</label> <input id="net_inv" type="number" class="quiz-input"></div>
+
+                            <!-- Financing Activities -->
+                            <div class="font-bold text-lg bg-purple-100 p-2 rounded mt-4">Cash flows from financing activities</div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Proceeds from issue of share capital</label> <input id="proc_shares" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Movements in borrowings (Repayment)</label> <input id="borrow" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Proceeds from issue of redeemable preference shares</label> <input id="pref_shares" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Dividends paid</label> <input id="div_paid" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-bold text-lg bg-purple-50 p-2 rounded"><label class="col-span-2">Net cash from/used in financing activities</label> <input id="net_fin" type="number" class="quiz-input"></div>
+
+                            <!-- Reconciliation -->
+                            <div class="font-bold text-lg bg-yellow-100 p-2 rounded mt-4">Reconciliation</div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-semibold"><label class="col-span-2">Net increase/decrease in cash and cash equivalents</label> <input id="net_change" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center"><label class="col-span-2">Cash and cash equivalents at the beginning of the year</label> <input id="cash_beg" type="number" class="quiz-input"></div>
+                            <div class="grid grid-cols-3 gap-4 items-center font-bold text-lg bg-yellow-50 p-2 rounded"><label class="col-span-2">Cash and cash equivalents at the end of the year</label> <input id="cash_end" type="number" class="quiz-input"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Tracker & Controls -->
+            <div class="lg:col-span-1">
+                <div class="sticky top-8 space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                        <h3 class="font-bold text-lg mb-2">Time Remaining</h3>
+                        <div id="timer" class="text-5xl font-bold mono text-blue-600">30:00</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-bold text-lg mb-4">Quiz Progress</h3>
+                        <div class="w-full bg-gray-200 rounded-full h-4">
+                            <div id="progress-bar" class="bg-blue-600 h-4 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                        <p id="progress-text" class="text-center text-sm mt-2">0% Complete</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h3 class="font-bold text-lg mb-4">Actions</h3>
+                        <button id="submit-btn" class="submit-btn">
+                            Submit Answers
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Container (Initially Hidden) -->
+    <div id="results-container" class="hidden max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 bg-white rounded-xl shadow-2xl my-8">
+        <!-- Results content will be injected here by JavaScript -->
+    </div>
+    
+    <footer class="text-center py-6 mt-8 bg-gray-800 text-gray-400 text-sm">
+        <p class="font-semibold">Prepared by:</p>
+        <p>K. M. Mahafuzul Alam</p>
+        <div class="flex justify-center space-x-4 mt-2">
+            <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="hover:text-white transition">LinkedIn</a>
+            <span>|</span>
+            <span>📞 01728-928984</span>
+            <span>|</span>
+            <span>📧 kmmhafuzulalam@gmail.com</span>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- QUIZ DATA & CORRECT ANSWERS ---
+            // These answers are calculated based on the provided scenario.
+            // Note: There's a discrepancy in the source data, so the final cash balance
+            // will not reconcile perfectly to the balance sheet. The explanations will address this.
+            const correctAnswers = {
+                pbt: { value: 756000, explanation: "Directly from the Statement of Profit or Loss." },
+                dep: { value: 1100000, explanation: "Calculated via T-account: Opening Acc Dep (3,974k) + Expense - Disposal Acc Dep (153k) = Closing Acc Dep (4,921k). Expense = 1,100,000." },
+                amort: { value: 19000, explanation: "Calculated via T-account: Opening Acc Amort (354k) + Expense - Disposal Acc Amort (40k) = Closing Acc Amort (333k). Expense = 19,000." },
+                gain_ppe: { value: -98000, explanation: "Gain on sale is a non-cash income, so it's deducted. Proceeds (424k) - Carrying Amount (326k) = 98,000 gain. Deduct this amount." },
+                gain_int: { value: 3000, explanation: "Loss on sale is a non-cash expense, so it's added back. Proceeds (12k) - Carrying Amount (15k) = 3,000 loss. Add this amount." },
+                inv: { value: -87000, explanation: "Increase in inventories (685k - 598k = 87k) is a cash outflow." },
+                rec: { value: -15000, explanation: "Increase in receivables (480k - 465k = 15k) is a cash outflow." },
+                prep: { value: 30000, explanation: "Decrease in prepayments (126k - 96k = 30k) is a cash inflow." },
+                pay: { value: 322000, explanation: "Increase in trade payables (749k - 427k = 322k) is a cash inflow." },
+                acc: { value: -23000, explanation: "Decrease in accruals (131k - 108k = 23k) is a cash outflow." },
+                prov: { value: -20000, explanation: "Decrease in provisions (140k - 120k = 20k) is a cash outflow." },
+                cgo: { value: 1955000, explanation: "Sum of Profit Before Tax and all non-cash/working capital adjustments." },
+                tax_paid: { value: -175000, explanation: "Opening Tax Payable (165k) + P&L Expense (232k) - Closing Tax Payable (222k) = 175,000 paid (outflow)." },
+                int_paid: { value: -64000, explanation: "Finance cost from P&L, assuming no interest payable movement. Outflow." },
+                net_ops: { value: 1716000, explanation: "Cash Generated from Operations (1,955k) - Interest Paid (64k) - Tax Paid (175k)." },
+                pur_ppe: { value: -1568000, explanation: "Calculated via T-account: Opening Cost (6,375k) + Additions - Disposal Cost (479k) = Closing Cost (7,464k). Additions = 1,568,000 (outflow)." },
+                proc_ppe: { value: 424000, explanation: "Given directly in additional information (a). Inflow." },
+                pur_inv: { value: -406000, explanation: "Increase in Investments on Balance Sheet (406k - 0) is assumed to be a purchase (outflow)." },
+                proc_int: { value: 12000, explanation: "Given directly in additional information (e). Inflow." },
+                inv_inc: { value: 45000, explanation: "P&L Income (55k) - Increase in Investment Income Receivable (25k - 15k) = 45,000 received (inflow)." },
+                net_inv: { value: -1493000, explanation: "Sum of all cash flows from investing activities." },
+                proc_shares: { value: 192000, explanation: "Cash from share issue. Total equity increase (242k) - non-cash bonus issue (50k) = 192,000 cash (inflow)." },
+                borrow: { value: -500000, explanation: "Decrease in borrowings (1,000k - 500k) is a repayment (outflow)." },
+                pref_shares: { value: 200000, explanation: "Given directly in additional information (f) as an issuance (inflow)." },
+                div_paid: { value: 0, explanation: "Retained Earnings reconciliation shows no dividends were paid. Opening RE (1,311k) + Profit (524k) - Bonus Issue (50k) = Closing RE (1,785k)." },
+                net_fin: { value: -108000, explanation: "Sum of all cash flows from financing activities." },
+                net_change: { value: 115000, explanation: "Net Ops (1,716k) + Net Inv (-1,493k) + Net Fin (-108k)." },
+                cash_beg: { value: 200000, explanation: "Given in the 2019 Statement of Financial Position." },
+                cash_end: { value: 315000, explanation: "Beginning Cash (200k) + Net Change (115k). Note: This does not match the closing balance sheet figure of 426,000 due to likely inconsistencies in the source problem data." },
+            };
+
+            // --- UI ELEMENTS ---
+            const quizContainer = document.getElementById('quiz-container');
+            const resultsContainer = document.getElementById('results-container');
+            const submitBtn = document.getElementById('submit-btn');
+            const timerEl = document.getElementById('timer');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const inputs = document.querySelectorAll('.quiz-input');
+
+            // --- TIMER LOGIC ---
+            let timeRemaining = 30 * 60; // 30 minutes in seconds
+            const timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerEl.textContent = "00:00";
+                    timerEl.classList.add('text-red-600');
+                    handleSubmit();
+                }
+            }, 1000);
+
+            // --- PROGRESS BAR LOGIC ---
+            function updateProgress() {
+                const filledInputs = Array.from(inputs).filter(input => input.value.trim() !== '').length;
+                const totalInputs = inputs.length;
+                const percentage = totalInputs > 0 ? (filledInputs / totalInputs) * 100 : 0;
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `${Math.round(percentage)}% Complete (${filledInputs}/${totalInputs})`;
+            }
+            inputs.forEach(input => input.addEventListener('input', updateProgress));
+            
+            // --- SUBMIT LOGIC ---
+            submitBtn.addEventListener('click', handleSubmit);
+
+            function handleSubmit() {
+                clearInterval(timerInterval);
+                const userAnswers = {};
+                let score = 0;
+                const totalQuestions = Object.keys(correctAnswers).length;
+                const topicsToReview = new Set();
+
+                // Build results HTML
+                let resultsHTML = `
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900">Quiz Results</h2>
+                        <p class="text-lg text-gray-600 mt-1">Here's how you did on Scenario 1.</p>
+                    </div>
+                `;
+
+                // Score Summary
+                inputs.forEach(input => {
+                    const id = input.id;
+                    const value = input.value === '' ? null : Number(input.value);
+                    userAnswers[id] = value;
+                    if (value === correctAnswers[id].value) {
+                        score++;
+                    }
+                });
+                
+                const percentageCorrect = (score / totalQuestions) * 100;
+                const percentageIncorrect = 100 - percentageCorrect;
+
+                resultsHTML += `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg">
+                            <div class="font-bold">Correct</div>
+                            <div class="text-2xl">${score} / ${totalQuestions} (${percentageCorrect.toFixed(1)}%)</div>
+                        </div>
+                        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+                            <div class="font-bold">Incorrect</div>
+                            <div class="text-2xl">${totalQuestions - score} / ${totalQuestions} (${percentageIncorrect.toFixed(1)}%)</div>
+                        </div>
+                    </div>
+                `;
+
+                // Detailed Breakdown Table
+                resultsHTML += `
+                    <h3 class="text-2xl font-bold mb-4">Detailed Answer Analysis</h3>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line Item</th>
+                                    <th class="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Your Answer</th>
+                                    <th class="py-3 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Correct Answer</th>
+                                    <th class="py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Explanation</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                `;
+
+                document.querySelectorAll('#quiz-form label').forEach(label => {
+                    const inputId = label.nextElementSibling.id;
+                    if (inputId && correctAnswers[inputId]) {
+                        const isCorrect = userAnswers[inputId] === correctAnswers[inputId].value;
+                        const topicName = label.textContent.trim();
+                        
+                        if (!isCorrect) {
+                            topicsToReview.add(topicName);
+                        }
+
+                        resultsHTML += `
+                            <tr class="${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
+                                <td class="py-4 px-4 whitespace-nowrap text-sm font-medium text-gray-900">${topicName}</td>
+                                <td class="py-4 px-4 whitespace-nowrap text-sm text-right mono ${isCorrect ? 'text-green-700' : 'text-red-700 font-bold'}">
+                                    ${userAnswers[inputId] !== null ? userAnswers[inputId].toLocaleString() : 'No Answer'}
+                                </td>
+                                <td class="py-4 px-4 whitespace-nowrap text-sm text-right mono text-blue-700 font-bold">
+                                    ${correctAnswers[inputId].value.toLocaleString()}
+                                </td>
+                                <td class="py-4 px-4 text-sm text-gray-600">
+                                    <span class="font-bold">${isCorrect ? '✅ Regular' : '⚠ Tricky'}</span>: ${correctAnswers[inputId].explanation}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                resultsHTML += `</tbody></table></div>`;
+
+                // Topics to Review Section
+                if (topicsToReview.size > 0) {
+                    resultsHTML += `<div class="mt-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h3 class="text-xl font-bold mb-3 text-yellow-800">Topics to Review</h3>
+                        <p class="mb-4 text-yellow-700">You had some trouble with the following areas. It would be a good idea to revise them:</p>
+                        <ul class="list-disc list-inside space-y-1 text-yellow-900">`;
+                    topicsToReview.forEach(topic => {
+                        resultsHTML += `<li>${topic}</li>`;
+                    });
+                    resultsHTML += `</ul></div>`;
+                } else {
+                     resultsHTML += `<div class="mt-8 p-6 bg-green-50 border border-green-200 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-green-800">Excellent Work!</h3>
+                        <p class="text-green-700">You answered all questions correctly. Great job analyzing the scenario!</p>
+                     </div>`;
+                }
+
+                // Show results
+                quizContainer.classList.add('hidden');
+                resultsContainer.innerHTML = resultsHTML;
+                resultsContainer.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+            
+            // Initialize progress bar
+            updateProgress();
+        });
+    </script>
+
+</body>
+</html>

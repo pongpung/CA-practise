@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB Accounting Exam – Chapter 13: Data analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the quiz app */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-tracker-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .not-answered {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        .answered {
+            background-color: #10B981; /* Green-500 */
+            color: #ffffff;
+            border: 1px solid #10B981;
+        }
+        .flagged {
+            background-color: #EF4444; /* Red-500 */
+            color: #ffffff;
+            border: 1px solid #EF4444;
+        }
+        .current {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border: 2px solid #3B82F6; /* Blue-500 */
+        }
+        .option.selected {
+            background-color: #3B82F6; /* Blue-500 */
+            color: white;
+            border-color: #2563EB; /* Blue-600 */
+        }
+        .results-correct {
+            border-left: 5px solid #10B981; /* Green-500 */
+        }
+        .results-incorrect {
+            border-left: 5px solid #EF4444; /* Red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Main Container -->
+    <div id="app-container" class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center bg-white p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-700 mb-2">ICAB Accounting Exam</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-blue-600 mb-6">Chapter 13: Data analysis</h2>
+            <div class="text-left max-w-2xl mx-auto space-y-4 text-gray-600 mb-8">
+                <p><strong>📝 Quiz Specifications:</strong></p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Total Questions:</strong> 50 MCQs</li>
+                    <li><strong>Time Limit:</strong> 45 minutes</li>
+                    <li><strong>Marks:</strong> 2 marks per question</li>
+                    <li><strong>Difficulty:</strong> Exam-standard and tricky</li>
+                </ul>
+                <p>Click the button below to begin the exam. Good luck!</p>
+            </div>
+            <button onclick="startQuiz()" class="bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="quiz-view" class="hidden">
+            <header class="bg-white p-4 rounded-xl shadow-md mb-6 flex justify-between items-center">
+                <h1 class="text-xl md:text-2xl font-bold text-gray-700">ICAB Accounting Exam – Chapter 13</h1>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <!-- Left Side: Question Tracker -->
+                <aside class="md:col-span-3 lg:col-span-2 bg-white p-4 rounded-xl shadow-lg">
+                    <h3 class="font-bold mb-4 text-center">Question Tracker</h3>
+                    <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                        <!-- Tracker items will be generated here -->
+                    </div>
+                </aside>
+
+                <!-- Center: Question and Options -->
+                <main class="md:col-span-9 lg:col-span-7">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <span id="question-number" class="text-lg font-semibold text-blue-600"></span>
+                            <!-- Right Side: Timer + Flag (Mobile View) -->
+                            <div class="md:hidden flex flex-col items-end space-y-2">
+                                <div id="timer-mobile" class="text-lg font-bold text-red-600 bg-red-100 px-3 py-1 rounded-md"></div>
+                                <button id="flag-btn-mobile" onclick="toggleFlag()" class="text-sm text-yellow-600 hover:text-yellow-800 font-semibold">🚩 Flag for Review</button>
+                            </div>
+                        </div>
+                        <p id="question-text" class="text-lg mb-6"></p>
+                        <div id="options-container" class="space-y-3">
+                            <!-- Options will be generated here -->
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button onclick="prevQuestion()" id="prev-btn" class="bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition">Previous</button>
+                        <button onclick="nextQuestion()" id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-8 rounded-lg hover:bg-blue-700 transition">Next</button>
+                    </div>
+                     <div class="text-center mt-8">
+                        <button onclick="confirmSubmit()" class="bg-green-600 text-white font-bold py-3 px-12 rounded-lg shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105">Submit Quiz</button>
+                    </div>
+                </main>
+
+                <!-- Right Side: Timer + Flag (Desktop View) -->
+                <aside class="hidden md:block md:col-span-3 lg:col-span-3 bg-white p-4 rounded-xl shadow-lg text-center h-fit">
+                    <h3 class="font-bold mb-2">Time Remaining</h3>
+                    <div id="timer-desktop" class="text-3xl font-bold text-red-600 bg-red-100 py-2 rounded-lg mb-4"></div>
+                    <button id="flag-btn-desktop" onclick="toggleFlag()" class="w-full bg-yellow-400 text-yellow-800 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition">🚩 Flag for Review</button>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="results-view" class="hidden bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl font-bold text-center text-gray-700 mb-4">Quiz Results</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center mb-8">
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <p class="text-sm text-blue-700 font-semibold">Total Score</p>
+                    <p id="total-score" class="text-3xl font-bold text-blue-800"></p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <p class="text-sm text-green-700 font-semibold">Correct</p>
+                    <p id="correct-answers" class="text-3xl font-bold text-green-800"></p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <p class="text-sm text-red-700 font-semibold">Incorrect</p>
+                    <p id="incorrect-answers" class="text-3xl font-bold text-red-800"></p>
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                    <p class="text-sm text-yellow-700 font-semibold">Incorrect %</p>
+                    <p id="incorrect-percentage" class="text-3xl font-bold text-yellow-800"></p>
+                </div>
+            </div>
+
+            <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                <h2 class="text-xl font-bold mb-3">Areas for Improvement</h2>
+                <p class="mb-3">Based on your incorrect answers, you should focus more on the following topics:</p>
+                <ul id="improvement-topics" class="list-disc list-inside space-y-1 text-gray-700">
+                    <!-- Topics will be generated here -->
+                </ul>
+                 <p class="mt-4 text-sm font-semibold"><strong>Quiz Difficulty:</strong> <span id="quiz-difficulty" class="text-red-600">Tricky</span></p>
+            </div>
+            
+            <div class="text-center mb-8">
+                 <button onclick="retakeQuiz()" class="bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-blue-700 transition">Retake Quiz</button>
+            </div>
+
+            <h2 class="text-2xl font-bold text-center mb-6 border-t pt-6">Detailed Question Review</h2>
+            <div id="detailed-review" class="space-y-6">
+                <!-- Detailed review will be generated here -->
+            </div>
+
+            <footer class="text-center text-sm text-gray-500 mt-12 border-t pt-6">
+                <p class="font-bold">Prepared by:</p>
+                <p>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/k-m-mahafuzul-alam</a></p>
+                <p>📞 WhatsApp: 01728-928984</p>
+                <p>📧 Email: kmmhafuzulalam@gmail.com</p>
+            </footer>
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+                <h2 class="text-xl font-bold mb-4">Confirm Submission</h2>
+                <p class="mb-6">Are you sure you want to submit the quiz? You cannot change your answers after this.</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="cancelSubmit()" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button onclick="submitQuiz()" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- QUIZ DATA ---
+        // All questions are derived from the provided PDF "Chapter 13: Data analysis"
+        const quizData = [
+            {
+                question: "A retail manager uses last year's sales figures to determine the inventory levels for the upcoming holiday season. According to the syllabus, this activity primarily falls under which use of data?",
+                options: ["Control", "Decision Making", "Planning", "Reporting"],
+                answer: "C",
+                explanation: "Planning involves using data to forecast future events and ensure sufficient resources are available to meet anticipated demand. Using past sales data to set future inventory levels is a classic example of planning.",
+                topic: "Use of Data in Business"
+            },
+            {
+                question: "Which of the following is an example of 'provoked data' in the context of Big Data?",
+                options: ["A customer's location data is passively collected by their smartphone.", "A retailer analyzes website click patterns leading to a sale.", "A customer leaves a product review on a company's website.", "A government agency releases public transport data."],
+                answer: "C",
+                explanation: "Provoked data is a type of structured Big Data obtained from people who have been given the opportunity to express their views, such as ratings and reviews left on a website.",
+                topic: "Big Data"
+            },
+            {
+                question: "A junior accountant prepares a report for senior management that is 50 pages long, detailing every single transaction for the month. While the data is precise, the managers find it unusable for strategic decisions. Which quality of good information, according to the 'ACCURATE' mnemonic, is most significantly lacking?",
+                options: ["Accurate", "Authoritative", "Complete", "User-targeted"],
+                answer: "D",
+                explanation: "Good information should be targeted to the needs of the user. Senior managers typically require summaries for strategic decisions, not exhaustive detail. The report fails because it is not tailored to its audience.",
+                topic: "Qualities of Good Information"
+            },
+            {
+                question: "When a sample is not representative of the population because the data was not selected randomly, what type of bias occurs?",
+                options: ["Observer bias", "Selection bias", "Survivorship bias", "Confirmation bias"],
+                answer: "B",
+                explanation: "Selection bias occurs when the method of data selection is not random, resulting in a sample that is not representative of the population because not all items had an equal chance of being chosen.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "What is the key distinction between 'data' and 'information'?",
+                options: ["Data is quantitative, while information is qualitative.", "Data is raw and unprocessed, while information is processed and useful.", "Data comes from internal sources, while information comes from external sources.", "Data is used for planning, while information is used for control."],
+                answer: "B",
+                explanation: "The syllabus defines data as unprocessed facts. Information is the output of processing data in a way that makes it useful for activities like planning, control, and decision-making.",
+                topic: "Use of Data in Business"
+            },
+            {
+                question: "Which of the following are considered internal sources of data for an organization? (Choose TWO)",
+                options: ["Government economic statistics", "Human resources and payroll records", "Machine logs from production equipment", "Market research reports from a consulting firm"],
+                answer: ["B", "C"],
+                isMultiple: true,
+                explanation: "Internal data sources originate from within the organization. HR/payroll records and machine logs are explicitly mentioned as internal sources. Government statistics and consultant reports are external sources.",
+                topic: "Sources of Data"
+            },
+            {
+                question: "A type II error in hypothesis testing occurs when...",
+                options: ["The null hypothesis is true, but it is incorrectly rejected.", "The null hypothesis is false, but it is incorrectly accepted.", "The sample data is biased, leading to a wrong conclusion.", "The calculations contain a statistical error."],
+                answer: "B",
+                explanation: "A type II error, or a 'false negative', is the error of accepting a null hypothesis when it is actually false because the sample result was not statistically significant enough to reject it.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "Which of the following characteristics of Big Data refers to its trustworthiness and accuracy?",
+                options: ["Volume", "Velocity", "Variety", "Veracity"],
+                answer: "D",
+                explanation: "Veracity relates to the trustworthiness, accuracy, and quality of the data. It involves cleaning 'dirty data' to ensure it can be relied upon for analysis.",
+                topic: "Big Data"
+            },
+            {
+                question: "A manager is creating a presentation to show the proportion of total company sales generated by each of its five product categories for a single year. Which type of chart would be most appropriate?",
+                options: ["Line chart", "Clustered bar chart", "Pie chart", "Scatter plot"],
+                answer: "C",
+                explanation: "Pie charts are particularly useful for showing the components that make up a total for a single period or variable. The angle of each slice visually represents its proportion of the whole.",
+                topic: "Presentation of Information"
+            },
+            {
+                question: "According to the principles of good spreadsheet practice published by the ICAEW, why should you never embed numbers that might change directly into a formula?",
+                options: ["It makes the spreadsheet slower to calculate.", "It makes the formula difficult to understand and update.", "It can lead to data loss if the file is corrupted.", "It violates data privacy regulations."],
+                answer: "B",
+                explanation: "The ICAEW principles state to 'never embed numbers in a formula if they might change'. Instead, these numbers should be in separate cells that the formula refers to. This makes the spreadsheet easier to update and audit, improving its longevity and reducing the risk of error.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "A survey is conducted via an online poll on a popular social media platform to gauge public opinion on a new government policy. This sampling method is most likely to suffer from which two types of bias? (Choose TWO)",
+                options: ["Omitted variable bias", "Observer bias", "Self-selection bias", "Selection bias"],
+                answer: ["C", "D"],
+                isMultiple: true,
+                explanation: "This is a form of selection bias because the sample is limited to users of that specific platform, who may not be representative of the entire population. It is also a self-selection bias because individuals choose whether or not to participate in the poll, and those who respond may have stronger opinions than the general populace.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "In the context of the Internet of Things (IoT), which of the following is an example of a data source?",
+                options: ["An annual financial report", "A 'black box' in a car used for insurance purposes", "A printed customer satisfaction questionnaire", "A focus group discussion transcript"],
+                answer: "B",
+                explanation: "The Internet of Things (IoT) includes sensors that collect and transmit data. A 'black box' used in cars for insurance purposes is a prime example of such a sensor.",
+                topic: "Sources of Data"
+            },
+            {
+                question: "Which of the following statements about stratified sampling is true?",
+                options: ["It involves selecting every nth item from the population after a random start.", "It ensures that subgroups (strata) of a population are proportionally represented in the sample.", "It is the cheapest and simplest sampling method to implement.", "It guarantees that the sample will be free from all forms of bias."],
+                answer: "B",
+                explanation: "Stratified sampling involves dividing the population into distinct subgroups (strata) and then drawing a random sample from each stratum, often in proportion to its size in the population. This ensures representation from all key subgroups.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "A manager analyzing a dataset finds that customers who buy product A also tend to buy product B. This is an example of what kind of data analysis?",
+                options: ["Descriptive statistics", "Confirmatory data analysis", "Exploratory data analysis", "Hypothesis testing"],
+                answer: "C",
+                explanation: "Exploratory data analysis aims to identify previously unknown relationships, patterns, or connections in a dataset. Discovering that buyers of one product also buy another is a classic example of finding such a pattern.",
+                topic: "Data Analysis"
+            },
+            {
+                question: "Under the ethical principle of ______, organizations should be open about what personal data they hold and how they use it.",
+                options: ["Fairness", "Accountability", "Transparency", "Consent"],
+                answer: "C",
+                explanation: "Transparency is a key principle of data ethics, requiring businesses to be clear and open about how they use data. This includes publishing information about the data held and the processes used to analyze it.",
+                topic: "Data Science & Ethics"
+            },
+            {
+                question: "Which of the following is a primary risk associated with the use of spreadsheets for critical financial modeling?",
+                options: ["High software licensing costs", "Inability to create charts and graphs", "Risk of errors in formulae or data entry", "Limited data storage capacity compared to databases"],
+                answer: "C",
+                explanation: "A significant risk of relying on spreadsheets is the potential for errors in formulae, logic, or data entry, which can lead to incorrect outputs and poor decision-making.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "What is the process of using fields within source data to organize and analyze large datasets to discover patterns and useful information for future decisions known as?",
+                options: ["Data Science", "Data Analytics", "Big Data", "Data Visualisation"],
+                answer: "B",
+                explanation: "Data analytics is defined as the process of using source data to collect, organize, and analyze large datasets to uncover patterns and other useful information that can guide an organization's future business decisions.",
+                topic: "Data Science"
+            },
+            {
+                question: "An organization is accused of breaching data privacy laws in Bangladesh. Which of the following actions would be a direct violation of such principles, as outlined in the draft Data Protection Act, 2024?",
+                options: ["Using anonymized customer data to analyze market trends.", "Selling customer personal data to third parties without explicit consent.", "Backing up important spreadsheet files regularly.", "Using internal payroll data to plan future staffing costs."],
+                answer: "B",
+                explanation: "Collecting, storing, and analyzing personal data puts an organization at risk of breaching data privacy legislation. A key principle in laws like the draft Data Protection Act, 2024 of Bangladesh is consent; selling personal data without it is a significant ethical and legal breach.",
+                topic: "Data Science & Ethics"
+            },
+            {
+                question: "An accounting firm uses a spreadsheet template for departmental budgeting. What is the primary benefit of this approach?",
+                options: ["It eliminates the need for managers to provide any input.", "It ensures consistency in format and makes consolidation easier.", "It automatically prevents any errors in the budget figures.", "It is the only method compliant with international accounting standards."],
+                answer: "B",
+                explanation: "Using standardized budget templates ensures that all departmental budgets follow the same format. This helps managers provide consistent information and simplifies the process for the finance function to consolidate them into an overall company budget.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "'Cognitive bias' in data analysis can be influenced by which of the following?",
+                options: ["The size of the sample used for the analysis.", "The way data is presented, such as the order or use of infographics.", "The inclusion of an incorrect variable in the dataset.", "The random selection of data points from the population."],
+                answer: "B",
+                explanation: "Cognitive bias relates to human perception and can be triggered by factors like how data is presented (e.g., infographics, order of presentation) and the context in which it is shown ('anchoring').",
+                topic: "Potential Problems with Data"
+            },
+            // Scenario 1
+            {
+                question: "<strong>Scenario:</strong> A fast-fashion retailer, 'Trendify BD,' wants to understand its customer base better. The data analytics team conducts a survey by posting a link on its official Instagram page, offering a 10% discount voucher to everyone who completes it. The survey asks questions like, 'Do you agree that our brand is eco-friendly and stylish?' and 'How often do you shop with us (e.g., often, sometimes, rarely)?' The team analyzes the data from the 5,000 responses and concludes that their primary customers are young, environmentally conscious, and frequent shoppers. <br><br>Based on the scenario, the survey's sampling methodology is most likely to cause which type of data bias?",
+                options: ["Survivorship bias", "Observer bias", "Self-selection bias", "Omitted variable bias"],
+                answer: "C",
+                explanation: "The respondents are individuals who chose to participate, likely motivated by the discount voucher and their existing engagement with the brand on Instagram. This is a classic case of self-selection bias, as the sample is not representative of all potential customers but only those who self-select to respond.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> The survey question 'Do you agree that our brand is eco-friendly and stylish?' is a poorly designed question primarily because it is a ________ question.",
+                options: ["Leading", "Double-barrelled", "Open-ended", "All of the above"],
+                answer: "B",
+                explanation: "This is a 'double-barrelled' question because it asks about two separate concepts ('eco-friendly' and 'stylish') in a single question. A respondent might agree with one part but not the other, making it difficult to answer accurately.",
+                topic: "Data Analysis & Surveys"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> The question 'How often do you shop with us (e.g., often, sometimes, rarely)?' could be improved by:",
+                options: ["Asking for a yes/no answer instead.", "Using a larger scale, from 1 to 20.", "Asking for a specific, numerical answer (e.g., 'How many times per month?').", "Removing the question to shorten the survey."],
+                answer: "C",
+                explanation: "Good survey design suggests asking questions that require specific answers rather than subjective judgments. Terms like 'often' can be interpreted differently by various respondents. Asking for a specific number (e.g., times per month) yields more precise and analyzable data.",
+                topic: "Data Analysis & Surveys"
+            },
+            {
+                question: "Which of the following represents a type I error?",
+                options: ["A medical test incorrectly shows a patient is healthy when they are actually sick.", "A factory's quality control check fails to detect a faulty product.", "A scientific study concludes a new drug is effective when it actually has no effect.", "None of the above."],
+                answer: "C",
+                explanation: "A type I error (a 'false positive') occurs when a true null hypothesis is rejected. In this case, the null hypothesis is 'the drug has no effect.' Concluding it is effective (rejecting the null) when it isn't, is a type I error. Options A and B describe type II errors ('false negatives').",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "A manager needs to present the trend of monthly sales revenue and monthly profits over the last three years on a single graph. Which chart type is most suitable?",
+                options: ["A single Pie Chart", "A Line Chart", "A Component Bar Chart", "A Histogram"],
+                answer: "B",
+                explanation: "Line charts are ideal for showing trends in data series over time. A key advantage is that several data series (like sales and profits) can be plotted on the same chart, making comparison easy.",
+                topic: "Presentation of Information"
+            },
+            {
+                question: "According to the syllabus, the exponential growth in computing power, new data sources like social media, and new infrastructure like crowdsourcing are the key driving forces behind the increasing importance of what?",
+                options: ["Spreadsheet software", "Professional scepticism", "Good information presentation", "Big Data"],
+                answer: "D",
+                explanation: "The ICAEW sets out these three factors—new data sources, growth in computing power, and new knowledge creation infrastructure—as the driving forces behind the increasing importance of big data.",
+                topic: "Big Data"
+            },
+            {
+                question: "An accountant critically assesses a statistical analysis report by questioning the sample size and sampling method used. This is an application of:",
+                options: ["Data analytics", "Professional scepticism", "Data visualisation", "The 'ACCURATE' principle"],
+                answer: "B",
+                explanation: "Professional scepticism involves assessing information critically with a questioning mind. When dealing with statistical analysis, this includes asking pertinent questions about the reliability of the analysis, such as the sample size and method used.",
+                topic: "Data Analysis"
+            },
+            {
+                question: "Which of the following is NOT one of the 4 Vs of Big Data?",
+                options: ["Volume", "Validity", "Variety", "Veracity"],
+                answer: "B",
+                explanation: "The four key characteristics (the 4 Vs) of big data are Volume, Velocity, Variety, and Veracity. Validity is not one of them.",
+                topic: "Big Data"
+            },
+            {
+                question: "In a spreadsheet, cell B14 contains the formula `=B6-B12`. What does this represent?",
+                options: ["A function", "A text value", "A formula", "A data visualisation"],
+                answer: "C",
+                explanation: "A formula is an expression that calculates the value in a cell, typically by referring to other cells. Formulae begin with an equals sign (=) and perform calculations like addition or subtraction. A function is a *predefined* formula, like `SUM()`.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "A company's management team has already decided to launch a new product. They are presented with two market research reports. They embrace the report that predicts success but dismiss the one that warns of potential failure. This is an example of:",
+                options: ["Self-selection bias", "Omitted variable bias", "Confirmation bias", "Survivorship bias"],
+                answer: "C",
+                explanation: "Confirmation bias occurs when people favor information that confirms their existing beliefs or decisions and ignore data that contradicts them.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "The practice of breaking a population into sub-populations (e.g., by customer balance size) and then randomly sampling from each sub-population is known as ____ sampling.",
+                options: ["Systematic", "Simple Random", "Stratified", "Convenience"],
+                answer: "C",
+                explanation: "Stratified sampling is the method of dividing a population into subgroups (strata) based on a shared characteristic and then taking a random sample from each stratum.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "According to the chapter, data from social networks, blogs, and internet searches is classified as what source of big data?",
+                options: ["Processed data", "Open data", "Human-sourced data", "Machine-generated data"],
+                answer: "C",
+                explanation: "Human-sourced data is a classification of big data that comes from social networks, blogs, emails, text messages, and internet searches.",
+                topic: "Big Data"
+            },
+            {
+                question: "An analyst presents a report showing a 25% growth in company profit. However, they fail to mention that the overall market grew by 40% in the same period. This omission primarily affects the ________ of the data.",
+                options: ["Accuracy", "Timeliness", "Veracity", "Context and Relevance"],
+                answer: "D",
+                explanation: "This is an example of cognitive bias related to context. The 25% growth sounds impressive in isolation, but when placed in the context of 40% market growth, its interpretation changes significantly, making the initial figure less relevant.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "Which of the following best describes 'what-if' analysis in spreadsheets?",
+                options: ["Using a spreadsheet to record historical accounting transactions.", "Creating a financial model and changing key assumptions to see the impact on outcomes.", "Verifying that the totals in a budget spreadsheet are mathematically correct.", "Formatting a spreadsheet to make it easier for senior management to read."],
+                answer: "B",
+                explanation: "What-if analysis is used in financial modeling where a model (e.g., a cash flow forecast) is set up in a spreadsheet. The user can then change various assumptions (e.g., sales growth rate) to see what happens to the final result.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "A key benefit of data analytics is its ability to help businesses tailor product designs and prices to specific customer groups. This is known as:",
+                options: ["Performance improvement", "Enhancing transparency", "Market segmentation and customisation", "Risk management"],
+                answer: "C",
+                explanation: "A report by McKinsey, cited in the text, highlights that insights from big data analysis allow a business to segment its market and customize products and prices for particular groups of customers.",
+                topic: "Data Science"
+            },
+            // Scenario 2
+            {
+                question: "<strong>Scenario:</strong> An audit firm is analyzing the trade receivables of a client. The total population consists of 500 customer balances. The auditors note the following breakdown:<br><ul><li>50 balances are over BDT 1,000,000 (10%).</li><li>300 balances are between BDT 100,000 and BDT 1,000,000 (60%).</li><li>150 balances are below BDT 100,000 (30%).</li></ul>The audit team decides to select a sample of 50 balances for testing by randomly selecting 5 balances from the high-value group, 30 from the medium-value group, and 15 from the low-value group.<br><br>What sampling method has the audit team used?",
+                options: ["Simple random sampling", "Systematic sampling", "Quota sampling", "Stratified sampling"],
+                answer: "D",
+                explanation: "The auditors have divided the population into distinct subgroups (strata) based on the value of the receivable balance. They then took a sample from each stratum proportional to its size in the population. This is the definition of stratified sampling.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> What is the primary advantage of using this method in this audit context?",
+                options: ["It is the fastest and least expensive method to perform.", "It eliminates the risk of sampling error entirely.", "It ensures that the sample is representative by including items from all material value bands.", "It allows the auditor to use their professional judgment to select the most suspicious items."],
+                answer: "C",
+                explanation: "The advantage of stratified sampling is that it ensures all defined strata (in this case, different value levels of receivables) are represented in the sample, which is crucial for forming a reliable audit opinion on the entire population.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> If the auditors had instead numbered all 500 customers and used a random number generator to select 50 unique numbers, what sampling method would this be?",
+                options: ["Simple random sampling", "Systematic sampling", "Stratified sampling", "Haphazard sampling"],
+                answer: "A",
+                explanation: "In simple random sampling, every item in the population is assigned a number, and a random number generator is used to select the sample. This gives every item an equal chance of being selected.",
+                topic: "Data Analysis & Sampling"
+            },
+            {
+                question: "Data that can only take exact, whole number values (e.g., the number of employees in a department) is known as:",
+                options: ["Continuous data", "Qualitative data", "Discrete data", "Unstructured data"],
+                answer: "C",
+                explanation: "Discrete data can only take exact values, typically whole numbers, and usually refers to items that can be counted.",
+                topic: "Types of Data"
+            },
+            {
+                question: "A manager receives a monthly performance report two weeks after the month has ended, by which time it is too late to take corrective action. This information lacks the quality of being:",
+                options: ["Complete", "Accurate", "Authoritative", "Timely"],
+                answer: "D",
+                explanation: "One of the ACCURATE qualities of good information is that it should be timely, meaning it is available when it is needed to support decision-making or control actions.",
+                topic: "Qualities of Good Information"
+            },
+            {
+                question: "The use of sensors on a factory machine that alert users if the machine is starting to malfunction is an example of using data for:",
+                options: ["Planning", "Control", "Strategic decision-making", "Market research"],
+                answer: "B",
+                explanation: "Control involves ensuring an organization is achieving its objectives and taking corrective action when deviating from plans. Real-time data from sensors that allows for immediate intervention is a modern example of a control activity.",
+                topic: "Use of Data in Business"
+            },
+            {
+                question: "Which of the following statements is FALSE regarding the presentation of information?",
+                options: ["The chosen chart type should be appropriate for the data being presented.", "If the underlying data in a spreadsheet is changed, any charts based on it will update automatically.", "A line chart is suitable for showing the components of a total for a single period.", "Charts should have clear titles, labels, and legends."],
+                answer: "C",
+                explanation: "Line charts are best for showing trends over time. A pie chart is the most suitable for showing components of a single total for one period.",
+                topic: "Presentation of Information"
+            },
+            {
+                question: "Which of the following is considered a risk of Big Data and data analytics? (Choose TWO)",
+                options: ["Decreased market transparency", "Information overload hampering decision-making", "Data dependency leading to poor decisions if data is flawed", "Reduced need for a skilled workforce"],
+                answer: ["B", "C"],
+                isMultiple: true,
+                explanation: "The syllabus identifies several risks, including information overload, where too many insights may hamper decision-making speed, and data dependency, where organizations are at risk of making poor decisions if the underlying data is erroneous or misinterpreted.",
+                topic: "Big Data & Data Science"
+            },
+            {
+                question: "A research firm boasts that 98% of students who sat for a professional exam from their institution passed. However, they do not disclose that only students who scored above 80% on a rigorous mock exam were allowed to sit for the final exam. This is a clear example of:",
+                options: ["Selection bias", "Confirmation bias", "Omitted variable bias", "Survivorship bias"],
+                answer: "D",
+                explanation: "Survivorship bias occurs when the sample contains only items that have 'survived' a previous selection process, while those that did not are excluded. The 98% pass rate is misleading because it excludes the students who failed to pass the mock exam and were thus filtered out.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "True or False: 'Continuous data' can take any value within a given range, such as the height of an individual.",
+                options: ["True", "False"],
+                answer: "A",
+                explanation: "This statement is true. Continuous variables, like height or weight, can take any value within a range, unlike discrete data which can only take specific values.",
+                topic: "Types of Data"
+            },
+            {
+                question: "According to the ICAEW principles for good spreadsheet practice, which of the following is recommended?",
+                options: ["Perform the same calculation in multiple cells to cross-check for errors.", "Combine inputs, workings, and outputs in the same area to save space.", "Use advanced features whenever possible to show technical skill.", "Rigorously test the workbook, preferably through a peer review."],
+                answer: "D",
+                explanation: "Principle 18 explicitly states to 'Rigorously test the workbook' and suggests that this testing should be done by a peer to help identify mistakes. The other options contradict the principles.",
+                topic: "Spreadsheets"
+            },
+            {
+                question: "Which data source involves the 'release of large amounts of primarily public sector data, such as geo-spatial data, transport data, and government financial data'?",
+                options: ["Open data", "Processed data", "User-generated data", "Compiled data"],
+                answer: "A",
+                explanation: "Open data is defined as the release of large datasets, usually from the public sector, which can include things like transport, government financial, and geo-spatial data.",
+                topic: "Big Data"
+            },
+            {
+                question: "In a research study, a scientist's unconscious assumptions influence how they interpret and record observations, leading to skewed results. This is known as:",
+                options: ["Observer bias", "Cognitive bias", "Selection bias", "Confirmation bias"],
+                answer: "A",
+                explanation: "Observer bias occurs when a researcher's own assumptions, which may be unconscious, influence their observations and the recording of results.",
+                topic: "Potential Problems with Data"
+            },
+            {
+                question: "An analyst uses statistical methods to test if the average weekly sales are indeed BDT 500,000, as the company has hypothesized. This is an example of:",
+                options: ["Descriptive statistics", "Confirmatory data analysis", "Exploratory data analysis", "Data mining"],
+                answer: "B",
+                explanation: "Confirmatory data analysis involves using statistical methods to confirm or test a pre-determined hypothesis. Here, the analyst is testing the specific hypothesis that average sales are BDT 500,000.",
+                topic: "Data Analysis"
+            },
+            {
+                question: "Which of the following is a primary ethical concern related to data ownership?",
+                options: ["Whether data belongs to the individual (data subject) or the company that collected it.", "Whether data is stored on a cloud server or a local machine.", "Whether the data is structured or unstructured.", "Whether the data analysis was performed by an in-house team or an external consultant."],
+                answer: "A",
+                explanation: "A key ethical question in the age of big data is who owns the data. There is a debate over whether it belongs to the data subject (the individual) or the business that collected it, especially when businesses generate revenue by selling that data.",
+                topic: "Data Science & Ethics"
+            }
+        ].map(q => ({ ...q, userAnswer: q.isMultiple ? [] : null, flagged: false }));
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtnMobile = document.getElementById('flag-btn-mobile');
+        const flagBtnDesktop = document.getElementById('flag-btn-desktop');
+        const timerMobile = document.getElementById('timer-mobile');
+        const timerDesktop = document.getElementById('timer-desktop');
+        const confirmationModal = document.getElementById('confirmation-modal');
+
+        // --- STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let timerInterval;
+
+        // --- FUNCTIONS ---
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizView.classList.remove('hidden');
+            initializeTracker();
+            loadQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function initializeTracker() {
+            questionTracker.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const trackerItem = document.createElement('div');
+                trackerItem.textContent = index + 1;
+                trackerItem.className = 'question-tracker-item w-10 h-10 flex items-center justify-center rounded-full font-bold cursor-pointer not-answered';
+                trackerItem.onclick = () => jumpToQuestion(index);
+                trackerItem.id = `tracker-${index}`;
+                questionTracker.appendChild(trackerItem);
+            });
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const question = quizData[index];
+            
+            questionNumberEl.textContent = `Question ${index + 1} of ${quizData.length}`;
+            questionTextEl.innerHTML = question.question; // Use innerHTML to render bold/br tags in scenarios
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, i) => {
+                const optionWrapper = document.createElement('div');
+                optionWrapper.className = 'option border-2 border-gray-300 rounded-lg p-3 hover:bg-gray-100 cursor-pointer transition';
+                
+                let isSelected = false;
+                if (question.isMultiple) {
+                    optionWrapper.innerHTML = `
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" onchange="handleMultipleChoice('${optionLetters[i]}', this)">
+                            <span class="ml-3">${optionLetters[i]}. ${option}</span>
+                        </label>`;
+                    const checkbox = optionWrapper.querySelector('input');
+                    if (question.userAnswer.includes(optionLetters[i])) {
+                        checkbox.checked = true;
+                        isSelected = true;
+                    }
+                } else {
+                    optionWrapper.innerHTML = `<span class="font-semibold">${optionLetters[i]}.</span> ${option}`;
+                    optionWrapper.onclick = () => selectAnswer(optionLetters[i]);
+                    if (question.userAnswer === optionLetters[i]) {
+                         isSelected = true;
+                    }
+                }
+                
+                if (isSelected) {
+                    optionWrapper.classList.add('selected');
+                }
+                
+                optionsContainer.appendChild(optionWrapper);
+            });
+
+            updateNavigationButtons();
+            updateFlagButton();
+            updateActiveTracker();
+        }
+        
+        function selectAnswer(selectedOption) {
+            quizData[currentQuestionIndex].userAnswer = selectedOption;
+            loadQuestion(currentQuestionIndex); // Reload to show selection
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+        
+        function handleMultipleChoice(optionLetter, checkbox) {
+            const userAnswer = quizData[currentQuestionIndex].userAnswer;
+            if (checkbox.checked) {
+                if (!userAnswer.includes(optionLetter)) {
+                    userAnswer.push(optionLetter);
+                }
+            } else {
+                const index = userAnswer.indexOf(optionLetter);
+                if (index > -1) {
+                    userAnswer.splice(index, 1);
+                }
+            }
+            // Sort to make answer checking easier later
+            userAnswer.sort();
+            
+            // Update UI
+            const label = checkbox.parentElement;
+            const wrapper = label.parentElement;
+            if (checkbox.checked) {
+                wrapper.classList.add('selected');
+            } else {
+                wrapper.classList.remove('selected');
+            }
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            nextBtn.classList.toggle('opacity-50', nextBtn.disabled);
+        }
+        
+        function updateFlagButton() {
+            const isFlagged = quizData[currentQuestionIndex].flagged;
+            const flagText = isFlagged ? '🚩 Unflag Question' : '🚩 Flag for Review';
+            flagBtnMobile.innerHTML = flagText;
+            flagBtnDesktop.innerHTML = flagText;
+            flagBtnDesktop.classList.toggle('bg-red-500', isFlagged);
+            flagBtnDesktop.classList.toggle('text-white', isFlagged);
+            flagBtnDesktop.classList.toggle('bg-yellow-400', !isFlagged);
+            flagBtnDesktop.classList.toggle('text-yellow-800', !isFlagged);
+        }
+
+        function updateQuestionTrackerStatus(index) {
+            const item = document.getElementById(`tracker-${index}`);
+            item.classList.remove('not-answered', 'answered', 'flagged');
+            
+            const question = quizData[index];
+            if (question.flagged) {
+                item.classList.add('flagged');
+            } else if ((question.isMultiple && question.userAnswer.length > 0) || (!question.isMultiple && question.userAnswer !== null)) {
+                item.classList.add('answered');
+            } else {
+                item.classList.add('not-answered');
+            }
+        }
+        
+        function updateActiveTracker() {
+            document.querySelectorAll('.question-tracker-item').forEach(item => {
+                item.classList.remove('current');
+            });
+            document.getElementById(`tracker-${currentQuestionIndex}`).classList.add('current');
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+        
+        function jumpToQuestion(index) {
+            loadQuestion(index);
+        }
+        
+        function toggleFlag() {
+            const question = quizData[currentQuestionIndex];
+            question.flagged = !question.flagged;
+            updateFlagButton();
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const formattedTime = formatTime(timeLeft);
+                timerMobile.textContent = formattedTime;
+                timerDesktop.textContent = formattedTime;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        function confirmSubmit() {
+            confirmationModal.classList.remove('hidden');
+        }
+
+        function cancelSubmit() {
+            confirmationModal.classList.add('hidden');
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizView.classList.add('hidden');
+            resultsView.classList.remove('hidden');
+            confirmationModal.classList.add('hidden');
+            calculateAndDisplayResults();
+        }
+
+        function calculateAndDisplayResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectTopics = new Set();
+
+            quizData.forEach((q, index) => {
+                let isCorrect = false;
+                if (q.isMultiple) {
+                    // Check if arrays are equal
+                    if (q.userAnswer.length === q.answer.length && q.userAnswer.every((val, i) => val === q.answer[i])) {
+                        isCorrect = true;
+                    }
+                } else {
+                    if (q.userAnswer === q.answer) {
+                        isCorrect = true;
+                    }
+                }
+                
+                q.isCorrect = isCorrect;
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectTopics.add(q.topic);
+                }
+            });
+
+            const totalQuestions = quizData.length;
+            const score = correctCount * 2;
+            const percentage = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            const incorrectPercentage = totalQuestions > 0 ? (incorrectCount / totalQuestions) * 100 : 0;
+
+            document.getElementById('total-score').textContent = `${score} / ${totalQuestions * 2}`;
+            document.getElementById('correct-answers').textContent = `${correctCount} / ${totalQuestions}`;
+            document.getElementById('incorrect-answers').textContent = `${incorrectCount} / ${totalQuestions}`;
+            document.getElementById('incorrect-percentage').textContent = `${incorrectPercentage.toFixed(1)}%`;
+            
+            const improvementTopicsEl = document.getElementById('improvement-topics');
+            improvementTopicsEl.innerHTML = '';
+            if(incorrectTopics.size > 0) {
+                incorrectTopics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.textContent = topic;
+                    improvementTopicsEl.appendChild(li);
+                });
+            } else {
+                improvementTopicsEl.innerHTML = '<li>Congratulations! No specific areas for improvement identified.</li>';
+            }
+
+
+            displayDetailedReview();
+        }
+        
+        function displayDetailedReview() {
+            const reviewContainer = document.getElementById('detailed-review');
+            reviewContainer.innerHTML = '';
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            quizData.forEach((q, index) => {
+                const resultClass = q.isCorrect ? 'results-correct' : 'results-incorrect';
+                let userAnswerText = 'Not Answered';
+                if (q.isMultiple) {
+                    if(q.userAnswer.length > 0) userAnswerText = q.userAnswer.join(', ');
+                } else {
+                    if(q.userAnswer) userAnswerText = q.userAnswer;
+                }
+                
+                const correctAnswerText = Array.isArray(q.answer) ? q.answer.join(', ') : q.answer;
+
+                const reviewCard = `
+                    <div class="p-4 rounded-lg bg-gray-50 ${resultClass}">
+                        <p class="font-bold mb-2">Q${index + 1}: ${q.question.replace(/<strong>.*?<\/strong>|<br>/g, '')}</p>
+                        <p class="text-sm"><strong>Your Answer:</strong> <span class="${q.isCorrect ? 'text-green-700' : 'text-red-700'} font-semibold">${userAnswerText}</span></p>
+                        <p class="text-sm mb-2"><strong>✅ Correct Answer:</strong> ${correctAnswerText}</p>
+                        <div class="mt-2 pt-2 border-t text-sm text-gray-600">
+                            <p><strong>📖 Explanation:</strong> ${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                reviewContainer.innerHTML += reviewCard;
+            });
+        }
+
+        function retakeQuiz() {
+            window.location.reload();
+        }
+
+    </script>
+
+</body>
+</html>

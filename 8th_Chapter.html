@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB – Accounting | Chapter: 8 Irrecoverable Debts and Allowance for Receivables</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .quiz-button {
+            /* Updated for bubble look */
+            @apply bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-110 active:scale-95;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+        }
+        .question-tracker-btn {
+            @apply w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold border-2;
+        }
+        .unattempted {
+            @apply bg-gray-200 border-gray-300 text-gray-700;
+        }
+        .attempted {
+            @apply bg-green-500 border-green-600 text-white;
+        }
+        .flagged {
+            @apply bg-yellow-500 border-yellow-600 text-white;
+        }
+        .current-question {
+            @apply bg-blue-500 border-blue-600 text-white;
+        }
+        .option-label {
+            @apply block p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors duration-200;
+        }
+        input[type="radio"]:checked + .option-label,
+        input[type="checkbox"]:checked + .option-label {
+            @apply bg-blue-100 border-blue-500;
+        }
+        .explanation {
+            @apply bg-gray-100 p-4 rounded-lg mt-4 border-l-4 border-gray-400;
+        }
+        .correct-answer {
+            @apply bg-green-100 border-green-500;
+        }
+        .incorrect-answer {
+            @apply bg-red-100 border-red-500;
+        }
+        .result-section {
+            @apply p-6 bg-white rounded-lg shadow-lg;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="home-screen" class="container flex flex-col items-center justify-center min-h-screen-minus-footer">
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-4">ICAB – Accounting</h1>
+            <h2 class="text-2xl font-semibold text-gray-600 mb-8">Chapter: Irrecoverable Debts and Allowance for Receivables</h2>
+            <button id="start-quiz-btn" class="quiz-button">Start Quiz</button>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="container hidden flex-col lg:flex-row gap-8 py-8">
+        <!-- Left Side: Question Tracker -->
+        <div class="lg:w-1/4 bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Questions</h3>
+            <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                <!-- Buttons will be dynamically generated here -->
+            </div>
+            <div class="mt-6 text-sm text-gray-600">
+                <p><span class="w-4 h-4 inline-block rounded-full bg-green-500 mr-2"></span>Attempted</p>
+                <p><span class="w-4 h-4 inline-block rounded-full bg-gray-200 mr-2"></span>Unattempted</p>
+                <p><span class="w-4 h-4 inline-block rounded-full bg-yellow-500 mr-2"></span>Flagged</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Quiz Content -->
+        <div class="lg:w-3/4 bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="text-xl font-bold text-gray-800">Question <span id="current-question-number">1</span> of 50</h3>
+                <div class="flex items-center space-x-4">
+                    <div class="text-lg font-semibold text-gray-700">Time Left: <span id="countdown-timer" class="text-blue-600">45:00</span></div>
+                    <button id="flag-question-btn" class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-600 transition-colors duration-300">
+                        <i class="fas fa-flag mr-2"></i>Flag This Question
+                    </button>
+                </div>
+            </div>
+
+            <div id="question-content" class="mb-8">
+                <!-- Question and options will be dynamically loaded here -->
+            </div>
+
+            <div class="flex justify-between">
+                <button id="prev-question-btn" class="quiz-button bg-gray-400 hover:bg-gray-500"><i class="fas fa-arrow-left mr-2"></i>Previous</button>
+                <button id="next-question-btn" class="quiz-button"><i class="fas fa-arrow-right mr-2"></i>Next</button>
+                <button id="submit-quiz-btn" class="quiz-button bg-red-600 hover:bg-red-700 hidden">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-screen" class="container hidden flex-col items-center py-8">
+        <div class="result-section w-full">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Quiz Results</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-lg">
+                <p class="text-green-700 font-semibold">Correct: <span id="correct-percentage">0%</span> (<span id="correct-count">0</span> questions)</p>
+                <p class="text-red-700 font-semibold">Incorrect: <span id="incorrect-percentage">0%</span> (<span id="incorrect-count">0</span> questions)</p>
+                <p class="text-blue-700 font-semibold">Attempted: <span id="attempted-count">0</span> questions</p>
+                <p class="text-gray-700 font-semibold">Unattempted: <span id="unattempted-count">0</span> questions</p>
+            </div>
+
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Topics to Review:</h3>
+            <ul id="review-topics" class="list-disc list-inside text-gray-700 mb-8 ml-4">
+                <!-- Review topics will be dynamically added here -->
+            </ul>
+
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Question Analysis:</h3>
+            <div id="question-analysis" class="space-y-6">
+                <!-- Detailed question analysis will be dynamically added here -->
+            </div>
+
+            <button id="review-mode-btn" class="quiz-button mt-8 w-full bg-purple-600 hover:bg-purple-700">Review Quiz</button>
+        </div>
+    </div>
+
+    <!-- Modal for confirmation -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h3 class="text-xl font-bold mb-4">Confirm Submission</h3>
+            <p class="mb-6">Are you sure you want to submit the quiz? You cannot change your answers after submission.</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancel-submission" class="quiz-button bg-gray-500 hover:bg-gray-600">Cancel</button>
+                <button id="confirm-submission" class="quiz-button bg-red-600 hover:bg-red-700">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="container flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-4 md:mb-0">
+                <p class="text-lg font-semibold">Prepared by:</p>
+                <p class="text-md">K. M. Mahafuzul Alam</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+                <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-400 hover:underline">
+                    <i class="fab fa-linkedin mr-2"></i>LinkedIn
+                </a>
+                <a href="tel:01728928984" class="text-green-400 hover:underline">
+                    <i class="fas fa-phone mr-2"></i>01728-928984
+                </a>
+                <a href="mailto:kmmhafuzulalam@gmail.com" class="text-red-400 hover:underline">
+                    <i class="fas fa-envelope mr-2"></i>kmmhafuzulalam@gmail.com
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                type: "single",
+                question: "Which of the following situations most definitively indicates an irrecoverable debt?",
+                options: [
+                    { text: "A customer pays part of the account.", isCorrect: false },
+                    { text: "An invoice is in dispute.", isCorrect: false },
+                    { text: "The customer goes bankrupt.", isCorrect: true },
+                    { text: "A cheque received in settlement is dishonoured by the customer’s bank.", isCorrect: false }
+                ],
+                explanation: "When a customer becomes bankrupt, there is no money with which to settle the debt, so it must be regarded as being irrecoverable. Other options may be due to administrative issues or disputes, not necessarily an inability to pay."
+            },
+            {
+                id: 2,
+                type: "single",
+                question: "An allowance for receivables of £4,000 is required at the end of a reporting period. The allowance for receivables brought forward from the previous period is £2,000. What is the impact of the allowance for receivables on profit for the year?",
+                options: [
+                    { text: "Increase by £4,000", isCorrect: false },
+                    { text: "Decrease by £4,000", isCorrect: false },
+                    { text: "Increase by £2,000", isCorrect: false },
+                    { text: "Decrease by £2,000", isCorrect: true }
+                ],
+                explanation: "The allowance needs to increase from £2,000 to £4,000, which is an increase of £2,000. This increase is charged to the statement of profit or loss as an expense, reducing profit by £2,000."
+            },
+            {
+                id: 3,
+                type: "single",
+                question: "On 1 January 20X5 Plodd had an allowance for receivables of £1,000. During 20X5 Plodd wrote off debts of £600 and was paid £80 by the liquidator of a company whose debts had been written off completely in 20X4. At the end of 20X5 it was decided to adjust the allowance for receivables to £900. What is the irrecoverable debts expense in the statement of profit or loss for 20X5?",
+                options: [
+                    { text: "£420", isCorrect: true },
+                    { text: "£580", isCorrect: false },
+                    { text: "£620", isCorrect: false },
+                    { text: "£780", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Debts written off: £600 (Debit Irrecoverable Debts Expense)\n- Cash received from previously written off debt: £80 (Credit Irrecoverable Debts Expense)\n- Allowance for receivables adjustment: From £1,000 to £900, a decrease of £100 (Credit Irrecoverable Debts Expense)\nTotal Irrecoverable Debts Expense = £600 (DR) - £80 (CR) - £100 (CR) = £420 (DR). So, £420 charge to profit or loss."
+            },
+            {
+                id: 4,
+                type: "single",
+                question: "Smith has receivables totalling £16,000 after writing off irrecoverable debts of £500 and has an allowance for receivables brought forward of £2,000. Smith wishes to carry forward an allowance for receivables of £800. What will be the effect on profit of adjusting the allowance for receivables?",
+                options: [
+                    { text: "£700 decrease", isCorrect: false },
+                    { text: "£700 increase", isCorrect: false },
+                    { text: "£1,200 decrease", isCorrect: false },
+                    { text: "£1,200 increase", isCorrect: true }
+                ],
+                explanation: "The allowance for receivables is decreasing from £2,000 to £800, a reduction of £1,200. A decrease in the allowance for receivables results in a credit to the irrecoverable debts expense account, which increases profit. Therefore, profit will increase by £1,200."
+            },
+            {
+                id: 5,
+                type: "single",
+                question: "At 31 December 20X9 Folland’s receivables totalled £120,000. Folland wishes to have an allowance for receivables of £3,600, which is 25% higher than it was before. During the year irrecoverable debts of £3,200 were written off and irrecoverable debts (written off three years previously) of £150 were recovered. What is the net charge for irrecoverable debts for the 12-month reporting period ended 31 December 20X9?",
+                options: [
+                    { text: "£720", isCorrect: false },
+                    { text: "£900", isCorrect: false },
+                    { text: "£3,770", isCorrect: true },
+                    { text: "£3,950", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Current allowance: £3,600\n- Previous allowance (before 25% increase): £3,600 / 1.25 = £2,880\n- Increase in allowance: £3,600 - £2,880 = £720 (Debit Irrecoverable Debts Expense)\n- Debts written off: £3,200 (Debit Irrecoverable Debts Expense)\n- Debts recovered: £150 (Credit Irrecoverable Debts Expense)\nNet Charge = £720 (DR) + £3,200 (DR) - £150 (CR) = £3,770 (DR). So, £3,770 charge to profit or loss."
+            },
+            {
+                id: 6,
+                type: "single",
+                question: "During the 12-month reporting period ended 31 December 20X8, Keele decreased its allowance for receivables by £600. An irrecoverable debt written off in the previous reporting period amounting to £300 was recovered in 20X8. If the profit for the reporting period after accounting for the above items is £5,000, what was it before accounting for them?",
+                options: [
+                    { text: "£4,100", isCorrect: true },
+                    { text: "£4,700", isCorrect: false },
+                    { text: "£5,300", isCorrect: false },
+                    { text: "£5,900", isCorrect: false }
+                ],
+                explanation: "Let P be the profit before accounting for these items.\n- Decrease in allowance: £600 (increases profit)\n- Debt recovered: £300 (increases profit)\nSo, P + £600 + £300 = £5,000\nP + £900 = £5,000\nP = £5,000 - £900 = £4,100."
+            },
+            {
+                id: 7,
+                type: "single",
+                question: "Bodkin had the following balances in its trial balance at 30 June 20X1: Trade receivables £70,000, Irrecoverable debts expense £500, Allowance for receivables at 1 July 20X0 £5,000. Bodkin wishes to carry forward at 30 June 20X1 an allowance equal to 10% of trade receivables. What is the irrecoverable debts expense in the statement of profit or loss for the 12-month reporting period ended 30 June 20X1?",
+                options: [
+                    { text: "Charge of £2,450", isCorrect: false },
+                    { text: "Credit of £2,450", isCorrect: false },
+                    { text: "Charge of £2,500", isCorrect: true },
+                    { text: "Credit of £2,500", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Required allowance: 10% of £70,000 = £7,000\n- Previous allowance: £5,000\n- Increase in allowance: £7,000 - £5,000 = £2,000 (Debit Irrecoverable Debts Expense)\n- Existing Irrecoverable Debts Expense from trial balance: £500 (Debit)\nTotal Irrecoverable Debts Expense = £500 (DR) + £2,000 (DR) = £2,500 (DR). So, a charge of £2,500 to profit or loss."
+            },
+            {
+                id: 8,
+                type: "single",
+                question: "Wacko had an allowance for receivables at 1 January 20X0 of £1,000. It calculates that at 31 December 20X0 an allowance for receivables of £1,500 is required. In addition, £2,000 of debts were written off during the reporting period. How much should be included in Wacko’s statement of profit or loss in relation to irrecoverable debts expense for the 12-month reporting period ended 31 December 20X0?",
+                options: [
+                    { text: "£1,500", isCorrect: false },
+                    { text: "£2,450", isCorrect: false },
+                    { text: "£2,500", isCorrect: true },
+                    { text: "£2,550", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Debts written off: £2,000 (Debit Irrecoverable Debts Expense)\n- Allowance increase: From £1,000 to £1,500, an increase of £500 (Debit Irrecoverable Debts Expense)\nTotal Irrecoverable Debts Expense = £2,000 (DR) + £500 (DR) = £2,500 (DR). So, £2,500 charge to profit or loss."
+            },
+            {
+                id: 9,
+                type: "multiple",
+                question: "Which of the following are true regarding the accounting for irrecoverable debts and the allowance for receivables? (Select all that apply)",
+                options: [
+                    { text: "The irrecoverable debts expense account is debited with debts written off.", isCorrect: true },
+                    { text: "The trade receivables account is directly affected by accounting entries related to the allowance for receivables.", isCorrect: false },
+                    { text: "Amounts received in respect of debts previously written off are credited to irrecoverable debts expense.", isCorrect: true },
+                    { text: "An allowance for receivables can have a debit balance.", isCorrect: false }
+                ],
+                explanation: "The irrecoverable debts expense account is debited when debts are written off and credited when previously written off debts are recovered. The trade receivables account is only affected when an irrecoverable debt is written off, not by the allowance itself. An allowance for receivables is a contra-asset account and cannot have a debit balance; its maximum decrease is to reduce it to nil."
+            },
+            {
+                id: 10,
+                type: "fill_in_the_blank",
+                question: "When a business decides that a particular debt will not be paid, the whole amount of the receivable in question is _____ as an expense in the statement of profit or loss.",
+                options: [
+                    { text: "capitalized", isCorrect: false },
+                    { text: "amortized", isCorrect: false },
+                    { text: "written off", isCorrect: true },
+                    { text: "depreciated", isCorrect: false }
+                ],
+                explanation: "The term 'written off' is used to describe charging the cost of an uncollectible debt against the profit for the period."
+            },
+            {
+                id: 11,
+                type: "single",
+                question: "According to IFRS 9, Financial Instruments, how should companies approach the creation of an allowance for receivables?",
+                options: [
+                    { text: "It should be based solely on historical data of actual defaults.", isCorrect: false },
+                    { text: "It requires a backward-looking test based on known evidence at year-end.", isCorrect: false },
+                    { text: "It requires looking forward and estimating expected future losses on the trade receivables balance.", isCorrect: true },
+                    { text: "It is optional and depends on the company's profitability.", isCorrect: false }
+                ],
+                explanation: "IFRS 9 requires a forward-looking approach, estimating expected future credit losses, unlike older standards that might have focused on incurred losses."
+            },
+            {
+                id: 12,
+                type: "single",
+                question: "A company has trade receivables of £50,000. Based on past experience and current economic conditions, management estimates that 2% of these receivables will not be collected. If there was no existing allowance for receivables, what journal entry would be made to establish the allowance?",
+                options: [
+                    { text: "Debit Allowance for Receivables £1,000; Credit Trade Receivables £1,000", isCorrect: false },
+                    { text: "Debit Irrecoverable Debts Expense £1,000; Credit Allowance for Receivables £1,000", isCorrect: true },
+                    { text: "Debit Cash at Bank £1,000; Credit Irrecoverable Debts Expense £1,000", isCorrect: false },
+                    { text: "Debit Trade Receivables £1,000; Credit Irrecoverable Debts Expense £1,000", isCorrect: false }
+                ],
+                explanation: "The allowance for receivables is created by debiting the Irrecoverable Debts Expense (affecting profit or loss) and crediting the Allowance for Receivables (a contra-asset account in the statement of financial position). £50,000 * 2% = £1,000."
+            },
+            {
+                id: 13,
+                type: "single",
+                question: "Which of the following statements is true regarding the presentation of the allowance for receivables in the statement of financial position?",
+                options: [
+                    { text: "It is presented as a separate liability account.", isCorrect: false },
+                    { text: "It is presented as a separate asset account.", isCorrect: false },
+                    { text: "It is netted off against trade receivables.", isCorrect: true },
+                    { text: "It is presented as an equity account.", isCorrect: false }
+                ],
+                explanation: "The allowance for receivables is a contra-asset account and is deducted from the gross trade receivables balance to arrive at the net carrying amount of receivables in the statement of financial position."
+            },
+            {
+                id: 14,
+                type: "single",
+                question: "A company previously wrote off a debt of £700. Unexpectedly, the customer paid £300 in cash. What is the correct journal entry to record this receipt?",
+                options: [
+                    { text: "Debit Trade Receivables £300; Credit Cash at Bank £300", isCorrect: false },
+                    { text: "Debit Cash at Bank £300; Credit Trade Receivables £300", isCorrect: false },
+                    { text: "Debit Cash at Bank £300; Credit Irrecoverable Debts Expense £300", isCorrect: true },
+                    { text: "Debit Irrecoverable Debts Expense £300; Credit Cash at Bank £300", isCorrect: false }
+                ],
+                explanation: "When a previously written-off debt is recovered, cash is debited, and the irrecoverable debts expense is credited, reducing the expense for the period. Trade receivables are not re-instated as they were removed when the debt was initially written off."
+            },
+            {
+                id: 15,
+                type: "multiple",
+                question: "What are the dual impacts of creating an allowance for receivables on a business's financial statements? (Select 2 correct answers)",
+                options: [
+                    { text: "Increasing the carrying amount of assets.", isCorrect: false },
+                    { text: "Reducing the carrying amount of assets.", isCorrect: true },
+                    { text: "Increasing profits.", isCorrect: false },
+                    { text: "Increasing expenses, thus reducing profits.", isCorrect: true }
+                ],
+                explanation: "Creating an allowance for receivables reduces the net value of trade receivables (an asset) and increases the irrecoverable debts expense, which in turn reduces the reported profit for the period. This aligns with the prudence concept."
+            },
+            {
+                id: 16,
+                type: "single",
+                question: "A company's trial balance shows a debit balance of £200 for Irrecoverable Debts Expense. An allowance for receivables of £1,500 existed at the beginning of the year. At year-end, the company decides the allowance should be £1,200. What is the total irrecoverable debts expense to be reported in the statement of profit or loss?",
+                options: [
+                    { text: "£500", isCorrect: false },
+                    { text: "£200", isCorrect: false },
+                    { text: "£0", isCorrect: false },
+                    { text: "£-100 (Credit)", isCorrect: true }
+                ],
+                explanation: "The allowance decreased from £1,500 to £1,200, a decrease of £300. This decrease is a credit to the irrecoverable debts expense. So, the original £200 debit is offset by a £300 credit, resulting in a net credit of £100 to irrecoverable debts expense, meaning a £100 increase in profit."
+            },
+            {
+                id: 17,
+                type: "single",
+                question: "Which accounting principle is best demonstrated by the creation of an allowance for receivables?",
+                options: [
+                    { text: "Accruals concept", isCorrect: false },
+                    { text: "Going concern", isCorrect: false },
+                    { text: "Prudence concept", isCorrect: true },
+                    { text: "Materiality", isCorrect: false }
+                ],
+                explanation: "The prudence concept dictates that profits should not be overstated and assets should not be overstated. Creating an allowance for receivables ensures that assets (receivables) are not overstated by amounts unlikely to be collected, aligning with prudence."
+            },
+            {
+                id: 18,
+                type: "long_scenario",
+                question: "Alpha Co. started operations on 1 January 20X1. During 20X1, credit sales were £150,000, and cash received from credit customers was £120,000. Debts of £5,000 were written off as irrecoverable. At 31 December 20X1, Alpha Co. estimates that 5% of its remaining receivables will not be collected. Calculate the carrying amount of trade receivables to be presented in the statement of financial position at 31 December 20X1.",
+                options: [
+                    { text: "£25,000", isCorrect: false },
+                    { text: "£23,750", isCorrect: true },
+                    { text: "£24,000", isCorrect: false },
+                    { text: "£22,500", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Trade receivables before write-off: £150,000 (credit sales) - £120,000 (cash received) = £30,000\n- Trade receivables after write-off: £30,000 - £5,000 (written off) = £25,000\n- Required allowance: 5% of £25,000 = £1,250\n- Carrying amount = Trade receivables after write-off - Allowance = £25,000 - £1,250 = £23,750."
+            },
+            {
+                id: 19,
+                type: "single",
+                question: "Which of the following is NOT a direct reason for a debt to be considered irrecoverable?",
+                options: [
+                    { text: "Customer dishonesty", isCorrect: false },
+                    { text: "Customer bankruptcy", isCorrect: false },
+                    { text: "Dispute over the amount payable", isCorrect: false },
+                    { text: "Customer moving to a new address", isCorrect: true }
+                ],
+                explanation: "While a customer moving might make collection harder, it doesn't inherently mean the debt is irrecoverable. Dishonesty, bankruptcy, or a dispute directly relate to the unlikelihood of payment."
+            },
+            {
+                id: 20,
+                type: "single",
+                question: "If an allowance for receivables is reduced, what is the impact on the irrecoverable debts expense account?",
+                options: [
+                    { text: "It is debited.", isCorrect: false },
+                    { text: "It is credited.", isCorrect: true },
+                    { text: "It remains unchanged.", isCorrect: false },
+                    { text: "It is closed to trade receivables.", isCorrect: false }
+                ],
+                explanation: "When an allowance for receivables is reduced, the amount of the decrease is credited to the irrecoverable debts expense, thereby reducing the expense and increasing profit."
+            },
+            {
+                id: 21,
+                type: "single",
+                question: "Which of the following is the correct journal entry to write off an irrecoverable debt?",
+                options: [
+                    { text: "Debit Trade Receivables; Credit Irrecoverable Debts Expense", isCorrect: false },
+                    { text: "Debit Irrecoverable Debts Expense; Credit Trade Receivables", isCorrect: true },
+                    { text: "Debit Cash at Bank; Credit Trade Receivables", isCorrect: false },
+                    { text: "Debit Allowance for Receivables; Credit Irrecoverable Debts Expense", isCorrect: false }
+                ],
+                explanation: "Writing off an irrecoverable debt increases the irrecoverable debts expense (a debit) and reduces the trade receivables asset (a credit)."
+            },
+            {
+                id: 22,
+                type: "single",
+                question: "A company's trade receivables balance is £60,000. The company decides to create an allowance for receivables of £1,800. What is the net carrying amount of trade receivables after this adjustment?",
+                options: [
+                    { text: "£60,000", isCorrect: false },
+                    { text: "£61,800", isCorrect: false },
+                    { text: "£58,200", isCorrect: true },
+                    { text: "£57,000", isCorrect: false }
+                ],
+                explanation: "The allowance for receivables is netted off against trade receivables. So, £60,000 - £1,800 = £58,200."
+            },
+            {
+                id: 23,
+                type: "multiple",
+                question: "Which of the following information sources might an accountant use to determine if a debt is irrecoverable? (Select all that apply)",
+                options: [
+                    { text: "Formal notification from a liquidator or administrator.", isCorrect: true },
+                    { text: "Public notice of the credit customer entering administration.", isCorrect: true },
+                    { text: "A change in the customer's preferred payment method.", isCorrect: false },
+                    { text: "A general increase in sales volume.", isCorrect: false }
+                ],
+                explanation: "Formal notifications and public notices directly indicate the financial distress of a customer, making a debt irrecoverable. Other options are irrelevant."
+            },
+            {
+                id: 24,
+                type: "single",
+                question: "When an irrecoverable debt is written off, how does it affect revenue for the period?",
+                options: [
+                    { text: "Revenue is increased.", isCorrect: false },
+                    { text: "Revenue is decreased.", isCorrect: false },
+                    { text: "Revenue is adjusted to reflect the non-collection.", isCorrect: false },
+                    { text: "Revenue is not adjusted; it's a separate administrative matter.", isCorrect: true }
+                ],
+                explanation: "Revenue is recorded at the amount expected to be received from the customer at the point of sale. The subsequent failure to collect the debt is an administrative expense and does not require revenue to be adjusted."
+            },
+            {
+                id: 25,
+                type: "single",
+                question: "A company's trial balance shows: Trade Receivables £45,000, Allowance for Receivables (Cr) £1,000. During the year, £500 of debts were written off. The company decides to increase the allowance for receivables to £1,500. What is the total irrecoverable debts expense for the year?",
+                options: [
+                    { text: "£500", isCorrect: false },
+                    { text: "£1,000", isCorrect: true },
+                    { text: "£1,500", isCorrect: false },
+                    { text: "£2,000", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Debts written off: £500 (Debit Irrecoverable Debts Expense)\n- Increase in allowance: From £1,000 to £1,500, an increase of £500 (Debit Irrecoverable Debts Expense)\nTotal Irrecoverable Debts Expense = £500 (DR) + £500 (DR) = £1,000 (DR)."
+            },
+            {
+                id: 26,
+                type: "single",
+                question: "Which of the following is the primary purpose of creating an allowance for receivables?",
+                options: [
+                    { text: "To reduce the amount of tax payable.", isCorrect: false },
+                    { text: "To ensure that assets are not overstated by amounts unlikely to be collected.", isCorrect: true },
+                    { text: "To increase the reported profit for the period.", isCorrect: false },
+                    { text: "To simplify the process of collecting debts.", isCorrect: false }
+                ],
+                explanation: "The allowance for receivables is a provision for expected credit losses, ensuring a prudent valuation of receivables and preventing overstatement of assets."
+            },
+            {
+                id: 27,
+                type: "single",
+                question: "If a dishonoured payment is received, what is the initial accounting treatment?",
+                options: [
+                    { text: "It is automatically treated as an irrecoverable debt.", isCorrect: false },
+                    { text: "The debt is reinstated, and the receipt of cash is removed.", isCorrect: true },
+                    { text: "It is ignored until further notice from the bank.", isCorrect: false },
+                    { text: "It is recorded as an increase in irrecoverable debts expense.", isCorrect: false }
+                ],
+                explanation: "Unless specifically told otherwise, a dishonoured payment should not automatically be treated as irrecoverable. The debt is reinstated (debit trade receivables) and the initial cash receipt is reversed (credit cash at bank)."
+            },
+            {
+                id: 28,
+                type: "multiple",
+                question: "Which of the following are true about the allowance for receivables? (Select 2 correct answers)",
+                options: [
+                    { text: "It is a separate nominal ledger account.", isCorrect: true },
+                    { text: "It directly reduces the trade receivables balance.", isCorrect: false },
+                    { text: "It requires the use of judgment and estimates.", isCorrect: true },
+                    { text: "It is always a debit balance.", isCorrect: false }
+                ],
+                explanation: "The allowance for receivables is a separate nominal ledger account. It does not directly reduce the trade receivables balance but is offset against it for presentation. It requires judgment and estimates and is a credit balance."
+            },
+            {
+                id: 29,
+                type: "single",
+                question: "A company had an allowance for receivables of £800 at the start of the year. At the end of the year, the required allowance is £600. What is the impact on profit for the year?",
+                options: [
+                    { text: "Decrease by £200", isCorrect: false },
+                    { text: "Increase by £200", isCorrect: true },
+                    { text: "No impact", isCorrect: false },
+                    { text: "Decrease by £1,400", isCorrect: false }
+                ],
+                explanation: "The allowance decreased by £200 (£800 - £600). A decrease in allowance is a credit to irrecoverable debts expense, which increases profit."
+            },
+            {
+                id: 30,
+                type: "fill_in_the_blank",
+                question: "The irrecoverable debts expense is typically shown as an _____ expense in the statement of profit or loss.",
+                options: [
+                    { text: "selling", isCorrect: false },
+                    { text: "cost of sales", isCorrect: false },
+                    { text: "administrative", isCorrect: true },
+                    { text: "finance", isCorrect: false }
+                ],
+                explanation: "Irrecoverable debts expense is generally classified as an administrative expense because it relates to the general management of the business's receivables."
+            },
+            {
+                id: 31,
+                type: "single",
+                question: "Which of the following is a key difference between an irrecoverable debt write-off and an allowance for receivables?",
+                options: [
+                    { text: "An irrecoverable debt write-off is less certain than an allowance.", isCorrect: false },
+                    { text: "An allowance for receivables is a direct reduction of trade receivables.", isCorrect: false },
+                    { text: "An irrecoverable debt write-off removes the receivable, while an allowance is an estimate.", isCorrect: true },
+                    { text: "Only irrecoverable debts impact profit.", isCorrect: false }
+                ],
+                explanation: "An irrecoverable debt write-off is a definitive removal of a specific debt. An allowance for receivables is an estimate of future uncollectible amounts on the entire receivables balance and does not remove specific debts."
+            },
+            {
+                id: 32,
+                type: "single",
+                question: "A business has total trade receivables of £75,000. It estimates that 3% of these receivables will become irrecoverable. If the existing allowance for receivables is £1,500, what journal entry is required to adjust the allowance?",
+                options: [
+                    { text: "Debit Irrecoverable Debts Expense £750; Credit Allowance for Receivables £750", isCorrect: true },
+                    { text: "Debit Allowance for Receivables £750; Credit Irrecoverable Debts Expense £750", isCorrect: false },
+                    { text: "Debit Irrecoverable Debts Expense £2,250; Credit Allowance for Receivables £2,250", isCorrect: false },
+                    { text: "Debit Allowance for Receivables £1,500; Credit Irrecoverable Debts Expense £1,500", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Required allowance: 3% of £75,000 = £2,250\n- Existing allowance: £1,500\n- Increase required: £2,250 - £1,500 = £750\nThis increase is recorded by debiting Irrecoverable Debts Expense and crediting Allowance for Receivables."
+            },
+            {
+                id: 33,
+                type: "single",
+                question: "What is the effect of writing off an irrecoverable debt on the Conceptual Framework definition of an asset?",
+                options: [
+                    { text: "The debt continues to meet the definition as it represents a past transaction.", isCorrect: false },
+                    { text: "The debt no longer meets the definition as it has no potential to produce economic benefits.", isCorrect: true },
+                    { text: "The debt's value is increased to reflect the loss.", isCorrect: false },
+                    { text: "The debt is reclassified as a liability.", isCorrect: false }
+                ],
+                explanation: "An asset is defined as a resource controlled by the entity as a result of past events and from which future economic benefits are expected to flow to the entity. When a debt is irrecoverable, it no longer has the potential to produce economic benefits, thus failing the asset definition."
+            },
+            {
+                id: 34,
+                type: "single",
+                question: "Which of the following is a characteristic of an allowance for receivables that distinguishes it from an irrecoverable debt write-off?",
+                options: [
+                    { text: "It is a definite amount based on specific customer insolvency.", isCorrect: false },
+                    { text: "It is a backward-looking test based on known evidence.", isCorrect: false },
+                    { text: "It involves significant judgment and estimates about future non-payment.", isCorrect: true },
+                    { text: "It directly removes the receivable from the trade receivables ledger.", isCorrect: false }
+                ],
+                explanation: "An allowance for receivables is an estimate of future uncollectible amounts, requiring judgment, whereas a write-off is for a specific debt already deemed uncollectible."
+            },
+            {
+                id: 35,
+                type: "single",
+                question: "A company's gross profit for the year is £100,000. Irrecoverable debts written off amounted to £5,000. The allowance for receivables increased from £2,000 to £3,000. Other expenses totaled £40,000. Calculate the profit for the year.",
+                options: [
+                    { text: "£55,000", isCorrect: false },
+                    { text: "£54,000", isCorrect: true },
+                    { text: "£53,000", isCorrect: false },
+                    { text: "£52,000", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Gross Profit: £100,000\n- Irrecoverable Debts Expense (written off): £5,000\n- Increase in Allowance: £3,000 - £2,000 = £1,000\n- Total Irrecoverable Debts Expense = £5,000 + £1,000 = £6,000\n- Other Expenses: £40,000\nProfit = Gross Profit - Total Irrecoverable Debts Expense - Other Expenses\nProfit = £100,000 - £6,000 - £40,000 = £54,000."
+            },
+            {
+                id: 36,
+                type: "single",
+                question: "When adjusting the initial trial balance for irrecoverable debts and the allowance for receivables, what new line item(s) might be created?",
+                options: [
+                    { text: "Only Irrecoverable Debts Expense.", isCorrect: false },
+                    { text: "Only Allowance for Receivables.", isCorrect: false },
+                    { text: "Both Irrecoverable Debts Expense and Allowance for Receivables.", isCorrect: true },
+                    { text: "Neither, existing accounts are always used.", isCorrect: false }
+                ],
+                explanation: "If these accounts do not already exist in the initial trial balance, new lines will be opened for both Irrecoverable Debts Expense (an expense account) and Allowance for Receivables (a contra-asset account)."
+            },
+            {
+                id: 37,
+                type: "single",
+                question: "A company's accounting system shows an unmatched payment on an exception report. This is likely due to a payment received in respect of a debt previously written off. How should this be resolved?",
+                options: [
+                    { text: "By ignoring it, as it's an old debt.", isCorrect: false },
+                    { text: "By re-issuing the invoice to the customer.", isCorrect: false },
+                    { text: "By recording the transaction manually using a journal entry.", isCorrect: true },
+                    { text: "By adjusting the sales ledger directly.", isCorrect: false }
+                ],
+                explanation: "Computerized systems may not match such payments. The problem is resolved by manually recording the transaction, typically debiting cash and crediting irrecoverable debts expense."
+            },
+            {
+                id: 38,
+                type: "single",
+                question: "Under FRS 102 (UK GAAP), how are trade receivables tested for impairment?",
+                options: [
+                    { text: "Using a forward-looking approach based on expected future losses.", isCorrect: false },
+                    { text: "Only when a customer explicitly declares bankruptcy.", isCorrect: false },
+                    { text: "Based on objective evidence of impairment at the end of each reporting period.", isCorrect: true },
+                    { text: "It is not required under FRS 102.", isCorrect: false }
+                ],
+                explanation: "FRS 102 uses a backward-looking test, recognizing impairment losses when there is objective evidence of impairment, such as bankruptcy."
+            },
+            {
+                id: 39,
+                type: "multiple",
+                question: "Which of the following are true about the irrecoverable debts expense account? (Select all that apply)",
+                options: [
+                    { text: "It is debited with debts written off.", isCorrect: true },
+                    { text: "It is credited with increases in the allowance for receivables.", isCorrect: false },
+                    { text: "It is credited with amounts received in respect of debts previously written off.", isCorrect: true },
+                    { text: "Its balance is transferred to the profit and loss ledger account at period end.", isCorrect: true }
+                ],
+                explanation: "The irrecoverable debts expense is debited for write-offs and increases in allowance, and credited for recoveries and decreases in allowance. Its final balance is transferred to the profit and loss account."
+            },
+            {
+                id: 40,
+                type: "single",
+                question: "A company's trade receivables are £80,000. It has an allowance for receivables of £2,000. What is the carrying amount of trade receivables in the statement of financial position?",
+                options: [
+                    { text: "£80,000", isCorrect: false },
+                    { text: "£82,000", isCorrect: false },
+                    { text: "£78,000", isCorrect: true },
+                    { text: "£76,000", isCorrect: false }
+                ],
+                explanation: "Carrying amount = Trade Receivables - Allowance for Receivables = £80,000 - £2,000 = £78,000."
+            },
+            {
+                id: 41,
+                type: "single",
+                question: "What is the implication for creative accounting when determining the allowance for receivables?",
+                options: [
+                    { text: "It eliminates the possibility of creative accounting due to strict rules.", isCorrect: false },
+                    { text: "It increases the scope for creative accounting due to subjectivity and estimates.", isCorrect: true },
+                    { text: "It only allows for overstating the allowance to be prudent.", isCorrect: false },
+                    { text: "It ensures that profits are always accurately reported without manipulation.", isCorrect: false }
+                ],
+                explanation: "Due to the level of subjectivity and estimates involved, there is increased scope for creative accounting, which might seek to understate the allowance to overstate profits."
+            },
+            {
+                id: 42,
+                type: "single",
+                question: "A company's trade receivables balance is £90,000. The company decides to establish an allowance for receivables of 1.5% of trade receivables. What is the initial journal entry to record this?",
+                options: [
+                    { text: "DR Allowance for Receivables £1,350; CR Trade Receivables £1,350", isCorrect: false },
+                    { text: "DR Irrecoverable Debts Expense £1,350; CR Allowance for Receivables £1,350", isCorrect: true },
+                    { text: "DR Trade Receivables £1,350; CR Irrecoverable Debts Expense £1,350", isCorrect: false },
+                    { text: "DR Cash at Bank £1,350; CR Irrecoverable Debts Expense £1,350", isCorrect: false }
+                ],
+                explanation: "The allowance is calculated as £90,000 * 1.5% = £1,350. The entry is to debit Irrecoverable Debts Expense and credit Allowance for Receivables."
+            },
+            {
+                id: 43,
+                type: "single",
+                question: "Which of the following describes the 'writing off' of a debt?",
+                options: [
+                    { text: "Increasing the value of the debt on the balance sheet.", isCorrect: false },
+                    { text: "Charging the cost of the debt against the profit for the period.", isCorrect: true },
+                    { text: "Converting the debt into equity.", isCorrect: false },
+                    { text: "Delaying the collection of the debt indefinitely.", isCorrect: false }
+                ],
+                explanation: "Writing off a debt means recognizing it as an expense, thereby reducing the profit for the period, as it is no longer expected to be collected."
+            },
+            {
+                id: 44,
+                type: "single",
+                question: "If the allowance for receivables has increased, what is the impact on the irrecoverable debts expense account?",
+                options: [
+                    { text: "It is credited.", isCorrect: false },
+                    { text: "It is debited.", isCorrect: true },
+                    { text: "It is unaffected.", isCorrect: false },
+                    { text: "It is closed to retained earnings.", isCorrect: false }
+                ],
+                explanation: "An increase in the allowance for receivables is recorded by debiting the irrecoverable debts expense account, thereby increasing the expense and reducing profit."
+            },
+            {
+                id: 45,
+                type: "single",
+                question: "A company's trade receivables at year-end are £100,000. The company estimates that 1% of these receivables will be uncollectible. If the allowance for receivables at the beginning of the year was £800, what is the adjustment to the irrecoverable debts expense for the year?",
+                options: [
+                    { text: "Debit £200", isCorrect: true },
+                    { text: "Credit £200", isCorrect: false },
+                    { text: "Debit £1,000", isCorrect: false },
+                    { text: "Credit £800", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Required allowance: 1% of £100,000 = £1,000\n- Existing allowance: £800\n- Increase required: £1,000 - £800 = £200\nThis increase is a debit to Irrecoverable Debts Expense."
+            },
+            {
+                id: 46,
+                type: "single",
+                question: "What is the primary objective of IFRS 9 regarding financial assets like trade receivables?",
+                options: [
+                    { text: "To simplify accounting for all financial instruments.", isCorrect: false },
+                    { text: "To ensure that all receivables are collected promptly.", isCorrect: false },
+                    { text: "To test for impairment and estimate expected future losses.", isCorrect: true },
+                    { text: "To eliminate the need for an allowance for receivables.", isCorrect: false }
+                ],
+                explanation: "IFRS 9 focuses on the impairment of financial assets, requiring entities to estimate expected credit losses, which is a forward-looking approach."
+            },
+            {
+                id: 47,
+                type: "single",
+                question: "A business has outstanding debts of £15,000. It estimates that 5% of these debts are irrecoverable. If there is no existing allowance, what is the impact on the statement of profit or loss?",
+                options: [
+                    { text: "Increase in profit by £750", isCorrect: false },
+                    { text: "Decrease in profit by £750", isCorrect: true },
+                    { text: "No impact on profit", isCorrect: false },
+                    { text: "Increase in revenue by £750", isCorrect: false }
+                ],
+                explanation: "The creation of an allowance for receivables (5% of £15,000 = £750) is charged as an irrecoverable debts expense, which decreases profit."
+            },
+            {
+                id: 48,
+                type: "single",
+                question: "When an irrecoverable debt is written off, what happens to the trade receivables account?",
+                options: [
+                    { text: "It is debited.", isCorrect: false },
+                    { text: "It is credited.", isCorrect: true },
+                    { text: "It remains unchanged.", isCorrect: false },
+                    { text: "It is reclassified as a long-term asset.", isCorrect: false }
+                ],
+                explanation: "Writing off an irrecoverable debt reduces the trade receivables balance, which is a credit entry to the trade receivables account."
+            },
+            {
+                id: 49,
+                type: "single",
+                question: "What is the term for an amount in relation to the probability of the non-recovery of debts that reduces the receivables asset to its prudent valuation?",
+                options: [
+                    { text: "Bad debt expense", isCorrect: false },
+                    { text: "Sales return allowance", isCorrect: false },
+                    { text: "Allowance for receivables", isCorrect: true },
+                    { text: "Contingent liability", isCorrect: false }
+                ],
+                explanation: "This is the definition of an allowance for receivables, which is a provision for expected credit losses."
+            },
+            {
+                id: 50,
+                type: "single",
+                question: "A company's trial balance before adjustments shows Trade Receivables £25,000 and an Allowance for Receivables (Cr) £500. It is determined that £200 of debts are irrecoverable and should be written off. The company also decides to maintain the allowance for receivables at £500. What is the net carrying amount of trade receivables after these adjustments?",
+                options: [
+                    { text: "£24,500", isCorrect: false },
+                    { text: "£24,300", isCorrect: true },
+                    { text: "£24,800", isCorrect: false },
+                    { text: "£25,000", isCorrect: false }
+                ],
+                explanation: "Calculation:\n- Original Trade Receivables: £25,000\n- Debts written off: £200\n- Trade Receivables after write-off: £25,000 - £200 = £24,800\n- Allowance for receivables: £500 (remains unchanged)\n- Net Carrying Amount = Trade Receivables after write-off - Allowance = £24,800 - £500 = £24,300."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let flaggedQuestions = new Set();
+        let timerInterval;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let quizAttempted = false;
+
+        const homeScreen = document.getElementById('home-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const questionTracker = document.getElementById('question-tracker');
+        const currentQuestionNumberSpan = document.getElementById('current-question-number');
+        const countdownTimerSpan = document.getElementById('countdown-timer');
+        const flagQuestionBtn = document.getElementById('flag-question-btn');
+        const questionContentDiv = document.getElementById('question-content');
+        const prevQuestionBtn = document.getElementById('prev-question-btn');
+        const nextQuestionBtn = document.getElementById('next-question-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const closeModalBtn = document.querySelector('#confirmation-modal .close-button');
+        const cancelSubmissionBtn = document.getElementById('cancel-submission');
+        const confirmSubmissionBtn = document.getElementById('confirm-submission');
+        const reviewModeBtn = document.getElementById('review-mode-btn');
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                countdownTimerSpan.textContent = formatTime(timeLeft);
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function renderQuestionTracker() {
+            questionTracker.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.classList.add('question-tracker-btn');
+                btn.textContent = index + 1;
+                btn.dataset.index = index;
+
+                if (userAnswers[index]) {
+                    btn.classList.add('attempted');
+                } else {
+                    btn.classList.add('unattempted');
+                }
+
+                if (flaggedQuestions.has(index)) {
+                    btn.classList.add('flagged');
+                }
+
+                if (index === currentQuestionIndex) {
+                    btn.classList.add('current-question');
+                }
+
+                btn.addEventListener('click', () => {
+                    currentQuestionIndex = index;
+                    loadQuestion();
+                });
+                questionTracker.appendChild(btn);
+            });
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
+            currentQuestionNumberSpan.textContent = currentQuestionIndex + 1;
+
+            questionContentDiv.innerHTML = `
+                <p class="text-lg mb-4 font-medium">${question.question}</p>
+                <div class="space-y-3" id="options-container">
+                    ${question.options.map((option, idx) => `
+                        <div>
+                            <input type="${question.type === 'multiple' ? 'checkbox' : 'radio'}"
+                                id="option-${idx}"
+                                name="question-${question.id}"
+                                value="${idx}"
+                                class="hidden"
+                                ${userAnswers[currentQuestionIndex] && userAnswers[currentQuestionIndex].includes(idx.toString()) ? 'checked' : ''}
+                                ${quizAttempted ? 'disabled' : ''}>
+                            <label for="option-${idx}" class="option-label">
+                                ${String.fromCharCode(65 + idx)}. ${option.text}
+                            </label>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            if (quizAttempted) {
+                showQuestionAnalysis(question);
+            }
+
+            // Update button visibility
+            prevQuestionBtn.classList.toggle('hidden', currentQuestionIndex === 0);
+            nextQuestionBtn.classList.toggle('hidden', currentQuestionIndex === quizData.length - 1);
+            submitQuizBtn.classList.toggle('hidden', currentQuestionIndex !== quizData.length - 1);
+
+            // Update flag button text
+            flagQuestionBtn.innerHTML = flaggedQuestions.has(currentQuestionIndex) ? '<i class="fas fa-flag mr-2"></i>Unflag Question' : '<i class="fas fa-flag mr-2"></i>Flag This Question';
+
+            // Add event listeners for options
+            document.querySelectorAll(`#options-container input`).forEach(input => {
+                input.addEventListener('change', (event) => {
+                    if (!quizAttempted) {
+                        handleAnswerChange(event);
+                    }
+                });
+            });
+
+            renderQuestionTracker();
+        }
+
+        function handleAnswerChange(event) {
+            const questionType = quizData[currentQuestionIndex].type;
+            const selectedValue = event.target.value;
+
+            if (questionType === 'multiple') {
+                if (!userAnswers[currentQuestionIndex]) {
+                    userAnswers[currentQuestionIndex] = [];
+                }
+                if (event.target.checked) {
+                    userAnswers[currentQuestionIndex].push(selectedValue);
+                } else {
+                    userAnswers[currentQuestionIndex] = userAnswers[currentQuestionIndex].filter(val => val !== selectedValue);
+                }
+                if (userAnswers[currentQuestionIndex].length === 0) {
+                    delete userAnswers[currentQuestionIndex];
+                }
+            } else {
+                userAnswers[currentQuestionIndex] = [selectedValue];
+            }
+            renderQuestionTracker();
+        }
+
+        function showQuestionAnalysis(question) {
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.querySelectorAll('input').forEach((input, idx) => {
+                const label = input.nextElementSibling;
+                const isCorrectOption = question.options[idx].isCorrect;
+                const isUserSelected = userAnswers[currentQuestionIndex] && userAnswers[currentQuestionIndex].includes(input.value);
+
+                label.classList.remove('bg-blue-100', 'border-blue-500'); // Remove user selection highlight
+
+                if (isCorrectOption) {
+                    label.classList.add('correct-answer');
+                }
+                if (!isCorrectOption && isUserSelected) {
+                    label.classList.add('incorrect-answer');
+                }
+            });
+
+            const explanationDiv = document.createElement('div');
+            explanationDiv.classList.add('explanation');
+            explanationDiv.innerHTML = `<h4 class="font-bold mb-2">Explanation:</h4><p>${question.explanation}</p>`;
+            questionContentDiv.appendChild(explanationDiv);
+        }
+
+        function calculateResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let attemptedCount = 0;
+            let unattemptedCount = 0;
+            const topicsToReview = new Set();
+            const questionAnalysisData = [];
+
+            quizData.forEach((question, index) => {
+                const userAnswer = userAnswers[index] || [];
+                attemptedCount += userAnswer.length > 0 ? 1 : 0;
+                unattemptedCount += userAnswer.length === 0 ? 1 : 0;
+
+                let isQuestionCorrect = true;
+                let hasUserAnsweredCorrectly = false;
+                let hasUserAnsweredIncorrectly = false;
+
+                const correctOptions = question.options.filter(opt => opt.isCorrect).map((_, idx) => idx.toString());
+
+                if (userAnswer.length > 0) {
+                    if (question.type === 'multiple') {
+                        // Check if all correct options are selected and no incorrect options are selected
+                        const allCorrectSelected = correctOptions.every(opt => userAnswer.includes(opt));
+                        const noIncorrectSelected = userAnswer.every(opt => question.options[parseInt(opt)].isCorrect);
+                        isQuestionCorrect = allCorrectSelected && noIncorrectSelected;
+                    } else { // single or fill_in_the_blank
+                        isQuestionCorrect = userAnswer.length === 1 && question.options[parseInt(userAnswer[0])].isCorrect;
+                    }
+                } else {
+                    isQuestionCorrect = false; // Unattempted questions are not correct
+                }
+
+                if (isQuestionCorrect) {
+                    correctCount++;
+                    hasUserAnsweredCorrectly = true;
+                } else if (userAnswer.length > 0) {
+                    incorrectCount++;
+                    hasUserAnsweredIncorrectly = true;
+                    // Add topic to review for incorrect answers
+                    topicsToReview.add(question.topic || "General Concepts"); // Assuming questions might have a 'topic' field
+                } else {
+                    // Unattempted, also suggest review
+                    topicsToReview.add(question.topic || "General Concepts");
+                }
+
+                questionAnalysisData.push({
+                    question: question.question,
+                    userAnswer: userAnswer.map(idx => question.options[parseInt(idx)].text),
+                    correctAnswer: correctOptions.map(idx => question.options[parseInt(idx)].text),
+                    isCorrect: isQuestionCorrect,
+                    isTricky: hasUserAnsweredIncorrectly // Mark as tricky if answered incorrectly
+                });
+            });
+
+            const totalQuestions = quizData.length;
+            const correctPercentage = (correctCount / totalQuestions * 100).toFixed(2);
+            const incorrectPercentage = (incorrectCount / totalQuestions * 100).toFixed(2);
+
+            document.getElementById('correct-percentage').textContent = `${correctPercentage}%`;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-percentage').textContent = `${incorrectPercentage}%`;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+            document.getElementById('attempted-count').textContent = attemptedCount;
+            document.getElementById('unattempted-count').textContent = unattemptedCount;
+
+            const reviewTopicsList = document.getElementById('review-topics');
+            reviewTopicsList.innerHTML = '';
+            if (topicsToReview.size === 0) {
+                reviewTopicsList.innerHTML = '<li>Great job! You covered all topics well.</li>';
+            } else {
+                topicsToReview.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.textContent = topic;
+                    reviewTopicsList.appendChild(li);
+                });
+            }
+
+            const questionAnalysisDiv = document.getElementById('question-analysis');
+            questionAnalysisDiv.innerHTML = '';
+            questionAnalysisData.forEach((data, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.classList.add('p-4', 'rounded-lg', 'border', data.isCorrect ? 'border-green-300' : 'border-red-300', 'bg-white');
+                qDiv.innerHTML = `
+                    <p class="font-semibold mb-2">Question ${index + 1} ${data.isTricky ? '<span class="text-red-500 text-sm ml-2">⚠ Tricky</span>' : '<span class="text-green-500 text-sm ml-2">✅ Regular</span>'}</p>
+                    <p class="mb-2">${data.question}</p>
+                    <p class="text-sm text-gray-600 mb-1">Your Answer: ${data.userAnswer.length > 0 ? data.userAnswer.join(', ') : 'Unattempted'}</p>
+                    <p class="text-sm text-gray-600">Correct Answer: ${data.correctAnswer.join(', ')}</p>
+                `;
+                questionAnalysisDiv.appendChild(qDiv);
+            });
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizAttempted = true;
+            homeScreen.classList.add('hidden');
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            calculateResults();
+        }
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', () => {
+            homeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            flaggedQuestions = new Set();
+            quizAttempted = false;
+            timeLeft = 45 * 60; // Reset timer
+            countdownTimerSpan.textContent = formatTime(timeLeft);
+            startTimer();
+            loadQuestion();
+        });
+
+        prevQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        nextQuestionBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        });
+
+        flagQuestionBtn.addEventListener('click', () => {
+            if (flaggedQuestions.has(currentQuestionIndex)) {
+                flaggedQuestions.delete(currentQuestionIndex);
+            } else {
+                flaggedQuestions.add(currentQuestionIndex);
+            }
+            loadQuestion(); // Re-render to update flag button text and tracker
+        });
+
+        submitQuizBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'flex'; // Show modal
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none'; // Hide modal
+        });
+
+        cancelSubmissionBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none'; // Hide modal
+        });
+
+        confirmSubmissionBtn.addEventListener('click', () => {
+            confirmationModal.style.display = 'none'; // Hide modal
+            submitQuiz();
+        });
+
+        reviewModeBtn.addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentQuestionIndex = 0; // Start review from the first question
+            loadQuestion(); // Load the first question in review mode
+            // Hide quiz controls in review mode
+            prevQuestionBtn.classList.remove('hidden'); // Ensure visible for navigation
+            nextQuestionBtn.classList.remove('hidden'); // Ensure visible for navigation
+            submitQuizBtn.classList.add('hidden'); // Hide submit button in review mode
+            flagQuestionBtn.classList.add('hidden'); // Hide flag button in review mode
+            countdownTimerSpan.closest('div').classList.add('hidden'); // Hide timer
+        });
+
+        // Initial load for home screen
+        document.addEventListener('DOMContentLoaded', () => {
+            homeScreen.classList.remove('hidden');
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Flow Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container-card {
+            max-width: 800px;
+            margin: auto;
+            background-color: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="container-card p-6 sm:p-10 w-full">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-6 sm:mb-8">Cash Flow Statement Practice</h1>
+        <p class="text-center text-gray-600 mb-8 sm:mb-10">Follow the steps below to practice creating a simple cash flow statement. Enter the values in each section and see the result.</p>
+
+        <!-- Operating Activities Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-blue-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">1</span>
+                Operating Activities
+            </h2>
+            <p class="text-gray-700 mb-4">Cash flow from core business operations. This starts with net income and adjusts for non-cash items and changes in working capital.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="netIncome" class="block text-sm font-medium text-gray-700">Net Income</label>
+                    <input type="number" id="netIncome" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 100000">
+                </div>
+                <div>
+                    <label for="depreciation" class="block text-sm font-medium text-gray-700">Depreciation</label>
+                    <input type="number" id="depreciation" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 5000">
+                </div>
+                <div>
+                    <label for="accountsReceivable" class="block text-sm font-medium text-gray-700">Decrease in Accounts Receivable</label>
+                    <input type="number" id="accountsReceivable" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 2000">
+                </div>
+                <div>
+                    <label for="inventory" class="block text-sm font-medium text-gray-700">Decrease in Inventory</label>
+                    <input type="number" id="inventory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 1500">
+                </div>
+            </div>
+            <div class="mt-4 text-lg font-bold text-gray-900 text-right">
+                Operating Cash Flow: <span id="operatingResult">$0</span>
+            </div>
+        </div>
+
+        <!-- Investing Activities Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-blue-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">2</span>
+                Investing Activities
+            </h2>
+            <p class="text-gray-700 mb-4">Cash flow from the purchase and sale of long-term assets and other investments.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="purchaseEquipment" class="block text-sm font-medium text-gray-700">Purchase of Equipment</label>
+                    <input type="number" id="purchaseEquipment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., -20000">
+                </div>
+                <div>
+                    <label for="saleAssets" class="block text-sm font-medium text-gray-700">Sale of Assets</label>
+                    <input type="number" id="saleAssets" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 3000">
+                </div>
+            </div>
+            <div class="mt-4 text-lg font-bold text-gray-900 text-right">
+                Investing Cash Flow: <span id="investingResult">$0</span>
+            </div>
+        </div>
+
+        <!-- Financing Activities Section -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-blue-500 text-white rounded-full h-8 w-8 flex items-center justify-center mr-3">3</span>
+                Financing Activities
+            </h2>
+            <p class="text-gray-700 mb-4">Cash flow from debt and equity transactions.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label for="issuanceStock" class="block text-sm font-medium text-gray-700">Issuance of Stock</label>
+                    <input type="number" id="issuanceStock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 15000">
+                </div>
+                <div>
+                    <label for="dividendPayments" class="block text-sm font-medium text-gray-700">Dividend Payments</label>
+                    <input type="number" id="dividendPayments" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 transition duration-200 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., -5000">
+                </div>
+            </div>
+            <div class="mt-4 text-lg font-bold text-gray-900 text-right">
+                Financing Cash Flow: <span id="financingResult">$0</span>
+            </div>
+        </div>
+
+        <!-- Calculate and Results Section -->
+        <div class="mt-8 pt-6 border-t border-gray-200">
+            <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">Final Result</h2>
+            <div class="flex flex-col sm:flex-row justify-between items-center bg-gray-100 p-4 rounded-lg">
+                <span class="text-xl font-bold text-gray-900">Net Increase/Decrease in Cash:</span>
+                <span id="totalResult" class="text-3xl font-extrabold text-blue-600">$0</span>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-4">Net Cash Flow = Operating + Investing + Financing</p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript for calculating and displaying cash flow
+        window.onload = function() {
+            // Get all input fields
+            const inputs = document.querySelectorAll('input[type="number"]');
+            
+            // Add an event listener to each input to trigger calculation on input change
+            inputs.forEach(input => {
+                input.addEventListener('input', calculateCashFlow);
+            });
+
+            // Initial calculation on page load
+            calculateCashFlow();
+        };
+
+        function calculateCashFlow() {
+            // Helper function to safely parse a value from an input field
+            const getValue = (id) => {
+                const value = document.getElementById(id).value;
+                return parseFloat(value) || 0;
+            };
+
+            // --- Operating Activities Calculation ---
+            const netIncome = getValue('netIncome');
+            const depreciation = getValue('depreciation');
+            const accountsReceivable = getValue('accountsReceivable');
+            const inventory = getValue('inventory');
+            
+            // Calculate cash flow from operating activities
+            const operatingCashFlow = netIncome + depreciation + accountsReceivable + inventory;
+            document.getElementById('operatingResult').textContent = `$${operatingCashFlow.toLocaleString()}`;
+
+            // --- Investing Activities Calculation ---
+            const purchaseEquipment = getValue('purchaseEquipment');
+            const saleAssets = getValue('saleAssets');
+            
+            // Calculate cash flow from investing activities
+            const investingCashFlow = purchaseEquipment + saleAssets;
+            document.getElementById('investingResult').textContent = `$${investingCashFlow.toLocaleString()}`;
+
+            // --- Financing Activities Calculation ---
+            const issuanceStock = getValue('issuanceStock');
+            const dividendPayments = getValue('dividendPayments');
+            
+            // Calculate cash flow from financing activities
+            const financingCashFlow = issuanceStock + dividendPayments;
+            document.getElementById('financingResult').textContent = `$${financingCashFlow.toLocaleString()}`;
+
+            // --- Final Calculation ---
+            // Sum all three sections to get the total cash flow
+            const totalCashFlow = operatingCashFlow + investingCashFlow + financingCashFlow;
+            document.getElementById('totalResult').textContent = `$${totalCashFlow.toLocaleString()}`;
+        }
+    </script>
+</body>
+</html>

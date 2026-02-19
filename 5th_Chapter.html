@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB Accounting Exam – Chapter 5: Preparing basic financial statements</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-option:hover {
+            background-color: #f0f9ff; /* light-blue-50 */
+        }
+        .selected-option {
+            background-color: #e0f2fe; /* light-blue-100 */
+            border-color: #0284c7; /* light-blue-600 */
+        }
+        .correct-answer {
+            background-color: #dcfce7; /* green-100 */
+            border-color: #22c55e; /* green-500 */
+        }
+        .incorrect-answer {
+            background-color: #fee2e2; /* red-100 */
+            border-color: #ef4444; /* red-500 */
+        }
+        .tracker-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .tracker-unattempted { background-color: #f3f4f6; color: #4b5563; }
+        .tracker-unattempted:hover { background-color: #e5e7eb; }
+        .tracker-attempted { background-color: #22c55e; color: white; }
+        .tracker-flagged { background-color: #f97316; color: white; }
+        .tracker-current { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="quiz-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Opening Page -->
+        <div id="opening-page" class="text-center bg-white p-10 rounded-xl shadow-lg">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-800 mb-4">ICAB Accounting Exam</h1>
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-700 mb-8">Chapter 5: Preparing basic financial statements</h2>
+            <p class="text-gray-600 mb-2">You will have <span class="font-bold">45 minutes</span> to answer <span class="font-bold">50 questions</span>.</p>
+            <p class="text-gray-600 mb-8">Click the button below to start the exam.</p>
+            <button id="start-quiz-btn" class="bg-sky-700 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-sky-800 transition-colors duration-300 text-lg">
+                Start Exam
+            </button>
+        </div>
+
+        <!-- Quiz Interface -->
+        <div id="quiz-interface" class="hidden">
+            <div class="flex justify-between items-center mb-4 flex-wrap gap-4">
+                 <h1 class="text-2xl font-bold text-sky-800">ICAB Accounting Exam – Chapter 5</h1>
+                 <div id="timer" class="text-2xl font-bold bg-white px-4 py-2 rounded-lg shadow-md text-red-600">45:00</div>
+            </div>
+           
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Left Side: Question Tracker -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit">
+                    <h3 class="text-lg font-bold mb-4">Question Tracker</h3>
+                    <div id="question-tracker" class="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-5 gap-2">
+                        <!-- Tracker buttons will be generated here -->
+                    </div>
+                     <div class="mt-6 space-y-2 text-sm">
+                        <div class="flex items-center"><span class="w-4 h-4 rounded-full bg-green-500 mr-2 border border-gray-300"></span> Attempted ✔</div>
+                        <div class="flex items-center"><span class="w-4 h-4 rounded-full bg-gray-200 mr-2 border border-gray-300"></span> Unattempted 🔲</div>
+                        <div class="flex items-center"><span class="w-4 h-4 rounded-full bg-orange-500 mr-2 border border-gray-300"></span> Flagged 🚩</div>
+                    </div>
+                    <button id="submit-quiz-btn" class="w-full mt-6 bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-300">
+                        Submit Quiz
+                    </button>
+                </div>
+
+                <!-- Right Side: Question Display -->
+                <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg">
+                    <div id="question-area">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-semibold">Question <span id="question-number">1</span> of 50</h3>
+                            <button id="flag-btn" class="flex items-center gap-2 text-orange-600 hover:text-orange-800 font-semibold py-1 px-3 rounded-lg border-2 border-orange-500 hover:bg-orange-100 transition-colors">
+                                <span id="flag-icon">🚩</span> <span id="flag-text">Flag This Question</span>
+                            </button>
+                        </div>
+                        <div id="question-text" class="text-lg mb-6 leading-relaxed"></div>
+                        <div id="options-container" class="space-y-3"></div>
+                    </div>
+                    <div class="mt-8 flex justify-between">
+                        <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-colors">Previous</button>
+                        <button id="next-btn" class="bg-sky-700 text-white font-bold py-2 px-8 rounded-lg hover:bg-sky-800 transition-colors">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post-Submission/Results Page -->
+        <div id="results-page" class="hidden">
+            <div class="bg-white p-6 sm:p-10 rounded-xl shadow-lg text-center">
+                <h1 class="text-3xl sm:text-4xl font-bold text-sky-800 mb-4">Exam Results</h1>
+                <p class="text-lg text-gray-600 mb-6">You have completed the exam.</p>
+                <div class="text-5xl font-bold mb-2" id="score-text"></div>
+                <div class="text-xl font-semibold text-gray-700 mb-8" id="percentage-text"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-8">
+                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                        <h3 class="text-lg font-bold text-green-800">Correct Answers</h3>
+                        <p class="text-4xl font-bold text-green-600" id="correct-count"></p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <h3 class="text-lg font-bold text-red-800">Incorrect Answers</h3>
+                        <p class="text-4xl font-bold text-red-600" id="incorrect-count"></p>
+                    </div>
+                </div>
+
+                <!-- Auto-Analysis Section -->
+                <div class="bg-sky-50 p-6 rounded-lg border border-sky-200 text-left mb-8">
+                    <h2 class="text-2xl font-bold text-sky-800 mb-4">Performance Analysis</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2">Chapters/Topics Needing More Practice:</h3>
+                            <ul id="topics-to-revise" class="list-disc list-inside space-y-1 text-gray-700">
+                                <!-- Topics will be generated here -->
+                            </ul>
+                        </div>
+                         <div>
+                            <h3 class="font-semibold text-lg mb-2">Revision Suggestions:</h3>
+                            <p class="text-gray-700">Based on your performance, focus on the topics listed. Re-read the relevant sections in the textbook, work through the examples, and pay close attention to the double-entry rules for each transaction type.</p>
+                             <h3 class="font-semibold text-lg mt-4 mb-2">Quiz Coverage Area:</h3>
+                             <p class="text-gray-700 text-sm">Trial Balance (25%), Ledger Accounts & Adjustments (20%), Statement of Profit or Loss (25%), Statement of Financial Position (25%), Error Correction (5%).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="review-answers-btn" class="bg-sky-700 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-sky-800 transition-colors duration-300 text-lg">
+                    Review Your Answers
+                </button>
+            </div>
+
+            <div id="review-section" class="hidden mt-8">
+                 <h2 class="text-3xl font-bold text-center mb-6 text-sky-800">Answer Review</h2>
+                <!-- Detailed review will be generated here -->
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-sm text-gray-500">
+            <p class="font-semibold">Prepared by:</p>
+            <p>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="hover:text-sky-700">K. M. Mahafuzul Alam</a></p>
+            <p>📞 WhatsApp: 01728-928984</p>
+            <p>📧 Email: kmmhafuzulalam@gmail.com</p>
+        </footer>
+    </div>
+    
+    <!-- Modal for Time's Up / Submit Confirmation -->
+    <div id="submission-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="modal-text" class="mb-6"></p>
+            <button id="modal-confirm-btn" class="bg-sky-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-800">View Results</button>
+            <button id="modal-cancel-btn" class="ml-4 bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+        </div>
+    </div>
+
+
+    <script>
+        const questions = [
+            // Questions generated based on the PDF content.
+            // 1. Standard MCQ - Single Choice
+            {
+                question: "What is the primary purpose of an initial trial balance?",
+                options: [
+                    "To calculate the profit or loss for the period.",
+                    "To list nominal ledger account balances to check the equality of debits and credits.",
+                    "To report the financial position of the business.",
+                    "To list all transactions that have occurred during the period."
+                ],
+                type: 'single',
+                answer: "To list nominal ledger account balances to check the equality of debits and credits.",
+                explanation: "The initial trial balance is a list of all nominal ledger account balances. Its primary purpose is to verify that the total of all debit balances equals the total of all credit balances, confirming adherence to the double-entry principle. (Chapter 5, Section 1)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+            // 2. Standard MCQ - Multiple Choice
+            {
+                question: "Which TWO of the following accounts will normally have a debit balance in the trial balance?",
+                options: [
+                    "Sales",
+                    "Capital",
+                    "Purchases",
+                    "Bank Loan",
+                    "Drawings"
+                ],
+                type: 'multiple',
+                answer: ["Purchases", "Drawings"],
+                explanation: "Purchases (an expense) and Drawings (a reduction of equity) are increased with debit entries, so they normally have debit balances. Sales (income), Capital (equity), and Bank Loan (liability) normally have credit balances. (Chapter 5, Section 1.1)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+            // 3. Mathematical/Calculation-Based MCQ
+            {
+                question: "A business has sales of £140,000, purchases of £75,000, and other expenses of £25,000. What is the profit for the period?",
+                options: [
+                    "£40,000",
+                    "£65,000",
+                    "£115,000",
+                    "£240,000"
+                ],
+                type: 'single',
+                answer: "£40,000",
+                explanation: "Profit is calculated as Sales - Purchases - Other Expenses. Therefore, £140,000 - £75,000 - £25,000 = £40,000. (Chapter 5, Self-test question 1)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            // 4. Standard MCQ - Fill in the blank
+            {
+                question: "For asset, liability, and capital accounts, the closing balance is referred to as the balance ________.",
+                options: [
+                    "transferred out",
+                    "brought down (b/d)",
+                    "carried down (c/d)",
+                    "expensed"
+                ],
+                type: 'single',
+                answer: "carried down (c/d)",
+                explanation: "At the end of a period, the balancing figure for asset, liability, and capital accounts is the 'balance carried down' (c/d). This balance then becomes the 'balance brought down' (b/d) at the start of the next period. (Chapter 5, Section 2)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Regular ✅"
+            },
+            // 5. Standard MCQ - "All of the above"
+            {
+                question: "Which of the following errors may still exist even if a trial balance balances?",
+                options: [
+                    "Error of Omission (a transaction is completely missed).",
+                    "Error of Commission (correct amount, wrong account of the same class).",
+                    "Error of Principle (transaction entered in the wrong class of account).",
+                    "All of the above."
+                ],
+                type: 'single',
+                answer: "All of the above.",
+                explanation: "A trial balance only confirms that debits equal credits. It does not detect errors where the double-entry was correctly made but for the wrong amount, to the wrong account, or was missed entirely. Errors of omission, commission, principle, and compensating errors can all exist in a balanced trial balance. (Chapter 5, Section 1.2)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Tricky ⚠"
+            },
+             // 6. Scenario-Based MCQ (Short)
+            {
+                question: "A business purchases goods for £800 on credit from Supplier X. What is the correct double entry to record this transaction?",
+                options: [
+                    "Debit Cash £800, Credit Purchases £800",
+                    "Debit Purchases £800, Credit Trade Payables £800",
+                    "Debit Trade Payables £800, Credit Purchases £800",
+                    "Debit Purchases £800, Credit Cash £800"
+                ],
+                type: 'single',
+                answer: "Debit Purchases £800, Credit Trade Payables £800",
+                explanation: "Purchases is an expense, which increases with a debit. As the goods were bought on credit, a liability to the supplier is created. Liabilities (Trade Payables) increase with a credit. (Chapter 5, Worked Example)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+            // 7. Standard MCQ - "None of the above"
+            {
+                question: "Which of the following items appears in the Statement of Financial Position?",
+                options: [
+                    "Sales Revenue",
+                    "Rent Expense",
+                    "Cost of Sales",
+                    "None of the above"
+                ],
+                type: 'single',
+                answer: "None of the above",
+                explanation: "Sales Revenue, Rent Expense, and Cost of Sales are all items that appear on the Statement of Profit or Loss. The Statement of Financial Position shows Assets, Liabilities, and Capital. (Chapter 5, Section 4)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+             // 8. Mathematical/Calculation-Based MCQ
+            {
+                question: "At 31 December, a company's total assets are £20,376 and its non-current liabilities are £10,000. If current liabilities are £6,290, what is the capital balance?",
+                options: [
+                    "£4,086",
+                    "£14,086",
+                    "£3,710",
+                    "£24,086"
+                ],
+                type: 'single',
+                answer: "£4,086",
+                explanation: "The accounting equation is Assets = Capital + Liabilities. Therefore, Capital = Assets - Liabilities. Capital = £20,376 - (£10,000 + £6,290) = £4,086. (Chapter 5, Self-test question 9)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 9. Standard MCQ - Multiple Correct
+            {
+                question: "The closing capital of a sole trader is calculated as: Opening Capital + Profit for the period - ________. Which THREE items could correctly fill the blank?",
+                options: [
+                    "Drawings",
+                    "A net loss for the period",
+                    "Additional capital introduced",
+                    "Non-current assets purchased",
+                    "Interest on a bank loan"
+                ],
+                type: 'multiple',
+                answer: ["Drawings", "A net loss for the period"],
+                explanation: "Closing Capital = Opening Capital + Additional Capital + Profit (- Loss) - Drawings. Therefore, Drawings and a net loss reduce the capital balance. Additional capital *increases* it. The other items are unrelated to the capital account calculation. (Chapter 5, Section 4.1)",
+                topic: "Statement of Financial Position",
+                difficulty: "Tricky ⚠"
+            },
+             // 10. Scenario-Based MCQ (Short)
+            {
+                question: "A sole trader pays for building maintenance of £500 and incorrectly debits the Non-current Assets (Buildings) account. What type of error is this?",
+                options: [
+                    "Error of Omission",
+                    "Error of Commission",
+                    "Compensating Error",
+                    "Error of Principle"
+                ],
+                type: 'single',
+                answer: "Error of Principle",
+                explanation: "An error of principle occurs when a transaction is posted to the wrong class of account, such as treating a revenue expenditure (maintenance expense) as a capital expenditure (asset). The double entry was made, but the accounting principle was violated. (Chapter 5, Section 1.2)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Tricky ⚠"
+            },
+            // 11. Mathematical Calculation
+            {
+                question: "A cash at bank T-account has total debits of £20,500 and total credits of £14,000. What is the closing balance of the account?",
+                options: [
+                    "£6,500 debit",
+                    "£6,500 credit",
+                    "£34,500 debit",
+                    "£34,500 credit"
+                ],
+                type: 'single',
+                answer: "£6,500 debit",
+                explanation: "The debit side (receipts) is larger than the credit side (payments). The balance is the difference: £20,500 - £14,000 = £6,500. Since debits exceed credits, it is a debit balance, representing cash as an asset. (Chapter 5, Section 2)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Regular ✅"
+            },
+            // 12. Standard MCQ
+            {
+                question: "At the end of the accounting period, the balances on income and expense accounts are transferred to the:",
+                options: [
+                    "Statement of Financial Position",
+                    "Capital Account",
+                    "Profit and Loss Ledger Account",
+                    "Drawings Account"
+                ],
+                type: 'single',
+                answer: "Profit and Loss Ledger Account",
+                explanation: "To determine the profit or loss for a period, all income and expense account balances are closed off and transferred to the Profit and Loss Ledger Account. The resulting balance on this account is the profit or loss. (Chapter 5, Section 3)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            // 13. Scenario-based MCQ
+            {
+                question: "Drawings of £100 were incorrectly debited to the Expenses account. The credit entry to Cash was correct. What is the journal entry to correct this error?",
+                options: [
+                    "Debit Drawings £100, Credit Cash £100",
+                    "Debit Expenses £100, Credit Drawings £100",
+                    "Debit Drawings £100, Credit Expenses £100",
+                    "Debit Cash £100, Credit Drawings £100"
+                ],
+                type: 'single',
+                answer: "Debit Drawings £100, Credit Expenses £100",
+                explanation: "The error was debiting Expenses instead of Drawings. To correct this, we must remove the incorrect debit from Expenses (by crediting it) and put the debit in the correct account, Drawings (by debiting it). (Chapter 5, Self-test question 7)",
+                topic: "Error Correction",
+                difficulty: "Tricky ⚠"
+            },
+            // 14. Standard MCQ
+            {
+                question: "A credit balance brought down on a cash at bank ledger account indicates:",
+                options: [
+                    "Cash in hand",
+                    "An asset",
+                    "A bank overdraft",
+                    "A profit"
+                ],
+                type: 'single',
+                answer: "A bank overdraft",
+                explanation: "Normally, cash at bank is an asset and has a debit balance. A credit balance means that more cash has been paid out than was available, resulting in a liability to the bank, known as a bank overdraft. (Chapter 5, Worked Example footnote)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Regular ✅"
+            },
+            // 15. Standard MCQ - Multiple Correct
+            {
+                question: "Which THREE of the following items are classified as current assets on the Statement of Financial Position?",
+                options: [
+                    "Motor Vehicles",
+                    "Trade Receivables",
+                    "Inventory",
+                    "Cash at Bank",
+                    "Bank Loan (payable in 3 years)"
+                ],
+                type: 'multiple',
+                answer: ["Trade Receivables", "Inventory", "Cash at Bank"],
+                explanation: "Current assets are assets expected to be converted to cash or used up within one year. Trade Receivables, Inventory, and Cash at Bank fit this definition. Motor Vehicles are non-current assets, and a long-term Bank Loan is a non-current liability.",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // --- Scenario for Q16-Q20 ---
+            // Based on Hawk Ltd Worked Example
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 16-20:</p>
+                        <p>You are presented with the following initial trial balance for Hawk Ltd at 31.3.20X7:</p>
+                        <ul class="list-disc list-inside text-sm mt-2">
+                            <li>Cash at bank: £11,700 Dr</li>
+                            <li>Purchases: £12,400 Dr</li>
+                            <li>Trade receivables: £12,000 Dr</li>
+                            <li>Trade payables: £11,200 Cr</li>
+                            <li>Sales: £34,600 Cr</li>
+                        </ul>
+                        <p class="mt-2">After this was extracted, the following transaction occurred: Hawk Ltd bought materials for £1,000, half for cash and half on credit.</p>
+                    </div>
+                    What is the journal entry to record the purchase of materials?`,
+                options: [
+                    "Dr Purchases £1,000; Cr Cash £1,000",
+                    "Dr Purchases £1,000; Cr Trade Payables £1,000",
+                    "Dr Purchases £1,000; Cr Cash £500; Cr Trade Payables £500",
+                    "Dr Cash £500; Dr Trade Payables £500; Cr Purchases £1,000"
+                ],
+                type: 'single',
+                answer: "Dr Purchases £1,000; Cr Cash £500; Cr Trade Payables £500",
+                explanation: "The total purchase is an expense, so Purchases is debited by £1,000. Half was paid in cash, reducing the asset, so Cash is credited by £500. The other half was on credit, increasing the liability, so Trade Payables is credited by £500. (Chapter 5, Worked Example: Hawk Ltd)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 16-20:</p>
+                        <p>Reference the Hawk Ltd scenario from the previous question.</p>
+                    </div>
+                    What will be the final balance on the Purchases account in the final trial balance?`,
+                options: ["£12,400", "£11,400", "£13,400", "£12,900"],
+                type: 'single',
+                answer: "£13,400",
+                explanation: "The initial balance was £12,400 debit. The additional purchase of £1,000 is also a debit. Final balance = £12,400 + £1,000 = £13,400. (Chapter 5, Worked Example: Hawk Ltd)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+             {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 16-20:</p>
+                        <p>Reference the Hawk Ltd scenario from the previous question.</p>
+                    </div>
+                    What will be the final balance on the Cash at bank account in the final trial balance?`,
+                options: ["£11,200", "£12,200", "£10,700", "£11,700"],
+                type: 'single',
+                answer: "£11,200",
+                explanation: "The initial balance was £11,700 debit. The cash payment of £500 for purchases is a credit. Final balance = £11,700 - £500 = £11,200. (Chapter 5, Worked Example: Hawk Ltd)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 16-20:</p>
+                        <p>Reference the Hawk Ltd scenario from the previous question.</p>
+                    </div>
+                    What will be the final balance on the Trade payables account in the final trial balance?`,
+                options: ["£11,700", "£10,700", "£11,200", "£12,200"],
+                type: 'single',
+                answer: "£11,700",
+                explanation: "The initial balance was £11,200 credit. The credit purchase of £500 increases this liability. Final balance = £11,200 + £500 = £11,700. (Chapter 5, Worked Example: Hawk Ltd)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+             {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 16-20:</p>
+                        <p>Reference the Hawk Ltd scenario from the previous question. Assume an additional transaction: sales of £800 were made on credit.</p>
+                    </div>
+                    After accounting for BOTH the purchase and the credit sale, what are the final balances for Trade Receivables and Sales?`,
+                options: [
+                    "Trade Receivables £12,800; Sales £35,400",
+                    "Trade Receivables £12,000; Sales £35,400",
+                    "Trade Receivables £12,800; Sales £34,600",
+                    "Trade Receivables £11,200; Sales £33,800"
+                ],
+                type: 'single',
+                answer: "Trade Receivables £12,800; Sales £35,400",
+                explanation: "Initial Trade Receivables was £12,000. A credit sale of £800 increases it. Final TR = £12,800. Initial Sales was £34,600. The sale of £800 increases it. Final Sales = £35,400. (Chapter 5, Worked Example: Hawk Ltd)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Tricky ⚠"
+            },
+            // 21.
+            {
+                question: "If the total debits in a Profit and Loss ledger account are £57,390 and total credits are £84,928, what is the result for the period?",
+                options: [
+                    "A profit of £27,538",
+                    "A loss of £27,538",
+                    "A profit of £142,318",
+                    "A loss of £142,318"
+                ],
+                type: 'single',
+                answer: "A profit of £27,538",
+                explanation: "In the P&L ledger account, credits represent income and debits represent expenses. If credits (£84,928) exceed debits (£57,390), the result is a profit. The profit is £84,928 - £57,390 = £27,538. (Chapter 5, Self-test question 10)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            // 22.
+            {
+                question: "Posting a debit entry to the Rent account instead of the Wages account is an example of an:",
+                options: [
+                    "Error of transposition",
+                    "Error of commission",
+                    "Error of omission",
+                    "Error of principle"
+                ],
+                type: 'single',
+                answer: "Error of commission",
+                explanation: "An error of commission occurs when an entry is posted to the correct type of account (e.g., an expense) but the wrong specific account (Rent instead of Wages). (Chapter 5, Section 1.2)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Tricky ⚠"
+            },
+            // 23.
+            {
+                question: "Which of the following statements is TRUE regarding the preparation of financial statements?",
+                options: [
+                    "The Profit and Loss ledger account must always be prepared manually.",
+                    "A trial balance can be used to prepare financial statements directly without creating a P&L ledger account.",
+                    "The initial trial balance contains the final figures for the Statement of Financial Position.",
+                    "All of the above."
+                ],
+                type: 'single',
+                answer: "A trial balance can be used to prepare financial statements directly without creating a P&L ledger account.",
+                explanation: "Modern accounting, and the encouraged method for exams, involves using the final trial balance to directly populate the Statement of Profit or Loss and Statement of Financial Position, which is quicker than preparing a full P&L ledger account. (Chapter 5, Section 5.2)",
+                topic: "Preparing Basic Financial Statements",
+                difficulty: "Regular ✅"
+            },
+            // 24.
+            {
+                question: "A business has opening capital of £10,000, profit for the year of £5,000, and drawings of £2,000. What is the closing capital?",
+                options: [
+                    "£17,000",
+                    "£13,000",
+                    "£7,000",
+                    "£3,000"
+                ],
+                type: 'single',
+                answer: "£13,000",
+                explanation: "Closing Capital = Opening Capital + Profit - Drawings. So, £10,000 + £5,000 - £2,000 = £13,000. (Chapter 5, Section 4.1)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 25.
+            {
+                question: "Which of the following would NOT be found on the Statement of Changes in Equity?",
+                options: [
+                    "Opening capital balance",
+                    "Profit for the period",
+                    "Purchase of a non-current asset",
+                    "Drawings made by the owner"
+                ],
+                type: 'single',
+                answer: "Purchase of a non-current asset",
+                explanation: "The Statement of Changes in Equity reconciles the opening and closing equity balances. It includes opening capital, profit/loss, new capital, and drawings. The purchase of a non-current asset is a transaction affecting assets and liabilities/cash, not directly the movement in equity itself.",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+             // --- Long Scenario for Q26-Q30 ---
+            // Based on the main worked example in section 5.1
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 26-30:</p>
+                        <p>A business starts with £2,000 capital paid into the bank. During the year, the following occurs:</p>
+                        <ul class="list-disc list-inside text-sm mt-2">
+                            <li>Purchases of goods on credit: £4,300</li>
+                            <li>Payments to credit suppliers: £3,600</li>
+                            <li>Sales on credit: £5,800</li>
+                            <li>Receipts from credit customers: £3,200</li>
+                            <li>Non-current assets purchased for cash: £1,500</li>
+                            <li>Other expenses paid in cash: £900</li>
+                        </ul>
+                    </div>
+                    What is the Gross Profit for the year?`,
+                options: ["£1,500", "£2,600", "£5,800", "£900"],
+                type: 'single',
+                answer: "£1,500",
+                explanation: "Gross Profit = Sales - Purchases. Gross Profit = £5,800 - £4,300 = £1,500. (Chapter 5, Worked Example 5.1)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 26-30:</p>
+                        <p>Reference the scenario from the previous question.</p>
+                    </div>
+                    What is the Profit for the year?`,
+                options: ["£1,500", "£600", "£900", "£2,400"],
+                type: 'single',
+                answer: "£600",
+                explanation: "Profit for the year = Gross Profit - Other Expenses. Profit = £1,500 - £900 = £600. (Chapter 5, Worked Example 5.1)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 26-30:</p>
+                        <p>Reference the scenario from the previous question.</p>
+                    </div>
+                    What is the closing balance on the Trade Receivables account?`,
+                options: ["£5,800", "£3,200", "£2,600", "£9,000"],
+                type: 'single',
+                answer: "£2,600",
+                explanation: "Total sales on credit were £5,800 (debit to receivables). Receipts from customers were £3,200 (credit to receivables). Closing balance = £5,800 - £3,200 = £2,600. (Chapter 5, Worked Example 5.1)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Tricky ⚠"
+            },
+            {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 26-30:</p>
+                        <p>Reference the scenario from the previous question.</p>
+                    </div>
+                    What is the closing balance on the Cash at Bank account?`,
+                options: ["£2,800 debit (asset)", "£800 credit (overdraft)", "£800 debit (asset)", "£200 credit (overdraft)"],
+                type: 'single',
+                answer: "£800 credit (overdraft)",
+                explanation: "Cash In: Capital £2,000 + Receipts £3,200 = £5,200. Cash Out: Payments to suppliers £3,600 + NCA £1,500 + Expenses £900 = £6,000. The business has paid out £800 more than it received, resulting in an £800 overdraft (credit balance). (Chapter 5, Worked Example 5.1)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Tricky ⚠"
+            },
+             {
+                question: `
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-4">
+                        <p class="font-bold mb-2">Scenario for Questions 26-30:</p>
+                        <p>Reference the scenario from the previous question.</p>
+                    </div>
+                    What is the total for 'Capital and Liabilities' on the Statement of Financial Position?`,
+                options: ["£2,600", "£3,300", "£4,100", "£4,900"],
+                type: 'single',
+                answer: "£4,100",
+                explanation: "Closing Capital (£2,000 + £600 profit) = £2,600. Current Liabilities: Bank Overdraft £800 + Trade Payables (£4,300 - £3,600 = £700) = £1,500. Total Capital and Liabilities = £2,600 + £1,500 = £4,100. (This must equal total assets). (Chapter 5, Worked Example 5.1)",
+                topic: "Statement of Financial Position",
+                difficulty: "Tricky ⚠"
+            },
+            // 31. Fill in the blank
+            {
+                question: "When a trial balance is prepared, the total of the ______ column must equal the total of the ______ column.",
+                options: ["asset, liability", "income, expense", "debit, credit", "current, non-current"],
+                type: 'single',
+                answer: "debit, credit",
+                explanation: "The fundamental principle checked by a trial balance is that for all the transactions recorded, the total debit entries must equal the total credit entries. (Chapter 5, Section 1)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+            // 32. Multiple Correct
+            {
+                question: "Which TWO of the following statements about balancing off accounts are correct?",
+                options: [
+                    "Income and expense account balances are carried down to the next period.",
+                    "Asset and liability account balances are transferred to the profit and loss ledger account.",
+                    "The balance on the drawings account is eventually transferred to the capital account.",
+                    "A debit balance c/d on the cash account becomes a credit balance b/d.",
+                    "The profit for the period is transferred to the capital account."
+                ],
+                type: 'multiple',
+                answer: ["The balance on the drawings account is eventually transferred to the capital account.", "The profit for the period is transferred to the capital account."],
+                explanation: "Drawings and profit/loss are transferred to the capital account to determine the closing capital balance. Income/expense balances are transferred to the P&L account, not carried down. Asset/liability balances are carried down, not transferred to the P&L account. A debit balance c/d becomes a debit balance b/d. (Chapter 5, Sections 2, 3, 4)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Tricky ⚠"
+            },
+            // 33. Calculation
+            {
+                question: "A company's trial balance shows Trade Payables of £5,600. An adjustment journal is then processed for a credit purchase of £700. What is the new balance for Trade Payables?",
+                options: ["£4,900 credit", "£6,300 credit", "£4,900 debit", "£6,300 debit"],
+                type: 'single',
+                answer: "£6,300 credit",
+                explanation: "Trade Payables is a liability account and has a credit balance. A credit purchase increases this liability. The new balance is £5,600 Cr + £700 Cr = £6,300 Cr. (Chapter 5, Section 1.4)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+            // 34.
+            {
+                question: "The Statement of Financial Position is a list of a company's:",
+                options: [
+                    "Income and expenses over a period of time.",
+                    "Assets, liabilities, and equity at a specific point in time.",
+                    "Cash inflows and outflows over a period of time.",
+                    "Profits and losses for the last five years."
+                ],
+                type: 'single',
+                answer: "Assets, liabilities, and equity at a specific point in time.",
+                explanation: "The SFP provides a snapshot of the company's financial health, showing what it owns (assets), what it owes (liabilities), and the owner's stake (equity) on a particular date. (Chapter 5, Section 4)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 35.
+            {
+                question: "If a business has a net loss for the period, how is this recorded in the ledger accounts?",
+                options: [
+                    "Debit the capital account; Credit the profit and loss ledger account.",
+                    "Credit the capital account; Debit the profit and loss ledger account.",
+                    "Debit the drawings account; Credit the profit and loss ledger account.",
+                    "Credit the drawings account; Debit the profit and loss ledger account."
+                ],
+                type: 'single',
+                answer: "Debit the capital account; Credit the profit and loss ledger account.",
+                explanation: "A loss reduces the owner's capital. To reduce the capital account (which has a credit balance), you debit it. To close the P&L ledger account, which would have a net debit balance (expenses > income), you credit it. (Chapter 5, Self-test question 8)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Tricky ⚠"
+            },
+            // 36.
+            {
+                question: "A transposition error occurs when:",
+                options: [
+                    "A transaction is completely omitted from the records.",
+                    "Two digits in an amount are accidentally recorded the wrong way round.",
+                    "A transaction is posted to the wrong account.",
+                    "An expense is incorrectly treated as an asset."
+                ],
+                type: 'single',
+                answer: "Two digits in an amount are accidentally recorded the wrong way round.",
+                explanation: "A transposition error is a specific type of clerical error where digits are swapped, for example, writing £54 instead of £45. (Chapter 5, Section 1.2)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+            // 37.
+            {
+                question: "The gross profit of a business is calculated as:",
+                options: [
+                    "Sales minus all expenses.",
+                    "Sales minus purchases.",
+                    "Total assets minus total liabilities.",
+                    "Opening capital plus profit."
+                ],
+                type: 'single',
+                answer: "Sales minus purchases.",
+                explanation: "Gross profit represents the profit made from the primary trading activity of buying and selling goods, before considering other operating expenses. It is calculated as Sales (Revenue) less Cost of Sales (often represented by Purchases in basic examples). (Chapter 5, Section 3.2)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+            // 38. Calculation
+            {
+                question: "Chan's bank account was overdrawn by £500 at the start of March. During March, receipts were £12,000 and total payments were £11,200 (£7,000 suppliers + £3,000 expenses + £1,200 drawings). What is the balance at 31 March?",
+                options: ["£300 debit", "£300 credit", "£1,300 debit", "£1,300 credit"],
+                type: 'single',
+                answer: "£300 debit",
+                explanation: "Opening balance: £500 Cr. Net cash movement: £12,000 Dr - £11,200 Cr = £800 Dr. Closing balance = £500 Cr + £800 Dr = £300 Dr. The account is now in funds (an asset). (Chapter 5, Self-test question 2)",
+                topic: "Balancing off Ledger Accounts",
+                difficulty: "Tricky ⚠"
+            },
+            // 39.
+            {
+                question: "The accounting equation can be expressed as:",
+                options: [
+                    "Assets + Liabilities = Capital",
+                    "Assets = Capital - Liabilities",
+                    "Assets = Liabilities - Capital",
+                    "Assets = Capital + Liabilities"
+                ],
+                type: 'single',
+                answer: "Assets = Capital + Liabilities",
+                explanation: "The fundamental accounting equation states that a business's assets are financed by either the owner's capital or by liabilities (amounts owed to third parties). (Chapter 5, SFP examples)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 40.
+            {
+                question: "Which of the following is NOT a liability?",
+                options: [
+                    "Trade Payables",
+                    "Bank Loan",
+                    "Bank Overdraft",
+                    "Trade Receivables"
+                ],
+                type: 'single',
+                answer: "Trade Receivables",
+                explanation: "Trade Receivables represent money owed *to* the business by its customers, making it an asset. The other three are all amounts owed *by* the business to third parties, making them liabilities. (Chapter 5, general knowledge)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 41
+            {
+                question: "When processing adjustments using a columnar approach with an initial trial balance, a debit adjustment to a debit balance will:",
+                options: [
+                    "Decrease the final debit balance",
+                    "Increase the final debit balance",
+                    "Create a credit balance",
+                    "Have no effect on the balance"
+                ],
+                type: 'single',
+                answer: "Increase the final debit balance",
+                explanation: "When adjusting a debit balance (like an asset or expense), adding another debit adjustment will increase the total debit value. (Chapter 5, Section 1.4)",
+                topic: "Ledger Accounts & Adjustments",
+                difficulty: "Regular ✅"
+            },
+            // 42
+            {
+                question: "The balance on the sales account is transferred to the profit and loss ledger account by:",
+                options: [
+                    "Debiting the Sales account and crediting the P&L account",
+                    "Crediting the Sales account and debiting the P&L account",
+                    "Debiting the Sales account and debiting the P&L account",
+                    "Crediting the Sales account and crediting the P&L account"
+                ],
+                type: 'single',
+                answer: "Debiting the Sales account and crediting the P&L account",
+                explanation: "The Sales account has a credit balance. To close it, you must debit the Sales account. The corresponding entry in the P&L account is a credit, as sales is an income item. (Chapter 5, Section 3.1)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Tricky ⚠"
+            },
+            // 43
+            {
+                question: "Which of the following would be classified as a non-current asset?",
+                options: [
+                    "Inventory of goods for resale",
+                    "A cash balance at the bank",
+                    "A machine expected to be used for 5 years",
+                    "An amount owed by a customer due in 30 days"
+                ],
+                type: 'single',
+                answer: "A machine expected to be used for 5 years",
+                explanation: "Non-current assets are long-term assets intended for use within the business for more than one accounting period. A machine with a 5-year useful life fits this definition. The others are all current assets. (Chapter 5, SFP examples)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            },
+            // 44
+            {
+                question: "If a business omits a transaction for bank charges of £50 entirely from its records, this is an error of:",
+                options: [
+                    "Commission",
+                    "Principle",
+                    "Omission",
+                    "Compensating"
+                ],
+                type: 'single',
+                answer: "Omission",
+                explanation: "An error of omission is when a transaction is completely left out of the accounting records. No debit or credit entry is made. (Chapter 5, Self-test question 6)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+            // 45
+            {
+                question: "Which of the following lists contains only items that would appear on a Statement of Profit or Loss?",
+                options: [
+                    "Sales, Purchases, Trade Payables",
+                    "Rent, Bank Loan Interest, Drawings",
+                    "Sales, Other Expenses, Bank Loan Interest",
+                    "Capital, Purchases, Rent"
+                ],
+                type: 'single',
+                answer: "Sales, Other Expenses, Bank Loan Interest",
+                explanation: "Sales (income), Other Expenses, and Bank Loan Interest (expense) are all P&L items. Trade Payables, Drawings, and Capital are SFP items. (Chapter 5, general knowledge)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+             // 46. Multiple Correct
+            {
+                question: "A final trial balance is prepared after which TWO of the following steps?",
+                options: [
+                    "Balancing off all ledger accounts.",
+                    "Preparing the Statement of Financial Position.",
+                    "Posting all adjustment journals.",
+                    "Calculating the profit for the period.",
+                    "Extracting the initial list of balances."
+                ],
+                type: 'multiple',
+                answer: ["Posting all adjustment journals.", "Extracting the initial list of balances."],
+                explanation: "The process is: 1) Extract initial trial balance, 2) Prepare and post adjustment journals to correct errors and omissions. The result is the final trial balance, which is then used to prepare the financial statements. (Chapter 5, Section 1.3 & Flowchart)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Regular ✅"
+            },
+             // 47. Calculation
+            {
+                question: "A trial balance has a 'Suspense Account' with a debit balance of £180. It was discovered that a cash payment of £90 for electricity was correctly credited to cash but was not debited to any account. After correcting this omission, what is the balance on the Suspense Account?",
+                options: [
+                    "£90 debit",
+                    "£90 credit",
+                    "£270 debit",
+                    "Zero"
+                ],
+                type: 'single',
+                answer: "£90 debit",
+                explanation: "This tests a concept related to trial balance errors. The missing debit of £90 would have been part of the £180 suspense balance. To correct it, you debit Electricity £90 and credit the Suspense Account £90. The new suspense balance is £180 Dr - £90 Cr = £90 Dr. (Implied knowledge)",
+                topic: "Error Correction",
+                difficulty: "Tricky ⚠"
+            },
+             // 48.
+            {
+                question: "The primary difference between the Statement of Profit or Loss and the Profit and Loss ledger account is:",
+                options: [
+                    "The final profit figure, which is always different.",
+                    "The format and presentation of the information.",
+                    "The ledger account includes asset balances.",
+                    "There is no difference."
+                ],
+                type: 'single',
+                answer: "The format and presentation of the information.",
+                explanation: "Both contain the same underlying data (incomes and expenses) and arrive at the same profit/loss figure. The key difference is the presentation: the ledger account uses a T-account format (debits/credits), while the Statement of Profit or Loss is a vertical, formatted statement for reporting. (Chapter 5, Section 3.2)",
+                topic: "Statement of Profit or Loss",
+                difficulty: "Regular ✅"
+            },
+             // 49.
+            {
+                question: "A compensating error is one where:",
+                options: [
+                    "An error in a debit entry is exactly cancelled out by another error in a credit entry.",
+                    "A transaction is posted to the wrong account.",
+                    "The accountant compensates the owner for a mistake.",
+                    "A transaction is entered twice."
+                ],
+                type: 'single',
+                answer: "An error in a debit entry is exactly cancelled out by another error in a credit entry.",
+                explanation: "A compensating error involves two or more unrelated errors that coincidentally cancel each other out, meaning the trial balance still balances despite the underlying mistakes. For example, overstating sales by £100 and overstating rent by £100. (Chapter 5, Section 1.2)",
+                topic: "The Initial Trial Balance",
+                difficulty: "Tricky ⚠"
+            },
+            // 50.
+            {
+                question: "In the final step of preparing the Statement of Financial Position, the total of Assets must equal the total of:",
+                options: [
+                    "Current Assets + Current Liabilities",
+                    "Non-Current Assets + Non-Current Liabilities",
+                    "Capital + Drawings",
+                    "Capital + Liabilities"
+                ],
+                type: 'single',
+                answer: "Capital + Liabilities",
+                explanation: "This is the core of the accounting equation and the final check for a balanced SFP. Total Assets must be equal to the sum of Total Capital (equity) and Total Liabilities. (Chapter 5, SFP examples)",
+                topic: "Statement of Financial Position",
+                difficulty: "Regular ✅"
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let flaggedQuestions = new Array(questions.length).fill(false);
+        let timerInterval;
+        let timeRemaining = 45 * 60; // 45 minutes in seconds
+
+        // DOM Elements
+        const openingPage = document.getElementById('opening-page');
+        const quizInterface = document.getElementById('quiz-interface');
+        const resultsPage = document.getElementById('results-page');
+        const startBtn = document.getElementById('start-quiz-btn');
+        const timerEl = document.getElementById('timer');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        const flagText = document.getElementById('flag-text');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        
+        // Results Page Elements
+        const scoreTextEl = document.getElementById('score-text');
+        const percentageTextEl = document.getElementById('percentage-text');
+        const correctCountEl = document.getElementById('correct-count');
+        const incorrectCountEl = document.getElementById('incorrect-count');
+        const topicsToReviseEl = document.getElementById('topics-to-revise');
+        const reviewAnswersBtn = document.getElementById('review-answers-btn');
+        const reviewSectionEl = document.getElementById('review-section');
+
+        // Modal Elements
+        const submissionModal = document.getElementById('submission-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+
+        function startQuiz() {
+            openingPage.classList.add('hidden');
+            quizInterface.classList.remove('hidden');
+            populateQuestionTracker();
+            displayQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    showModal('timeUp');
+                }
+            }, 1000);
+        }
+
+        function populateQuestionTracker() {
+            questionTracker.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i + 1;
+                btn.classList.add('tracker-btn', 'w-10', 'h-10', 'rounded-md', 'font-semibold', 'text-sm');
+                btn.dataset.index = i;
+                updateTrackerButtonStatus(btn, i);
+                btn.addEventListener('click', () => {
+                    currentQuestionIndex = i;
+                    displayQuestion();
+                });
+                questionTracker.appendChild(btn);
+            }
+        }
+
+        function updateTrackerButtonStatus(btn, index) {
+            btn.classList.remove('tracker-unattempted', 'tracker-attempted', 'tracker-flagged', 'tracker-current');
+            if (flaggedQuestions[index]) {
+                 btn.classList.add('tracker-flagged');
+            } else if (userAnswers[index] !== null) {
+                btn.classList.add('tracker-attempted');
+            } else {
+                btn.classList.add('tracker-unattempted');
+            }
+
+            if (index === currentQuestionIndex) {
+                 btn.classList.add('tracker-current');
+            }
+        }
+        
+        function updateAllTrackerButtons() {
+            const buttons = questionTracker.querySelectorAll('.tracker-btn');
+            buttons.forEach(btn => {
+                updateTrackerButtonStatus(btn, parseInt(btn.dataset.index));
+            });
+        }
+        
+        function displayQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionNumberEl.textContent = currentQuestionIndex + 1;
+            questionTextEl.innerHTML = question.question; // Use innerHTML to render scenario formatting
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach(option => {
+                const optionWrapper = document.createElement('div');
+                optionWrapper.classList.add('question-option', 'p-4', 'border-2', 'border-gray-200', 'rounded-lg', 'cursor-pointer', 'flex', 'items-center');
+                
+                const input = document.createElement('input');
+                input.name = 'option';
+                input.value = option;
+                input.dataset.optionText = option;
+                
+                if (question.type === 'single') {
+                    input.type = 'radio';
+                    // Check if this option was previously selected
+                    if(userAnswers[currentQuestionIndex] === option) {
+                       input.checked = true;
+                       optionWrapper.classList.add('selected-option');
+                    }
+                } else {
+                    input.type = 'checkbox';
+                    // Check if this option was previously selected in the array
+                    if(Array.isArray(userAnswers[currentQuestionIndex]) && userAnswers[currentQuestionIndex].includes(option)) {
+                       input.checked = true;
+                       optionWrapper.classList.add('selected-option');
+                    }
+                }
+                
+                input.classList.add('mr-4', 'h-5', 'w-5', 'text-sky-600', 'focus:ring-sky-500');
+                
+                const label = document.createElement('label');
+                label.textContent = option;
+                label.classList.add('flex-grow', 'cursor-pointer');
+                label.setAttribute('for', option); // This is not ideal, but works for interaction
+                
+                optionWrapper.appendChild(input);
+                optionWrapper.appendChild(label);
+                
+                optionWrapper.addEventListener('click', () => handleOptionSelect(optionWrapper, input, question.type));
+                optionsContainer.appendChild(optionWrapper);
+            });
+            
+            updateNavigationButtons();
+            updateFlagButton();
+            updateAllTrackerButtons();
+        }
+
+        function handleOptionSelect(wrapper, input, type) {
+            const selectedOptionText = input.dataset.optionText;
+
+            if (type === 'single') {
+                // Unselect all others visually
+                document.querySelectorAll('.question-option').forEach(el => el.classList.remove('selected-option'));
+                document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+
+                // Select the clicked one
+                wrapper.classList.add('selected-option');
+                input.checked = true;
+                userAnswers[currentQuestionIndex] = selectedOptionText;
+
+            } else { // Multiple choice
+                wrapper.classList.toggle('selected-option');
+                input.checked = !input.checked; // This might be redundant depending on browser behavior, but ensures state
+                
+                // Update the answer array
+                let currentSelections = userAnswers[currentQuestionIndex] || [];
+                if(input.checked) {
+                    if(!currentSelections.includes(selectedOptionText)){
+                        currentSelections.push(selectedOptionText);
+                    }
+                } else {
+                    currentSelections = currentSelections.filter(item => item !== selectedOptionText);
+                }
+                userAnswers[currentQuestionIndex] = currentSelections.length > 0 ? currentSelections : null;
+            }
+             updateAllTrackerButtons();
+        }
+        
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+
+        function updateFlagButton() {
+            if (flaggedQuestions[currentQuestionIndex]) {
+                flagBtn.classList.add('bg-orange-100');
+                flagText.textContent = 'Unflag Question';
+            } else {
+                flagBtn.classList.remove('bg-orange-100');
+                flagText.textContent = 'Flag This Question';
+            }
+        }
+
+        function toggleFlag() {
+            flaggedQuestions[currentQuestionIndex] = !flaggedQuestions[currentQuestionIndex];
+            updateFlagButton();
+            updateAllTrackerButtons();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showModal('submit');
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+        
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizInterface.classList.add('hidden');
+            resultsPage.classList.remove('hidden');
+            submissionModal.classList.add('hidden');
+
+            let score = 0;
+            const incorrectTopics = new Set();
+
+            questions.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                let isCorrect = false;
+
+                if (q.type === 'single') {
+                    if (userAnswer === q.answer) {
+                        isCorrect = true;
+                    }
+                } else { // 'multiple'
+                    const correctAnswer = q.answer;
+                    if (Array.isArray(userAnswer) && userAnswer.length === correctAnswer.length) {
+                        isCorrect = correctAnswer.every(val => userAnswer.includes(val));
+                    }
+                }
+
+                if (isCorrect) {
+                    score++;
+                } else {
+                    incorrectTopics.add(q.topic);
+                }
+            });
+
+            const percentage = ((score / questions.length) * 100).toFixed(1);
+            scoreTextEl.textContent = `${score} / ${questions.length}`;
+            percentageTextEl.textContent = `You scored ${percentage}%`;
+            correctCountEl.textContent = score;
+            incorrectCountEl.textContent = questions.length - score;
+
+            topicsToReviseEl.innerHTML = '';
+            if (incorrectTopics.size > 0) {
+                incorrectTopics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.textContent = topic;
+                    topicsToReviseEl.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "Excellent work! No specific weak areas identified.";
+                li.classList.add('text-green-700', 'font-semibold');
+                topicsToReviseEl.appendChild(li);
+            }
+            
+            generateReviewSection();
+        }
+        
+        function generateReviewSection() {
+            reviewSectionEl.innerHTML = '';
+            questions.forEach((q, index) => {
+                const reviewCard = document.createElement('div');
+                reviewCard.classList.add('bg-white', 'p-6', 'rounded-xl', 'shadow-lg', 'mb-6');
+
+                const userAnswer = userAnswers[index];
+                let isCorrect = false;
+                if (q.type === 'single') {
+                    isCorrect = userAnswer === q.answer;
+                } else {
+                    const correctAnswer = q.answer;
+                    isCorrect = Array.isArray(userAnswer) && userAnswer.length === correctAnswer.length && correctAnswer.every(val => userAnswer.includes(val));
+                }
+
+                let statusHtml = isCorrect 
+                    ? `<span class="text-green-600 font-bold">Correct</span>`
+                    : `<span class="text-red-600 font-bold">Incorrect</span>`;
+
+                reviewCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-semibold">Question ${index + 1} <span class="text-base font-normal ml-4">${q.difficulty}</span></h3>
+                        <p class="text-lg">${statusHtml}</p>
+                    </div>
+                    <div class="text-lg mb-6 leading-relaxed">${q.question}</div>
+                    <div class="space-y-3 mb-6">
+                        ${q.options.map(option => {
+                            let optionClass = 'border-gray-200';
+                            let isSelected = false;
+                            
+                            if (q.type === 'single') {
+                                isSelected = (userAnswer === option);
+                            } else {
+                                isSelected = Array.isArray(userAnswer) && userAnswer.includes(option);
+                            }
+                            
+                            // Check if this option is a correct answer
+                            const isCorrectAnswer = (q.type === 'single' && option === q.answer) || (q.type === 'multiple' && q.answer.includes(option));
+                            
+                            if (isCorrectAnswer) {
+                                optionClass = 'correct-answer'; // Green for correct answer
+                            }
+                            
+                            if(isSelected && !isCorrectAnswer) {
+                                optionClass = 'incorrect-answer'; // Red if user selected and it's wrong
+                            }
+
+                            return `<div class="p-4 border-2 rounded-lg ${optionClass}">${option}</div>`;
+                        }).join('')}
+                    </div>
+                    <div class="bg-sky-50 p-4 rounded-lg border border-sky-200">
+                        <h4 class="font-bold text-sky-800 mb-2">Explanation</h4>
+                        <p>${q.explanation}</p>
+                    </div>
+                `;
+                reviewSectionEl.appendChild(reviewCard);
+            });
+        }
+        
+        function showModal(type) {
+             modalCancelBtn.classList.remove('hidden');
+             if(type === 'timeUp') {
+                 modalTitle.textContent = "Time's Up!";
+                 modalText.textContent = "The exam time has finished. Your answers will be submitted automatically.";
+                 modalCancelBtn.classList.add('hidden');
+             } else { // submit
+                 modalTitle.textContent = "Confirm Submission";
+                 modalText.textContent = "Are you sure you want to finish the exam and submit your answers?";
+             }
+             submissionModal.classList.remove('hidden');
+        }
+
+
+        // Event Listeners
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', nextQuestion);
+        prevBtn.addEventListener('click', prevQuestion);
+        flagBtn.addEventListener('click', toggleFlag);
+        submitQuizBtn.addEventListener('click', () => showModal('submit'));
+        
+        reviewAnswersBtn.addEventListener('click', () => {
+            reviewSectionEl.classList.toggle('hidden');
+            reviewAnswersBtn.textContent = reviewSectionEl.classList.contains('hidden') 
+                ? 'Review Your Answers'
+                : 'Hide Review';
+        });
+
+        modalConfirmBtn.addEventListener('click', submitQuiz);
+        modalCancelBtn.addEventListener('click', () => submissionModal.classList.add('hidden'));
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB Quiz: Cost of Sales and Inventories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-option.selected {
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            border-color: #3b82f6;
+        }
+        .quiz-option.correct {
+            background-color: #22c55e; /* green-500 */
+            color: white;
+            border-color: #22c55e;
+        }
+        .quiz-option.incorrect {
+            background-color: #ef4444; /* red-500 */
+            color: white;
+            border-color: #ef4444;
+        }
+        .flagged-question {
+            background-color: #f59e0b !important; /* amber-500 */
+            color: white !important;
+        }
+        .attempted-question {
+            background-color: #22c55e !important; /* green-500 */
+            color: white !important;
+        }
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-inactive {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="home-page" class="flex flex-col items-center justify-center min-h-screen p-4">
+        <div class="text-center bg-white p-8 rounded-2xl shadow-xl max-w-2xl w-full">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600">ICAB – Accounting</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-gray-700 mt-2">Chapter: Cost of Sales and Inventories</h2>
+            <p class="mt-4 text-gray-600">Test your knowledge with 50 ICAB exam-level MCQs. You have 45 minutes to complete the quiz.</p>
+            <button id="start-quiz-btn" class="mt-8 bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                Start Quiz
+            </button>
+            <button id="instructions-btn" class="mt-4 text-sm text-gray-500 hover:text-blue-600">View Instructions</button>
+        </div>
+        <div class="text-center mt-8 text-sm text-gray-500">
+            <p>Prepared by:</p>
+            <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-500 hover:underline">🔗 K M Mahafuzul Alam</a>
+            <p class="mt-1">📞 WhatsApp: 01728-928984 | 📧 Email: kmmhafuzulalam@gmail.com</p>
+        </div>
+    </div>
+
+    <div id="quiz-page" class="hidden">
+        <div class="flex flex-col md:flex-row min-h-screen">
+            <!-- Left Side Panel -->
+            <div class="w-full md:w-1/4 bg-white p-4 shadow-lg md:h-screen md:sticky md:top-0 overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4 text-center">Question Tracker</h3>
+                <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                    <!-- Question buttons will be inserted here -->
+                </div>
+                <div class="mt-6 text-sm">
+                    <h4 class="font-semibold mb-2">Legend:</h4>
+                    <div class="flex items-center mb-1"><span class="w-4 h-4 rounded-full bg-gray-200 border border-gray-400 mr-2"></span> Unattempted</div>
+                    <div class="flex items-center mb-1"><span class="w-4 h-4 rounded-full bg-green-500 mr-2"></span> Attempted</div>
+                    <div class="flex items-center"><span class="w-4 h-4 rounded-full bg-amber-500 mr-2"></span> Flagged</div>
+                </div>
+            </div>
+
+            <!-- Right Side Panel (Main Content) -->
+            <div class="w-full md:w-3/4 p-4 md:p-8">
+                <div class="bg-white p-6 rounded-2xl shadow-xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                           <span id="question-number" class="text-xl font-bold text-blue-600"></span>
+                           <span id="question-type-badge" class="ml-2 text-xs font-semibold px-2.5 py-0.5 rounded-full"></span>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <div id="timer" class="text-2xl font-bold text-red-500">45:00</div>
+                            <button id="flag-question-btn" class="mt-1 text-sm text-amber-500 hover:text-amber-600"><i class="far fa-flag"></i> Flag This Question</button>
+                        </div>
+                    </div>
+                    
+                    <div id="question-container" class="mb-6">
+                        <p id="question-text" class="text-lg leading-relaxed"></p>
+                    </div>
+                    
+                    <div id="options-container" class="space-y-3">
+                        <!-- Options will be inserted here -->
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button id="prev-btn" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition">Previous</button>
+                        <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition">Next</button>
+                        <button id="submit-btn" class="hidden bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition">Submit Quiz</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results-page" class="hidden p-4 md:p-8">
+        <div class="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-xl">
+            <h2 class="text-3xl font-bold text-center text-blue-600 mb-6">Quiz Results</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-8">
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <div class="text-4xl font-bold text-blue-700" id="overall-score"></div>
+                    <div class="text-sm text-blue-600">Overall Score</div>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <div class="text-4xl font-bold text-green-700" id="correct-percentage"></div>
+                    <div class="text-sm text-green-600">% Correct</div>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <div class="text-4xl font-bold text-red-700" id="incorrect-percentage"></div>
+                    <div class="text-sm text-red-600">% Incorrect</div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Topic-wise Performance</h3>
+                <div id="topic-performance" class="space-y-2"></div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Gamification</h3>
+                <div class="flex items-center space-x-8">
+                    <div><i class="fas fa-star text-yellow-400 text-2xl"></i> <span id="xp-points" class="font-bold"></span> XP Points</div>
+                    <div><i class="fas fa-shield-alt text-blue-500 text-2xl"></i> <span id="badges" class="font-bold"></span></div>
+                    <div><i class="fas fa-chart-line text-green-500 text-2xl"></i> Level: <span id="level" class="font-bold"></span></div>
+                </div>
+            </div>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold mb-3">Revision Suggestions</h3>
+                <ul id="revision-suggestions" class="list-disc list-inside text-gray-700 space-y-1"></ul>
+            </div>
+
+            <div class="text-center">
+                <button id="review-answers-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition">Review Answers</button>
+                <button id="retake-quiz-btn" class="ml-4 bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition">Retake Quiz</button>
+            </div>
+        </div>
+        <div id="review-section" class="hidden max-w-4xl mx-auto mt-8"></div>
+         <div class="text-center mt-8 text-sm text-gray-500">
+            <p>Prepared by:</p>
+            <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-500 hover:underline">🔗 K M Mahafuzul Alam</a>
+            <p class="mt-1">📞 WhatsApp: 01728-928984 | 📧 Email: kmmhafuzulalam@gmail.com</p>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="instructions-modal" class="modal modal-inactive fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-lg w-full">
+            <h2 class="text-2xl font-bold mb-4">Quiz Instructions</h2>
+            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                <li>This quiz contains <strong>50 multiple-choice questions</strong>.</li>
+                <li>You have <strong>45 minutes</strong> to complete the quiz.</li>
+                <li>Questions include single-choice, multiple-choice, fill-in-the-blanks, and scenario-based problems.</li>
+                <li>Use the <strong>Question Tracker</strong> on the left to navigate between questions.</li>
+                <li>Flag questions you want to review later using the <strong>"Flag This Question"</strong> button.</li>
+                <li>Your progress is saved automatically. You must click the <strong>"Submit Quiz"</strong> button to see your results.</li>
+            </ul>
+            <div class="text-right mt-6">
+                <button id="close-modal-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+const quizData = [
+    // Questions based on PDF content with explanations for all.
+    {
+        question: "According to IAS 2, inventories are assets that are:",
+        options: ["Held for sale in the ordinary course of business", "In the process of production for such sale", "In the form of materials or supplies to be consumed in the production process", "All of the above"],
+        answer: ["All of the above"],
+        type: "Standard MCQ",
+        topic: "IAS 2 Fundamentals",
+        difficulty: "✅ Regular",
+        explanation: "IAS 2 defines inventories broadly to include finished goods, work in progress, and raw materials. Therefore, all the given options are correct components of the definition."
+    },
+    {
+        question: "Which of the following is the correct formula for calculating Cost of Sales?",
+        options: ["Opening inventory + Purchases - Closing inventory", "Sales - Gross Profit", "Opening inventory + Purchases + Delivery inwards - Closing inventory", "Purchases - Closing inventory"],
+        answer: ["Opening inventory + Purchases + Delivery inwards - Closing inventory"],
+        type: "Standard MCQ",
+        topic: "Cost of Sales Calculation",
+        difficulty: "✅ Regular",
+        explanation: "The cost of sales must account for all costs to bring goods to a saleable condition and location. This includes opening stock, adding new purchases and delivery inwards, and subtracting the value of goods not sold (closing stock)."
+    },
+    {
+        question: "The cost of 'delivery outwards' is treated as a:",
+        options: ["Component of cost of sales", "Distribution cost", "Administrative expense", "Finance cost"],
+        answer: ["Distribution cost"],
+        type: "Standard MCQ",
+        topic: "Cost Components",
+        difficulty: "✅ Regular",
+        explanation: "Delivery outwards is the cost of delivering goods to the customer. It is a selling and distribution expense, incurred after the goods are ready for sale, and is deducted from Gross Profit."
+    },
+    {
+        question: "Inventories should be valued at the lower of ________ and net realisable value (NRV).",
+        options: ["market value", "cost", "replacement value", "sales price"],
+        answer: ["cost"],
+        type: "Fill in the blank",
+        topic: "Inventory Valuation",
+        difficulty: "✅ Regular",
+        explanation: "This is the core principle of inventory valuation under IAS 2. It ensures that inventory is not stated at more than the amount expected to be realised from its sale."
+    },
+    {
+        question: "Which of the following inventory valuation methods are permitted under IAS 2? (Select two)",
+        options: ["FIFO (First-In, First-Out)", "LIFO (Last-In, Last-Out)", "AVCO (Average Cost)", "HIFO (Highest-In, First-Out)"],
+        answer: ["FIFO (First-In, First-Out)", "AVCO (Average Cost)"],
+        type: "Multiple Correct",
+        topic: "Inventory Valuation Methods",
+        difficulty: "⚠ Tricky",
+        explanation: "IAS 2 explicitly permits the use of FIFO and weighted-average cost (AVCO) methods. It specifically prohibits the use of LIFO (Last-In, First-Out)."
+    },
+    {
+        question: "Net Realisable Value (NRV) is defined as:",
+        options: ["Expected selling price in the ordinary course of business.", "Expected selling price less the estimated costs of completion.", "Expected selling price less the estimated costs necessary to make the sale.", "Expected selling price less estimated costs of completion and the estimated costs necessary to make the sale."],
+        answer: ["Expected selling price less estimated costs of completion and the estimated costs necessary to make the sale."],
+        type: "Standard MCQ",
+        topic: "Inventory Valuation",
+        difficulty: "⚠ Tricky",
+        explanation: "This is the complete definition from IAS 2. NRV must account for all future costs required to both finish the product and sell it."
+    },
+    {
+        question: "When an owner takes inventory for their own use, the correct double entry is:",
+        options: ["Debit Drawings, Credit Purchases", "Debit Drawings, Credit Inventory", "Debit Cost of Sales, Credit Drawings", "Debit Drawings, Credit Cost of Sales"],
+        answer: ["Debit Drawings, Credit Cost of Sales"],
+        type: "Standard MCQ",
+        topic: "Inventory Drawings",
+        difficulty: "✅ Regular",
+        explanation: "The goods taken are a form of drawings by the owner. The credit to Cost of Sales removes the cost of these goods from the business's expenses, as they were not sold to a customer."
+    },
+    {
+        question: "Which of the following costs should be included in the cost of inventory for a manufacturing company?",
+        options: ["Cost of raw materials", "Direct labour costs", "A proportion of production overheads", "All of the above"],
+        answer: ["All of the above"],
+        type: "Standard MCQ",
+        topic: "Cost Components",
+        difficulty: "✅ Regular",
+        explanation: "The cost of manufactured inventory includes all costs of purchase and conversion costs, which are comprised of raw materials, direct labour, and an appropriate share of production overheads."
+    },
+     {
+        question: "Which of these costs would NOT be included in the cost of sales for a service organisation like a consultancy firm?",
+        options: ["Salaries of consultants working directly on client projects", "Commission paid to sales agents for securing new contracts", "The annual rent for the head office building", "Costs of printing and binding reports for a specific client"],
+        answer: ["The annual rent for the head office building"],
+        type: "Standard MCQ",
+        topic: "Cost of Sales - Service Org",
+        difficulty: "✅ Regular",
+        explanation: "Cost of sales for a service firm includes direct costs of providing the service. Office rent is a general administrative overhead, not a direct cost of a specific service."
+    },
+    {
+        question: "If a material amount of inventory is stolen and is subject to an insurance claim, how should the cost of the stolen goods be treated?",
+        options: ["Left in cost of sales to reduce gross profit", "Treated as an administrative expense", "Offset against the insurance income", "None of the above"],
+        answer: ["Treated as an administrative expense"],
+        type: "Standard MCQ",
+        topic: "Inventory Write-Off",
+        difficulty: "⚠ Tricky",
+        explanation: "To avoid distorting the gross profit, the cost of the stolen goods is removed from the cost of sales calculation and shown separately as an expense. Any insurance proceeds are treated as 'other income'."
+    },
+    {
+        question: "A business has opening inventory of £15,000, purchases of £80,000, and closing inventory of £20,000. Delivery inwards was £2,000. What is the cost of sales?",
+        options: ["£73,000", "£75,000", "£77,000", "£117,000"],
+        answer: ["£77,000"],
+        type: "Calculation",
+        topic: "Cost of Sales Calculation",
+        difficulty: "✅ Regular",
+        explanation: "Cost of Sales = Opening Inventory + Purchases + Delivery Inwards - Closing Inventory = £15,000 + £80,000 + £2,000 - £20,000 = £77,000."
+    },
+    {
+        question: "A company sells goods at a mark-up of 25% on cost. If the revenue for the period was £100,000, what was the cost of sales?",
+        options: ["£75,000", "£80,000", "£125,000", "£100,000"],
+        answer: ["£80,000"],
+        type: "Calculation",
+        topic: "Mark-up/Margin",
+        difficulty: "⚠ Tricky",
+        explanation: "Mark-up is on cost. So, Sales = Cost * (1 + Mark-up %). The selling price represents 125% of the cost. Cost = £100,000 / 1.25 = £80,000."
+    },
+    {
+        question: "A business operates with a gross profit margin of 40%. If sales are £200,000, what is the value of the cost of sales?",
+        options: ["£80,000", "£120,000", "£280,000", "£140,000"],
+        answer: ["£120,000"],
+        type: "Calculation",
+        topic: "Mark-up/Margin",
+        difficulty: "✅ Regular",
+        explanation: "Margin is on sales. Gross Profit = 40% of £200,000 = £80,000. Cost of Sales = Sales - Gross Profit = £200,000 - £80,000 = £120,000."
+    },
+    {
+        question: "An item of inventory cost £50. Its expected selling price is £60. Costs to sell are estimated at £12. What is the correct valuation for this item in the financial statements?",
+        options: ["£60", "£50", "£48", "£72"],
+        answer: ["£48"],
+        type: "Calculation",
+        topic: "Inventory Valuation",
+        difficulty: "⚠ Tricky",
+        explanation: "Valuation is the lower of Cost (£50) and NRV. NRV = Selling Price - Costs to Sell = £60 - £12 = £48. The lower value is £48."
+    },
+    {
+        question: "A business has the following inventory items: Item A (Cost £100, NRV £120), Item B (Cost £200, NRV £180). What is the total value of inventory to be reported?",
+        options: ["£300", "£280", "£320", "£380"],
+        answer: ["£280"],
+        type: "Calculation",
+        topic: "Inventory Valuation",
+        difficulty: "⚠ Tricky",
+        explanation: "The lower of cost and NRV rule must be applied to each item separately. Item A is valued at cost (£100). Item B is valued at NRV (£180). Total value = £100 + £180 = £280."
+    },
+    {
+        question: "Inventory costing £10,000 was destroyed in a fire. The inventory was insured for 80% of its cost and the insurance company has agreed to pay the claim. What is the net expense to be recognised in the statement of profit or loss?",
+        options: ["£10,000 expense", "£8,000 income", "£2,000 expense", "No effect"],
+        answer: ["£2,000 expense"],
+        type: "Calculation",
+        topic: "Inventory Write-Off",
+        difficulty: "⚠ Tricky",
+        explanation: "The cost of destroyed inventory (£10,000) is an expense. The insurance claim (£8,000) is recognised as other income. The net effect on profit is an expense of £10,000 - £8,000 = £2,000."
+    },
+    {
+        question: "A trader took goods for personal use that had a selling price of £420. The business applies a mark-up of 40% on cost. What is the value of drawings?",
+        options: ["£420", "£252", "£300", "£168"],
+        answer: ["£300"],
+        type: "Calculation",
+        topic: "Inventory Drawings",
+        difficulty: "⚠ Tricky",
+        explanation: "Drawings are recorded at cost, not selling price. Selling Price = Cost * (1 + Mark-up). £420 = Cost * 1.40. Cost = £420 / 1.40 = £300."
+    },
+    {
+        question: "Scenario: A retail company, 'FashionFast', ends its year on 31 Dec 20X3. It holds a batch of winter coats that cost £5,000. Due to an unusually warm winter, it's estimated these coats can only be sold for £4,000 after a marketing campaign costing £500. What value should be assigned to the coats in the closing inventory?",
+        options: ["£5,000", "£4,000", "£3,500", "£4,500"],
+        answer: ["£3,500"],
+        type: "Scenario",
+        topic: "Inventory Valuation",
+        difficulty: "✅ Regular",
+        explanation: "The inventory must be valued at the lower of cost (£5,000) and NRV. NRV = Estimated Selling Price - Costs to Sell = £4,000 - £500 = £3,500. The lower value is £3,500."
+    },
+    {
+        question: "Scenario: 'TechGadgets Ltd' purchases microchips. On 1st May, they have 100 units costing £10 each. On 5th May, they buy 200 units at £12 each. On 10th May, they sell 150 units. Using the FIFO method, what is the cost of sales for this transaction?",
+        options: ["£1,500", "£1,800", "£1,600", "£1,700"],
+        answer: ["£1,600"],
+        type: "Scenario",
+        topic: "Inventory Valuation Methods",
+        difficulty: "⚠ Tricky",
+        explanation: "FIFO assumes the first units bought are the first ones sold. The 150 units sold consist of: the first 100 units @ £10 (£1,000) + 50 units from the next batch @ £12 (£600). Total Cost of Sales = £1,000 + £600 = £1,600."
+    },
+    {
+        question: "Scenario: Using the same data for 'TechGadgets Ltd' (Opening: 100 units @ £10; Purchase: 200 units @ £12; Sale: 150 units), what is the value of closing inventory using the AVCO method after the purchase on 5th May?",
+        options: ["£1,700", "£1,800", "£1,733", "£1,750"],
+        answer: ["£1,700"],
+        type: "Scenario",
+        topic: "Inventory Valuation Methods",
+        difficulty: "⚠ Tricky",
+        explanation: "First, calculate the weighted average cost. Total Cost = (100*£10) + (200*£12) = £3,400. Total Units = 300. AVCO per unit = £3,400 / 300 = £11.333. Cost of sales for 150 units = 150 * £11.333 = £1,700. Closing inventory value = (300-150) units * £11.333 = £1,700."
+    },
+    {
+        question: "Scenario: A professional services firm, 'ConsultRight', incurs the following costs in January: Office Rent £5,000, Salaries of consultants (directly billable hours) £20,000, Salary of the CEO £10,000, Commission to sales team for new contracts £3,000. Which costs should be included in 'Cost of Sales'?",
+        options: ["£20,000 only", "£23,000", "£33,000", "£38,000"],
+        answer: ["£23,000"],
+        type: "Scenario",
+        topic: "Cost of Sales - Service Org",
+        difficulty: "✅ Regular",
+        explanation: "For a service firm, cost of sales includes direct costs of providing the service. This includes the salaries of consultants working on projects (£20,000) and the sales commission (£3,000). Office rent and CEO salary are general overheads."
+    },
+    { question: "The journal entry to transfer opening inventory to the cost of sales account is:", options: ["Debit Inventory, Credit Cost of Sales", "Debit Cost of Sales, Credit Inventory", "Debit Profit & Loss, Credit Inventory", "Debit Inventory, Credit Purchases"], answer: ["Debit Cost of Sales, Credit Inventory"], type: "Standard MCQ", topic: "Ledger Accounting", difficulty: "✅ Regular", explanation: "At the start of a period, the opening inventory value is transferred from an asset (Inventory) to an expense (Cost of Sales) as it is now assumed to be available for sale during the period." },
+    { question: "Continuous inventory counting (perpetual inventory) differs from periodic counting in that it:", options: ["Is only done by large companies", "Happens only once a year", "Involves counting a few items regularly throughout the period", "Is less accurate"], answer: ["Involves counting a few items regularly throughout the period"], type: "Standard MCQ", topic: "Inventory Counting", difficulty: "✅ Regular", explanation: "Continuous or perpetual counting is a method where inventory is counted on a rolling basis throughout the year, as opposed to a single, large count at year-end (periodic)." },
+    { question: "Which of the following are valid reasons for inventory to be written down below its cost? (Select all that apply)", options: ["The goods are damaged", "The goods have become obsolete", "A marketing decision to sell them at a loss to attract customers", "The purchase price of new inventory has fallen"], answer: ["The goods are damaged", "The goods have become obsolete", "A marketing decision to sell them at a loss to attract customers"], type: "Multiple Correct", topic: "Inventory Write-Down", difficulty: "⚠ Tricky", explanation: "Any event that reduces the expected selling price or increases the costs to sell can lead to the NRV falling below cost. A fall in the purchase price of new stock does not automatically mean the existing stock's NRV has fallen." },
+    { question: "A business has a gross profit margin of 20%. What is the equivalent mark-up on cost?", options: ["20%", "25%", "15%", "30%"], answer: ["25%"], type: "Calculation", topic: "Mark-up/Margin", difficulty: "⚠ Tricky", explanation: "If Margin is 20% (1/5), then Sales=100, GP=20, Cost=80. Mark-up is calculated as (Gross Profit / Cost) * 100 = (20 / 80) * 100 = 25%." },
+    { question: "In a period of rising prices, which inventory valuation method will generally result in the highest reported profit?", options: ["FIFO", "AVCO", "LIFO", "They will all be the same"], answer: ["FIFO"], type: "Standard MCQ", topic: "Inventory Valuation Methods", difficulty: "⚠ Tricky", explanation: "FIFO matches the oldest (and therefore cheapest) costs against current revenues, which results in a lower cost of sales and a higher reported profit during inflation." },
+    { question: "An initial trial balance shows an opening inventory of £5,000 and purchases of £50,000. A closing inventory of £8,000 is counted. After adjustment, what will be the final balance on the Cost of Sales account?", options: ["£55,000", "£63,000", "£47,000", "£53,000"], answer: ["£47,000"], type: "Calculation", topic: "Trial Balance Adjustments", difficulty: "✅ Regular", explanation: "Cost of Sales = Opening Inventory (£5,000) + Purchases (£50,000) - Closing Inventory (£8,000) = £47,000." },
+    { question: "Scenario: 'AutoParts Ltd' discovers that 100 units of a specific part, costing £15 each, were omitted from the year-end inventory count. These parts have an NRV of £12 each. What is the effect of correcting this error on the company's profit?", options: ["Increase profit by £1,500", "Increase profit by £1,200", "Decrease profit by £300", "Decrease profit by £1,200"], answer: ["Increase profit by £1,200"], type: "Scenario", topic: "Inventory Errors", difficulty: "⚠ Tricky", explanation: "The inventory should be included at the lower of cost (£15) and NRV (£12), so at £12 per unit. Total value = 100 * £12 = £1,200. Including this omitted closing inventory reduces Cost of Sales by £1,200, therefore increasing profit by £1,200." },
+    { question: "The primary objective of IAS 2 is to prescribe the accounting treatment for ________.", options: ["revenue", "non-current assets", "inventories", "liabilities"], answer: ["inventories"], type: "Fill in the blank", topic: "IAS 2 Fundamentals", difficulty: "✅ Regular", explanation: "IAS 2 specifically deals with how to account for inventories, including their valuation and recognition as an expense." },
+    { question: "Which of these items would be classified as 'work in progress' inventory for a car manufacturer?", options: ["Sheet metal in the warehouse", "A fully assembled car in the showroom", "A car chassis on the assembly line with the engine just fitted", "Tires purchased from a supplier"], answer: ["A car chassis on the assembly line with the engine just fitted"], type: "Standard MCQ", topic: "IAS 2 Fundamentals", difficulty: "✅ Regular", explanation: "Work in progress refers to goods that are in the process of production but are not yet complete. The car chassis on the assembly line fits this description." },
+    { question: "The 'cost of conversion' includes:", options: ["Direct materials and direct labour only", "Direct labour and production overheads only", "Direct materials, direct labour, and a systematic allocation of production overheads", "Selling and administrative overheads"], answer: ["Direct materials, direct labour, and a systematic allocation of production overheads"], type: "Standard MCQ", topic: "Cost Components", difficulty: "✅ Regular", explanation: "Conversion costs are those incurred in converting raw materials into finished goods. This includes direct labour and a share of both variable and fixed production overheads." },
+    { question: "A company has closing inventory with a cost of £10,000. It would cost £500 to ship to a customer, and the expected selling price is £11,000. The inventory should be valued at:", options: ["£10,000", "£11,000", "£10,500", "£9,500"], answer: ["£10,000"], type: "Calculation", topic: "Inventory Valuation", difficulty: "✅ Regular", explanation: "The valuation is the lower of Cost (£10,000) and NRV. NRV = Selling Price (£11,000) - Costs to Sell (£500) = £10,500. The lower of the two is cost at £10,000." },
+    { question: "If closing inventory is overstated, what is the effect on the current year's and next year's profit?", options: ["Current profit overstated, next year's profit understated", "Current profit understated, next year's profit overstated", "Both are overstated", "Both are understated"], answer: ["Current profit overstated, next year's profit understated"], type: "Standard MCQ", topic: "Inventory Errors", difficulty: "⚠ Tricky", explanation: "Overstating closing inventory understates the cost of sales, thus overstating current profit. This error reverses in the next period, as the overstated opening inventory will overstate the cost of sales, thus understating the next year's profit." },
+    { question: "Which of the following would NOT be considered inventory for a supermarket?", options: ["Cans of beans on the shelf", "The delivery vans used to transport goods", "Fresh bread in the bakery section", "Cleaning supplies to be used in the store"], answer: ["The delivery vans used to transport goods"], type: "Standard MCQ", topic: "IAS 2 Fundamentals", difficulty: "✅ Regular", explanation: "Delivery vans are a non-current asset (Property, Plant, and Equipment) used in the operation of the business, not goods held for resale." },
+    { question: "A business buys 10 units for £5 each and then 10 units for £7 each. It sells 12 units. Using AVCO, what is the cost of sales?", options: ["£60", "£72", "£70", "£62"], answer: ["£72"], type: "Calculation", topic: "Inventory Valuation Methods", difficulty: "✅ Regular", explanation: "Total cost = (10*£5) + (10*£7) = £120. Total units = 20. Weighted average cost = £120 / 20 = £6 per unit. Cost of sales for 12 units = 12 units * £6/unit = £72." },
+    { question: "The journal entry to record closing inventory in the ledger accounts at year-end is:", options: ["Debit Cost of Sales, Credit Inventory", "Debit Inventory, Credit Purchases", "Debit Inventory, Credit Cost of Sales", "Debit Profit & Loss, Credit Cost of Sales"], answer: ["Debit Inventory, Credit Cost of Sales"], type: "Standard MCQ", topic: "Ledger Accounting", difficulty: "✅ Regular", explanation: "Closing inventory is an asset, so the Inventory account is debited. The corresponding credit to Cost of Sales reduces the expense for the period to reflect the goods that were not sold." },
+    { question: "Scenario: 'Bookworm Ltd' has 1,000 books in inventory that cost £8 each. They can be sold for £10 each, but a 15% sales commission is paid to the sales staff. What is the NRV per book?", options: ["£10.00", "£8.00", "£8.50", "£9.20"], answer: ["£8.50"], type: "Scenario", topic: "Inventory Valuation", difficulty: "✅ Regular", explanation: "NRV = Selling Price - Costs to Sell. Commission = 15% of £10 = £1.50. NRV = £10.00 - £1.50 = £8.50." },
+    { question: "Which principle is most directly related to the 'lower of cost and NRV' rule?", options: ["Going Concern", "Materiality", "Prudence (or Conservatism)", "Accruals"], answer: ["Prudence (or Conservatism)"], type: "Standard MCQ", topic: "Accounting Principles", difficulty: "⚠ Tricky", explanation: "The prudence concept dictates that assets and income should not be overstated, and liabilities and expenses should not be understated. The lower of cost and NRV rule applies this by recognising expected losses immediately." },
+    { question: "If a company changes its inventory valuation method from FIFO to AVCO, this is considered a:", options: ["Change in accounting policy", "Change in accounting estimate", "Correction of a prior period error", "It is not a change"], answer: ["Change in accounting policy"], type: "Standard MCQ", topic: "Accounting Principles", difficulty: "⚠ Tricky", explanation: "The choice between FIFO and AVCO is a choice of accounting policy. Changing this method requires retrospective application according to IAS 8." },
+    { question: "Cost of sales for a period was £50,000. Opening inventory was £10,000 and closing inventory was £12,000. What were the purchases for the period (assuming no delivery costs)?", options: ["£48,000", "£52,000", "£72,000", "£28,000"], answer: ["£52,000"], type: "Calculation", topic: "Cost of Sales Calculation", difficulty: "✅ Regular", explanation: "Rearranging the formula: Purchases = Cost of Sales - Opening Inventory + Closing Inventory = £50,000 - £10,000 + £12,000 = £52,000." },
+    { question: "All of the following are costs of purchase EXCEPT:", options: ["Purchase price", "Import duties", "Transport costs for bringing goods in", "Trade discounts received"], answer: ["Trade discounts received"], type: "Standard MCQ", topic: "Cost Components", difficulty: "✅ Regular", explanation: "Trade discounts are deducted from the cost of purchases; they are not an additional cost." },
+    { question: "Scenario: A company's draft profit is £50,000. It is then discovered that closing inventory is understated by £5,000. What is the corrected profit?", options: ["£45,000", "£50,000", "£55,000", "Cannot be determined"], answer: ["£55,000"], type: "Scenario", topic: "Inventory Errors", difficulty: "✅ Regular", explanation: "Understating closing inventory overstates the cost of sales, which understates profit. Correcting the error by increasing closing inventory by £5,000 will decrease cost of sales by £5,000 and therefore increase profit by £5,000." },
+    { question: "What is the primary reason for physically counting inventory?", options: ["To determine the sales price", "To verify the accuracy of the inventory records", "To calculate employee bonuses", "To prepare a marketing plan"], answer: ["To verify the accuracy of the inventory records"], type: "Standard MCQ", topic: "Inventory Counting", difficulty: "✅ Regular", explanation: "A physical count is essential to confirm the quantities shown in the accounting records and to identify any discrepancies due to theft, damage, or errors." },
+    { question: "A business has a mark-up of 50%. If an item costs £200, what is its selling price?", options: ["£300", "£100", "£250", "£400"], answer: ["£300"], type: "Calculation", topic: "Mark-up/Margin", difficulty: "✅ Regular", explanation: "Mark-up is on cost. Selling Price = Cost + (Cost * Mark-up %) = £200 + (£200 * 50%) = £200 + £100 = £300." },
+    { question: "Which of the following statements about inventory drawings is true?", options: ["They increase the cost of sales", "They are recorded at selling price", "They reduce the cost of sales and are debited to the drawings account", "They have no effect on the financial statements"], answer: ["They reduce the cost of sales and are debited to the drawings account"], type: "Standard MCQ", topic: "Inventory Drawings", difficulty: "✅ Regular", explanation: "Drawings of inventory reduce the amount of goods available for sale (reducing cost of sales) and represent a withdrawal of capital by the owner (debited to drawings)." },
+    { question: "In the statement of financial position, inventory is classified as a:", options: ["Non-current asset", "Current asset", "Current liability", "Non-current liability"], answer: ["Current asset"], type: "Standard MCQ", topic: "Financial Statements", difficulty: "✅ Regular", explanation: "Inventory is considered a current asset because it is expected to be sold or used up within one operating cycle or year." },
+    { question: "Scenario: 'Creative Crafts' makes handmade furniture. A table has raw material costs of £100, direct labour costs of £80, and variable production overheads of £20. Fixed production overheads for the month are £5,000, and 100 tables were made. What is the cost of one table to be included in inventory?", options: ["£200", "£250", "£180", "£270"], answer: ["£250"], type: "Scenario", topic: "Cost Components", difficulty: "⚠ Tricky", explanation: "The cost of inventory must include a share of fixed production overheads. Fixed overhead per unit = £5,000 / 100 tables = £50 per table. Total cost = Raw Materials (£100) + Direct Labour (£80) + Variable Overheads (£20) + Fixed Overheads (£50) = £250." },
+    { question: "If a business has no opening or closing inventory, its cost of sales is equal to its ________.", options: ["sales", "gross profit", "purchases", "net profit"], answer: ["purchases"], type: "Fill in the blank", topic: "Cost of Sales Calculation", difficulty: "✅ Regular", explanation: "If inventory levels don't change, then all goods purchased during the period are assumed to have been sold. Thus, cost of sales equals purchases." },
+    { question: "The 'accruals' or 'matching' concept is the underlying reason for adjusting purchases for opening and closing inventory to calculate cost of sales. This statement is:", options: ["True", "False"], answer: ["True"], type: "Standard MCQ", topic: "Accounting Principles", difficulty: "✅ Regular", explanation: "The matching concept aims to match the cost of the goods that were actually sold against the revenue generated from those sales in the same accounting period." },
+    { question: "Which of the following is NOT a potential consequence of using the LIFO method (which is banned under IFRS)?", options: ["In a period of rising prices, it reports a lower profit than FIFO.", "Closing inventory on the statement of financial position could be valued at very old, outdated costs.", "It provides a better matching of current costs with current revenues.", "It is simpler to apply than the AVCO method."], answer: ["It is simpler to apply than the AVCO method."], type: "Standard MCQ", topic: "Inventory Valuation Methods", difficulty: "⚠ Tricky", explanation: "LIFO is often considered more complex to apply in practice than FIFO or AVCO, especially with detailed inventory records. The other statements are recognized characteristics of the LIFO method." }
+];
+
+
+const homePage = document.getElementById('home-page');
+const quizPage = document.getElementById('quiz-page');
+const resultsPage = document.getElementById('results-page');
+const startQuizBtn = document.getElementById('start-quiz-btn');
+const instructionsBtn = document.getElementById('instructions-btn');
+const instructionsModal = document.getElementById('instructions-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const questionTracker = document.getElementById('question-tracker');
+const timerEl = document.getElementById('timer');
+const flagQuestionBtn = document.getElementById('flag-question-btn');
+const questionNumberEl = document.getElementById('question-number');
+const questionTypeBadgeEl = document.getElementById('question-type-badge');
+const questionTextEl = document.getElementById('question-text');
+const optionsContainer = document.getElementById('options-container');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+const submitBtn = document.getElementById('submit-btn');
+const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+const reviewAnswersBtn = document.getElementById('review-answers-btn');
+const reviewSection = document.getElementById('review-section');
+
+let currentQuestionIndex = 0;
+let userAnswers = new Array(quizData.length).fill(null);
+let flaggedQuestions = new Array(quizData.length).fill(false);
+let timerInterval;
+let timeRemaining = 45 * 60; // 45 minutes in seconds
+
+function startQuiz() {
+    homePage.classList.add('hidden');
+    quizPage.classList.remove('hidden');
+    resultsPage.classList.add('hidden');
+    reviewSection.classList.add('hidden');
+    currentQuestionIndex = 0;
+    userAnswers.fill(null);
+    flaggedQuestions.fill(false);
+    timeRemaining = 45 * 60;
+    populateQuestionTracker();
+    loadQuestion(currentQuestionIndex);
+    startTimer();
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+        }
+    }, 1000);
+}
+
+function populateQuestionTracker() {
+    questionTracker.innerHTML = '';
+    quizData.forEach((_, index) => {
+        const button = document.createElement('button');
+        button.textContent = index + 1;
+        button.classList.add('w-10', 'h-10', 'rounded-full', 'border', 'border-gray-400', 'bg-gray-200', 'hover:bg-gray-300', 'transition', 'font-semibold');
+        button.addEventListener('click', () => {
+            loadQuestion(index);
+        });
+        questionTracker.appendChild(button);
+    });
+}
+
+function updateTrackerStatus() {
+    const buttons = questionTracker.children;
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove('attempted-question', 'flagged-question');
+        if (flaggedQuestions[i]) {
+            buttons[i].classList.add('flagged-question');
+        } else if (userAnswers[i] !== null) {
+            buttons[i].classList.add('attempted-question');
+        }
+    }
+}
+
+function loadQuestion(index) {
+    currentQuestionIndex = index;
+    const question = quizData[index];
+    
+    questionNumberEl.textContent = `Question ${index + 1}`;
+    questionTextEl.innerHTML = question.question.replace(/________/g, '<span class="font-bold text-blue-600">________</span>');
+    
+    // Set question type badge
+    questionTypeBadgeEl.textContent = question.type;
+    const typeColors = {
+        "Standard MCQ": "bg-blue-100 text-blue-800",
+        "Fill in the blank": "bg-purple-100 text-purple-800",
+        "Multiple Correct": "bg-yellow-100 text-yellow-800",
+        "Calculation": "bg-green-100 text-green-800",
+        "Scenario": "bg-indigo-100 text-indigo-800"
+    };
+    questionTypeBadgeEl.className = `ml-2 text-xs font-semibold px-2.5 py-0.5 rounded-full ${typeColors[question.type] || 'bg-gray-100 text-gray-800'}`;
+
+
+    optionsContainer.innerHTML = '';
+    const isMultipleChoice = Array.isArray(question.answer);
+
+    question.options.forEach(option => {
+        const optionEl = document.createElement('div');
+        optionEl.classList.add('quiz-option', 'p-4', 'border-2', 'rounded-lg', 'cursor-pointer', 'hover:bg-blue-100', 'transition');
+        
+        const inputType = isMultipleChoice ? 'checkbox' : 'radio';
+        optionEl.innerHTML = `
+            <label class="flex items-center cursor-pointer">
+                <input type="${inputType}" name="option" class="hidden">
+                <span class="text-base">${option}</span>
+            </label>
+        `;
+
+        optionEl.addEventListener('click', () => handleOptionSelect(optionEl, option, isMultipleChoice));
+        optionsContainer.appendChild(optionEl);
+    });
+
+    restoreAnswer();
+    updateNavigationButtons();
+    updateFlagButton();
+    updateTrackerStatus();
+}
+
+function handleOptionSelect(optionEl, option, isMultipleChoice) {
+    if (isMultipleChoice) {
+        optionEl.classList.toggle('selected');
+        const selectedOptions = Array.from(optionsContainer.querySelectorAll('.selected')).map(el => el.querySelector('span').textContent);
+        userAnswers[currentQuestionIndex] = selectedOptions.length > 0 ? selectedOptions : null;
+    } else {
+        optionsContainer.querySelectorAll('.quiz-option').forEach(el => el.classList.remove('selected'));
+        optionEl.classList.add('selected');
+        userAnswers[currentQuestionIndex] = option;
+    }
+    updateTrackerStatus();
+}
+
+function restoreAnswer() {
+    const savedAnswer = userAnswers[currentQuestionIndex];
+    if (savedAnswer === null) return;
+
+    optionsContainer.querySelectorAll('.quiz-option').forEach(optionEl => {
+        const optionText = optionEl.querySelector('span').textContent;
+        if (Array.isArray(savedAnswer) && savedAnswer.includes(optionText)) {
+            optionEl.classList.add('selected');
+        } else if (savedAnswer === optionText) {
+            optionEl.classList.add('selected');
+        }
+    });
+}
+
+function updateNavigationButtons() {
+    prevBtn.disabled = currentQuestionIndex === 0;
+    prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+    
+    if (currentQuestionIndex === quizData.length - 1) {
+        nextBtn.classList.add('hidden');
+        submitBtn.classList.remove('hidden');
+    } else {
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+    }
+}
+
+function updateFlagButton() {
+    if (flaggedQuestions[currentQuestionIndex]) {
+        flagQuestionBtn.innerHTML = '<i class="fas fa-flag"></i> Unflag Question';
+        flagQuestionBtn.classList.add('text-red-500');
+    } else {
+        flagQuestionBtn.innerHTML = '<i class="far fa-flag"></i> Flag This Question';
+        flagQuestionBtn.classList.remove('text-red-500');
+    }
+}
+
+function toggleFlag() {
+    flaggedQuestions[currentQuestionIndex] = !flaggedQuestions[currentQuestionIndex];
+    updateFlagButton();
+    updateTrackerStatus();
+}
+
+function submitQuiz() {
+    clearInterval(timerInterval);
+    quizPage.classList.add('hidden');
+    resultsPage.classList.remove('hidden');
+    calculateAndShowResults();
+}
+
+function calculateAndShowResults() {
+    let correctAnswers = 0;
+    let topicPerformance = {};
+    let revisionNeeded = new Set();
+
+    quizData.forEach((q, index) => {
+        const userAnswer = userAnswers[index];
+        const correctAnswer = q.answer;
+        let isCorrect = false;
+
+        if (Array.isArray(correctAnswer)) { // Multiple correct answers
+            if (userAnswer && userAnswer.length === correctAnswer.length && userAnswer.every(ans => correctAnswer.includes(ans))) {
+                isCorrect = true;
+            }
+        } else { // Single correct answer
+            if (userAnswer === correctAnswer) {
+                isCorrect = true;
+            }
+        }
+
+        if (isCorrect) {
+            correctAnswers++;
+        } else {
+            revisionNeeded.add(q.topic);
+        }
+        
+        if (!topicPerformance[q.topic]) {
+            topicPerformance[q.topic] = { correct: 0, total: 0 };
+        }
+        topicPerformance[q.topic].total++;
+        if (isCorrect) {
+            topicPerformance[q.topic].correct++;
+        }
+    });
+
+    const totalQuestions = quizData.length;
+    const score = `${correctAnswers} / ${totalQuestions}`;
+    const correctPercentage = ((correctAnswers / totalQuestions) * 100).toFixed(1);
+    const incorrectPercentage = (100 - correctPercentage).toFixed(1);
+
+    document.getElementById('overall-score').textContent = score;
+    document.getElementById('correct-percentage').textContent = `${correctPercentage}%`;
+    document.getElementById('incorrect-percentage').textContent = `${incorrectPercentage}%`;
+
+    // Topic Performance
+    const topicPerformanceEl = document.getElementById('topic-performance');
+    topicPerformanceEl.innerHTML = '';
+    for (const topic in topicPerformance) {
+        const { correct, total } = topicPerformance[topic];
+        const percentage = ((correct / total) * 100).toFixed(0);
+        const topicDiv = document.createElement('div');
+        topicDiv.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span class="font-medium">${topic}</span>
+                <span class="font-semibold">${correct}/${total} (${percentage}%)</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+            </div>
+        `;
+        topicPerformanceEl.appendChild(topicDiv);
+    }
+
+    // Revision Suggestions
+    const revisionSuggestionsEl = document.getElementById('revision-suggestions');
+    revisionSuggestionsEl.innerHTML = '';
+    if (revisionNeeded.size > 0) {
+        revisionNeeded.forEach(topic => {
+            const li = document.createElement('li');
+            li.textContent = `Review concepts related to ${topic}.`;
+            revisionSuggestionsEl.appendChild(li);
+        });
+    } else {
+        revisionSuggestionsEl.innerHTML = '<li>Excellent work! No specific revision areas identified.</li>';
+    }
+
+    // Gamification
+    const xp = correctAnswers * 10;
+    document.getElementById('xp-points').textContent = xp;
+    let badge = "Novice Accountant";
+    let level = "Beginner";
+    if (correctPercentage >= 90) {
+        badge = "Charted Champion 🏆";
+        level = "Expert";
+    } else if (correctPercentage >= 75) {
+        badge = "Finance Pro 🏅";
+        level = "Advanced";
+    } else if (correctPercentage >= 50) {
+        badge = "Ledger Leader ⭐";
+        level = "Intermediate";
+    }
+    document.getElementById('badges').textContent = badge;
+    document.getElementById('level').textContent = level;
+}
+
+function showReview() {
+    reviewSection.innerHTML = '';
+    reviewSection.classList.remove('hidden');
+
+    quizData.forEach((q, index) => {
+        const userAnswer = userAnswers[index];
+        const correctAnswer = q.answer;
+        let isCorrect = false;
+
+        if (Array.isArray(correctAnswer)) {
+            isCorrect = userAnswer && userAnswer.length === correctAnswer.length && userAnswer.every(ans => correctAnswer.includes(ans));
+        } else {
+            isCorrect = userAnswer === correctAnswer;
+        }
+
+        const reviewBlock = document.createElement('div');
+        reviewBlock.classList.add('p-6', 'mb-4', 'rounded-lg', 'shadow-md', isCorrect ? 'bg-green-50' : 'bg-red-50');
+        
+        let optionsHtml = '';
+        q.options.forEach(option => {
+            let optionClass = '';
+            const isCorrectAnswer = Array.isArray(correctAnswer) ? correctAnswer.includes(option) : correctAnswer === option;
+            const isUserAnswer = Array.isArray(userAnswer) ? userAnswer && userAnswer.includes(option) : userAnswer === option;
+
+            if (isCorrectAnswer) {
+                optionClass = 'correct';
+            } else if (isUserAnswer && !isCorrectAnswer) {
+                optionClass = 'incorrect';
+            }
+            
+            optionsHtml += `<div class="quiz-option p-3 my-2 border-2 rounded-lg ${optionClass}">${option}</div>`;
+        });
+
+        const explanationHtml = q.explanation ? `<div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 text-blue-800 rounded-r-lg"><strong>Explanation:</strong> ${q.explanation}</div>` : '';
+
+        reviewBlock.innerHTML = `
+            <p class="font-bold text-lg mb-2">Question ${index + 1}: ${q.question}</p>
+            ${optionsHtml}
+            ${explanationHtml}
+        `;
+        reviewSection.appendChild(reviewBlock);
+    });
+    
+    reviewAnswersBtn.textContent = "Hide Review";
+}
+
+// Event Listeners
+startQuizBtn.addEventListener('click', startQuiz);
+instructionsBtn.addEventListener('click', () => instructionsModal.classList.replace('modal-inactive', 'modal-active'));
+closeModalBtn.addEventListener('click', () => instructionsModal.classList.replace('modal-active', 'modal-inactive'));
+
+prevBtn.addEventListener('click', () => {
+    if (currentQuestionIndex > 0) {
+        loadQuestion(currentQuestionIndex - 1);
+    }
+});
+
+nextBtn.addEventListener('click', () => {
+    if (currentQuestionIndex < quizData.length - 1) {
+        loadQuestion(currentQuestionIndex + 1);
+    }
+});
+
+submitBtn.addEventListener('click', () => {
+    // Removed the problematic confirm() dialog
+    submitQuiz();
+});
+
+flagQuestionBtn.addEventListener('click', toggleFlag);
+
+retakeQuizBtn.addEventListener('click', () => {
+    quizPage.classList.add('hidden');
+    resultsPage.classList.add('hidden');
+    homePage.classList.remove('hidden');
+});
+
+reviewAnswersBtn.addEventListener('click', () => {
+    if (reviewSection.classList.contains('hidden')) {
+        showReview();
+    } else {
+        reviewSection.classList.add('hidden');
+        reviewAnswersBtn.textContent = "Review Answers";
+    }
+});
+
+</script>
+</body>
+</html>

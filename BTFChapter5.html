@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB BTF Exam -Chapter:5 Risk Management Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the app, if any */
+        body {
+            font-family: "Inter", sans-serif;
+        }
+        /* Ensure the body and html take full height for flexbox to work */
+        html, body, #app-root {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .scrollable-content {
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+
+    <div id="app-root" class="flex-1 flex flex-col">
+        <!-- Content will be rendered here by JavaScript -->
+    </div>
+
+    <footer class="text-center p-4 bg-gray-200 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-sm mt-auto">
+        <p>Prepared by:</p>
+        <p>
+          🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">K.M. Mahafuzul Alam</a> | 📞 WhatsApp: 01728-928984 | 📧 Email: kmmhafuzulalam@gmail.com
+        </p>
+    </footer>
+
+    <script>
+        // Quiz data from PDF analysis
+        const quizData = [
+            {
+                question: "According to the provided text, what is the definition of 'risk'?",
+                options: [
+                    "The possibility that something will go wrong.",
+                    "The possibility that something will go well.",
+                    "The possible variation in an outcome from what is expected to happen.",
+                    "The inability to predict the outcome from an activity due to a lack of information."
+                ],
+                answer: "The possible variation in an outcome from what is expected to happen.",
+                explanation: "The document defines risk as 'The possible variation in an outcome from what is expected to happen.' Uncertainty is defined as the inability to predict an outcome due to a lack of information.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Select the concepts that are categorized as 'measures of central tendency' in the document.",
+                options: [
+                    "Mean",
+                    "Standard Deviation",
+                    "Median",
+                    "Mode",
+                    "Variance"
+                ],
+                answer: ["Mean", "Median", "Mode"],
+                explanation: "The document explicitly lists 'mean, mode, median' as measures of central tendency. Standard deviation and variance are listed under 'measures of spread'.",
+                type: "Standard MCQ - Choose multiple correct answers"
+            },
+            {
+                question: "The risk that a business’s objectives will not be achieved because it chooses the wrong corporate, business, or functional strategy is known as:",
+                options: [
+                    "Financial risk",
+                    "Operational risk",
+                    "Sustainability risk",
+                    "Strategy risk"
+                ],
+                answer: "Strategy risk",
+                explanation: "The text defines Strategy risk as 'The risk that the business's objectives will not be achieved because it chooses the wrong corporate, business or functional strategy.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business's ability to manage and survive against planned or unplanned shocks and disruption to its operations is called:",
+                options: [
+                    "Crisis management",
+                    "Business resilience",
+                    "Disaster recovery planning",
+                    "Business continuity planning"
+                ],
+                answer: "Business resilience",
+                explanation: "The document defines business resilience as 'A business’s ability to manage and survive against planned or unplanned shocks and disruption to its operations.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company's monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the mean monthly profit?",
+                options: [
+                    "£70,000",
+                    "£80,000",
+                    "£85,000",
+                    "£96,000"
+                ],
+                answer: "£80,000",
+                explanation: "The mean is the sum of all values divided by the number of values. Sum = 50+52+74+105+120+125+120+85+65+58+52+54 = 960. Number of months = 12. Mean = 960 / 12 = 80. So the mean is £80,000.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "Which of the following is a disadvantage of using the 'range' as a measure of dispersion?",
+                options: [
+                    "It considers all values in the data set.",
+                    "It is not distorted by outliers.",
+                    "It is a complex measure to calculate.",
+                    "It only considers the highest and lowest values."
+                ],
+                answer: "It only considers the highest and lowest values.",
+                explanation: "The document states that the range 'only considers the lowest and highest value in the set of data so does not take into account the dispersion of the other values' and 'The range may be distorted by outliers.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business is considering two projects. Project A has a certain return of 5%, while Project B has a potential return of 10% but a higher risk of failure. The business chooses Project A. This behavior indicates a/an ________ attitude to risk.",
+                options: [
+                    "risk averse",
+                    "risk neutral",
+                    "risk seeking",
+                    "All of the above"
+                ],
+                answer: "risk averse",
+                explanation: "The document defines a risk averse attitude as choosing an investment with a more certain but possibly lower return over a less certain, potentially higher return investment.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "The risk that a business’s processes may be ineffective or inefficient is a type of:",
+                options: [
+                    "People risk",
+                    "Systems risk",
+                    "Process risk",
+                    "Event risk"
+                ],
+                answer: "Process risk",
+                explanation: "The document defines 'Process risk' as 'the risk that a business’s processes may be ineffective (fail to achieve their objectives) or inefficient (achieve their objectives but at excessive cost)'.",
+                type: "Fill in the blank"
+            },
+            {
+                question: "In the context of the risk management process, risks with a 'low impact' and 'high probability' are most likely to be addressed by:",
+                options: [
+                    "avoidance",
+                    "sharing",
+                    "reduction",
+                    "acceptance"
+                ],
+                answer: "reduction",
+                explanation: "The document's risk assessment map indicates that for 'Low impact, high probability' risks, 'Reduction is the key response here'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "In a normal distribution, what percentage of values lie within one standard deviation below and one standard deviation above the mean?",
+                options: [
+                    "50%",
+                    "68.2%",
+                    "95.4%",
+                    "99.7%"
+                ],
+                answer: "68.2%",
+                explanation: "The document states, '68.2% of values lie between one standard deviation below and one standard deviation above the mean' in a normal distribution.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following are examples of 'uncontrollable financial risk' as defined in the document? (Select all that apply)",
+                options: [
+                    "Gearing risk",
+                    "Changes in foreign exchange rates",
+                    "Credit risk",
+                    "Changes in interest rates"
+                ],
+                answer: ["Changes in foreign exchange rates", "Changes in interest rates"],
+                explanation: "The text identifies 'market risk' as an uncontrollable financial risk, which includes 'share prices, commodity prices, interest rates and foreign exchange rates'. Gearing risk and credit risk are listed as 'controllable financial risk'.",
+                type: "Standard MCQ - Choose multiple correct answers"
+            },
+            {
+                question: "According to the ICAEW's business continuity plan mentioned in the text, which of the following is the highest priority in the event of a major disaster?",
+                options: [
+                    "Communicating with media and stakeholders.",
+                    "Recovering mission-critical systems.",
+                    "Protecting the safety and well-being of employees, visitors, and contractors.",
+                    "Ensuring timely and efficient resumption of normal business."
+                ],
+                answer: "Protecting the safety and well-being of employees, visitors, and contractors.",
+                explanation: "The document, referencing the ICAEW's plan, explicitly states 'the priority will be to: protect and preserve the safety and well-being of employees, visitors and contractors;'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following is not a category of operational risk described in the document?",
+                options: [
+                    "Process risk",
+                    "People risk",
+                    "Systems risk",
+                    "Financial risk"
+                ],
+                answer: "Financial risk",
+                explanation: "The text breaks down operational risk into 'Process risk', 'People risk', 'Systems risk', and 'Event risk'. Financial risk is a separate category of risk.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company's monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the mode of the data?",
+                options: [
+                    "52 and 120",
+                    "52",
+                    "120",
+                    "54"
+                ],
+                answer: "52 and 120",
+                explanation: "The mode is the value that occurs most often. In the given data set, both 52 and 120 appear twice, while other numbers appear only once. Therefore, there are two modes.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "The ICAEW’s business continuity plan states that in a major event, the focus will initially be on recovering key business-critical activities, which will be guided by:",
+                options: [
+                    "a risk assessment map",
+                    "the chief executive officer",
+                    "business impact analysis (BIA)",
+                    "management controls"
+                ],
+                answer: "business impact analysis (BIA)",
+                explanation: "The document mentions that the ICAEW's plan 'will be guided by business impact analysis (BIA)' when recovering key business-critical activities.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following concepts is NOT a component of the risk management process as described in the chapter?",
+                options: [
+                    "Risk identification",
+                    "Risk measurement",
+                    "Risk response",
+                    "All of the above are components"
+                ],
+                answer: "All of the above are components",
+                explanation: "The learning outcomes and the chapter sections (5 and 6) indicate that the chapter covers the 'Objectives and process of risk management', which includes identification, measurement, and response.",
+                type: "Standard MCQ - 'All of the above' style"
+            },
+            {
+                question: "Which of the following correctly defines 'uncertainty'?",
+                options: [
+                    "The possible variation in an outcome from what is expected to happen.",
+                    "The possibility that something will go wrong.",
+                    "The inability to predict the outcome from an activity due to a lack of information.",
+                    "The possibility that an event will occur and positively affect the achievement of objectives."
+                ],
+                answer: "The inability to predict the outcome from an activity due to a lack of information.",
+                explanation: "The document provides a specific definition for uncertainty: 'The inability to predict the outcome from an activity due to a lack of information.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company's monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the median monthly profit?",
+                options: [
+                    "£74,000",
+                    "£69,500",
+                    "£80,000",
+                    "£65,000"
+                ],
+                answer: "£69,500",
+                explanation: "To find the median, first order the data: 50, 52, 52, 54, 58, 65, 74, 85, 105, 120, 120, 125. With an even number of values (12), the median is the average of the two middle values (the 6th and 7th values). The 6th value is 65 and the 7th is 74. The median is (65+74)/2 = 69.5. So the median is £69,500.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "What is the key difference between pure risk and speculative risk?",
+                options: [
+                    "Pure risk is a possibility of loss, while speculative risk is a possibility of gain.",
+                    "Pure risk is a possibility of something going wrong, while speculative risk is a possibility of something going better than expected.",
+                    "Pure risk is a possibility of financial loss, while speculative risk is a possibility of non-financial loss.",
+                    "There is no difference; the terms are interchangeable."
+                ],
+                answer: "Pure risk is a possibility of something going wrong, while speculative risk is a possibility of something going better than expected.",
+                explanation: "The document differentiates between pure risk ('the possibility that something will go wrong') and speculative risk ('the possibility that something could go better than expected').",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following defines a 'risk neutral' attitude?",
+                options: [
+                    "Choosing an investment with a certain but lower return over a less certain, higher return investment.",
+                    "Choosing an investment based on its expected return, irrespective of the risk.",
+                    "Choosing an investment that offers higher levels of risk, even with a lower expected return.",
+                    "None of the above."
+                ],
+                answer: "Choosing an investment based on its expected return, irrespective of the risk.",
+                explanation: "The text defines a risk neutral attitude as choosing an investment 'according to its expected return, irrespective of the risk.'",
+                type: "Standard MCQ - 'None of the above' style"
+            },
+            {
+                question: "A manufacturer of high-end sports cars faces the risk that a new model may not be accepted by the market, leading to significant financial losses. This is an example of:",
+                options: [
+                    "Strategy risk",
+                    "Product risk",
+                    "Enterprise risk",
+                    "Financial risk"
+                ],
+                answer: "Product risk",
+                explanation: "The document defines 'Product risk' as 'The chance that customers will not buy the company's products or services in the expected quantities.' This scenario directly relates to the market acceptance of a product.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "Which of the following is NOT an essential point in crisis management as per the provided text?",
+                options: [
+                    "Having contingency plans should a crisis occur.",
+                    "Acting to resolve an actual crisis.",
+                    "Having a formal risk management process in place.",
+                    "Seeking to prevent crises."
+                ],
+                answer: "Having a formal risk management process in place.",
+                explanation: "While a formal risk management process is important for the overall organization, the section on 'Crisis management' focuses specifically on preventing crises, having contingency plans, and resolving actual crises. The formal process is discussed in a broader context.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company is considering whether to invest in a new technology that could revolutionize its industry. This investment has a high chance of failure but also a high potential for reward. The decision to undertake this is an example of managing:",
+                options: [
+                    "Pure risk",
+                    "Downside risk",
+                    "Speculative risk",
+                    "Operational risk"
+                ],
+                answer: "Speculative risk",
+                explanation: "Speculative risk is defined as the possibility that something could go better than expected. This scenario presents a clear opportunity for a positive outcome, which aligns with speculative risk.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "In the context of the risk management process, which of the following is NOT one of the four possible responses to risk?",
+                options: [
+                    "Avoidance",
+                    "Reduction",
+                    "Sharing",
+                    "Elimination"
+                ],
+                answer: "Elimination",
+                explanation: "The document mentions 'four possible responses to risk' which are typically avoidance, reduction, sharing, and acceptance. Elimination is not listed.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company's monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the range of the data?",
+                options: [
+                    "75",
+                    "70",
+                    "80",
+                    "125"
+                ],
+                answer: "75",
+                explanation: "The range is the difference between the highest and lowest values. The highest value is 125 and the lowest is 50. Range = 125 - 50 = 75.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "A business is worried about the risk of a fire destroying its head office. In terms of the risk assessment map, this is a _____ impact, _____ probability risk.",
+                options: [
+                    "high, low",
+                    "high, high",
+                    "low, low",
+                    "low, high"
+                ],
+                answer: "high, low",
+                explanation: "The destruction of a head office by fire is an event with a high impact (threatens existence) but a low probability of occurring. The text's 'Stop and think' question on this topic reinforces this.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "Which of the following is a primary risk for a lender to a business?",
+                options: [
+                    "The business will default on its debt obligations.",
+                    "The share price will fall.",
+                    "Dividends will be lower than expected.",
+                    "All of the above."
+                ],
+                answer: "The business will default on its debt obligations.",
+                explanation: "The text states that lenders 'have to bear the risk that the business will default on its debt obligations, and fail to make an interest payment or even become insolvent and be unable to repay the loan principal.' Share price and dividends are primarily risks for shareholders.",
+                type: "Standard MCQ - 'All of the above' style"
+            },
+            {
+                question: "What is the term for a risk that is specific to a business or the industry sector in which it operates, as opposed to a general risk?",
+                options: [
+                    "Enterprise risk",
+                    "Strategic risk",
+                    "Systemic risk",
+                    "Business risk"
+                ],
+                answer: "Business risk",
+                explanation: "The text defines Business risk as arising from 'the nature of the entity's business, its industry and the conditions it operates in.' It is willingly taken by the business.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "The risk that a business’s activities damage its reputation in the eyes of stakeholders is called:",
+                options: [
+                    "Reputation risk",
+                    "Governance risk",
+                    "Regulatory risk",
+                    "Event risk"
+                ],
+                answer: "Reputation risk",
+                explanation: "The document defines Reputation risk as 'the business's activities damage its reputation in the eyes of stakeholders;'. This is listed as a type of event risk under operational risk.",
+                type: "Fill in the blank"
+            },
+            {
+                question: "The ICAEW report 'Developing a cyber-resilience strategy' identifies a threat where broadband and Wi-Fi networks may become unavailable. This is classified as a:",
+                options: [
+                    "Mobile threat",
+                    "Networking and cloud consideration",
+                    "Access control in the mobile world",
+                    "Denial of service"
+                ],
+                answer: "Networking and cloud consideration",
+                explanation: "The document mentions that the ICAEW report classifies the unavailability of broadband and Wi-Fi networks as a 'Networking and cloud consideration' threat to cyber resilience.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "In the context of the ICAEW's business continuity plan, what is the role of a 'designated manager or co-ordinator'?",
+                options: [
+                    "To recover mission critical systems.",
+                    "To assess the particular requirements of the problem.",
+                    "To communicate with the media and the public.",
+                    "To take control in a crisis and delegate specific tasks."
+                ],
+                answer: "To take control in a crisis and delegate specific tasks.",
+                explanation: "Under 'Definition of responsibilities' in the ICAEW plan, it is stated that 'It is important that somebody (a manager or co-ordinator) is designated to take control in a crisis. This individual can then delegate specific tasks or responsibilities to other designated people.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "According to the text, what is the primary difference between risk and uncertainty?",
+                options: [
+                    "Risk is always negative, while uncertainty can be positive.",
+                    "Risk exists in any situation, while uncertainty arises from a lack of information.",
+                    "Risk can be measured, but uncertainty cannot.",
+                    "There is no difference between the two terms."
+                ],
+                answer: "Risk exists in any situation, while uncertainty arises from a lack of information.",
+                explanation: "The document states, 'Risk (the possibility of variation) exists in any situation' while 'Uncertainty arises only because we are ignorant of all the facts: we lack adequate information.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following statements about the normal distribution is INCORRECT?",
+                options: [
+                    "The mean of the distribution equals the median and the mode.",
+                    "The distribution is symmetrical.",
+                    "95.4% of values lie between one standard deviation below and one standard deviation above the mean.",
+                    "The probability of a value being below the mean is 50%."
+                ],
+                answer: "95.4% of values lie between one standard deviation below and one standard deviation above the mean.",
+                explanation: "The text states that '68.2% of values lie between one standard deviation below and one standard deviation above the mean.' It is 95.4% that lie between *two* standard deviations below and above the mean.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business’s risk appetite is defined as:",
+                options: [
+                    "The total amount of financial risk the business is willing to accept.",
+                    "The extent to which a business is prepared to take on risks to achieve its objectives.",
+                    "The amount of loss the business can absorb before becoming insolvent.",
+                    "The level of risk considered acceptable by a regulatory body."
+                ],
+                answer: "The extent to which a business is prepared to take on risks to achieve its objectives.",
+                explanation: "The document defines 'Risk appetite' as 'The extent to which a business is prepared to take on risks in order to achieve its objectives.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following is a type of 'controllable financial risk'?",
+                options: [
+                    "Changes in commodity prices.",
+                    "Changes in share prices.",
+                    "Liquidity risk.",
+                    "All of the above."
+                ],
+                answer: "Liquidity risk.",
+                explanation: "The text lists 'liquidity risk' as a type of controllable financial risk. Changes in commodity prices and share prices are categorized as 'uncontrollable financial risk' (market risk).",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "What is the primary purpose of a business continuity plan?",
+                options: [
+                    "To prevent crises from happening.",
+                    "To plan for the destruction of a major facility.",
+                    "To ensure that some operations can be performed while normal services are disrupted.",
+                    "To prepare for hostile takeover bids and boardroom battles."
+                ],
+                answer: "To ensure that some operations can be performed while normal services are disrupted.",
+                explanation: "The document states that a business continuity plan 'will typically provide for: Standby procedures so that some operations can be performed while normal services are disrupted'. While it's part of a larger plan for disaster, this is its key function.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company faces a new regulation that will increase its costs and remove a competitive edge. This is an example of:",
+                options: [
+                    "Systems risk",
+                    "Event risk",
+                    "People risk",
+                    "Process risk"
+                ],
+                answer: "Event risk",
+                explanation: "Under 'Operational risk', the document lists 'Event risk' as including 'regulatory risk: new laws or regulations are introduced, affecting the business's operations and profitability'.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "Which of the following are included in the definition of a 'Critical Success Factor' (CSF)? (Select all that apply)",
+                options: [
+                    "Product features that are particularly valued by customers.",
+                    "Areas where the organization must perform well.",
+                    "A significant risk that creates an obstacle to business objectives.",
+                    "The extent to which a business is prepared to take on risks."
+                ],
+                answer: ["Product features that are particularly valued by customers.", "Areas where the organization must perform well."],
+                explanation: "The document defines a CSF as 'Those product features that are particularly valued by customers and, therefore, where the organisation must perform well.' The other options are definitions of risk and risk appetite.",
+                type: "Standard MCQ - Choose multiple correct answers"
+            },
+            {
+                question: "The risk that a business's reputation is harmed due to failing to address its contribution to climate change is classified as a:",
+                options: [
+                    "Governance risk",
+                    "Reputational risk",
+                    "Regulatory risk",
+                    "Financial risk"
+                ],
+                answer: "Reputational risk",
+                explanation: "The text discusses 'Reputational risks - poor environmental or social behaviour can harm the reputation of an organisation leading to a fall in sales...'. This specific scenario fits this definition.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "The average of the squared deviations of the values in a data set from the mean of that data is called:",
+                options: [
+                    "Standard deviation",
+                    "Range",
+                    "Variance",
+                    "Coefficient of variation"
+                ],
+                answer: "Variance",
+                explanation: "The document defines 'Variance' as 'The average of the squared deviations of the values in a data set from the mean of that data'.",
+                type: "Fill in the blank"
+            },
+            {
+                question: "A business chooses an investment based on it offering higher levels of risk, even if its expected return is lower than a safer alternative. This is an example of a:",
+                options: [
+                    "Risk neutral attitude",
+                    "Risk seeking attitude",
+                    "Risk averse attitude",
+                    "None of the above"
+                ],
+                answer: "Risk seeking attitude",
+                explanation: "The text defines a 'risk seeking attitude' as choosing an investment 'on the basis of it offering higher levels of risk, even if its expected return is lower than an alternative no-risk investment with a higher expected return.'",
+                type: "Standard MCQ - 'None of the above' style"
+            },
+            {
+                question: "What is the key role for accountants in managing financial risks?",
+                options: [
+                    "Ensuring all controls are in place to prevent fraud.",
+                    "Using hedging and other techniques to manage market risk.",
+                    "Planning for a major crisis like a fire or flood.",
+                    "Maximizing shareholder value at all costs."
+                ],
+                answer: "Using hedging and other techniques to manage market risk.",
+                explanation: "The document states, 'Management of these financial risks is a key role for accountants using hedging and other techniques.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "An IT department is concerned about the possibility of data corruption due to a software bug. This falls under which type of operational risk?",
+                options: [
+                    "Event risk",
+                    "People risk",
+                    "Systems risk",
+                    "Process risk"
+                ],
+                answer: "Systems risk",
+                explanation: "Systems risk is defined as 'the risk arising from information and communication systems such as systems capacity, security and availability, data integrity...'. A software bug causing data corruption is a clear systems risk.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "The risk that a business’s supply chain fails to meet its contractual obligations, thus affecting the entire system, is known as:",
+                options: [
+                    "Reputation risk",
+                    "Systemic risk",
+                    "Regulatory risk",
+                    "Disaster risk"
+                ],
+                answer: "Systemic risk",
+                explanation: "The document defines 'systemic risk' as 'failure by a participant in the business's supply chain or system to meet its contractual obligations, so the system itself is threatened'.",
+                type: "Fill in the blank"
+            },
+            {
+                question: "According to the risk assessment map, what is the recommended response for risks with a 'high impact' and 'high probability'?",
+                options: [
+                    "Acceptance",
+                    "Avoidance, reduction, and/or sharing",
+                    "Sharing using insurance",
+                    "Reduction is the key response"
+                ],
+                answer: "Avoidance, reduction, and/or sharing",
+                explanation: "The document states that for 'High impact, high probability' risks, 'These risks must be controlled, using avoidance, reduction and/or sharing'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following is considered a 'risk-free investment' in the text?",
+                options: [
+                    "High-yield corporate bonds",
+                    "Government securities or gilts",
+                    "Equity shares in a large company",
+                    "Investment in a new, risky project"
+                ],
+                answer: "Government securities or gilts",
+                explanation: "The text mentions that lenders expect a higher return than on 'government securities or gilts (commonly taken to be a risk-free investment)', to compensate for added risk.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company’s monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the sum of the deviations from the mean for this data set?",
+                options: [
+                    "0",
+                    "80",
+                    "960",
+                    "Cannot be determined"
+                ],
+                answer: "0",
+                explanation: "The document explains that 'if we simply calculated the average deviation, by adding together the values of all deviations from the mean, the sum of the positive deviations would offset the negative variations leading to a mean deviation of zero.' The sum of deviations from the mean is always zero.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "In the context of the risk management process, when should a business amend its objective?",
+                options: [
+                    "When a risk is identified that has a high impact.",
+                    "When a formal risk management process is not in place.",
+                    "When there are no methods of reducing risk to an acceptable level.",
+                    "When a business is risk averse."
+                ],
+                answer: "When there are no methods of reducing risk to an acceptable level.",
+                explanation: "The document's approach to strategic planning states: 'If there are no methods of reducing the risk to an acceptable level, the objective needs to be amended.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "Which of the following is an example of a crisis that could be managed by a crisis management plan?",
+                options: [
+                    "A hostile takeover bid.",
+                    "A sudden shortfall in demand.",
+                    "The death of a key manager.",
+                    "All of the above."
+                ],
+                answer: "All of the above.",
+                explanation: "The document lists 'hostile takeover bid', 'sudden shortfall in demand', and 'death of key management' as examples of crises under the 'Management crisis' and 'Business crisis' categories.",
+                type: "Standard MCQ - 'All of the above' style"
+            },
+            {
+                question: "The risk of financial loss, disruption, or damage to an organization from a cyber-attack is known as:",
+                options: [
+                    "Cyber risk",
+                    "Systemic risk",
+                    "Regulatory risk",
+                    "Reputation risk"
+                ],
+                answer: "Cyber risk",
+                explanation: "The text defines 'Cyber risk' as 'the risk of financial loss, disruption or damage to the reputation of an organisation from failure of its information technology systems due to accidents, breach of security, cyber-attacks or poor systems integrity.'",
+                type: "Fill in the blank"
+            },
+            {
+                question: "What is the key difference between business risk and operational risk?",
+                options: [
+                    "Business risk is willingly taken, while operational risk is not.",
+                    "Business risk arises from the business's industry, while operational risk arises from financial markets.",
+                    "Business risk is always financial, while operational risk is always non-financial.",
+                    "Operational risk is willingly taken, while business risk is not."
+                ],
+                answer: "Business risk is willingly taken, while operational risk is not.",
+                explanation: "The document states that 'Business risk is willingly taken by the business as part of its objective of making a return.' In contrast, 'Operational risk is not a risk that a business willingly accepts'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company’s annual budget and organizational structure are examples of:",
+                options: [
+                    "Financial controls",
+                    "System controls",
+                    "Management controls",
+                    "None of the above"
+                ],
+                answer: "Management controls",
+                explanation: "The text defines 'Management controls' as including 'all aspects of management that ensure the business is properly planned, controlled and led, such as the organisation’s structure, and the annual budget.'",
+                type: "Standard MCQ - 'None of the above' style"
+            },
+            {
+                question: "The possibility that an event will occur and adversely affect the achievement of objectives is known as:",
+                options: [
+                    "Upside risk",
+                    "Speculative risk",
+                    "Downside risk",
+                    "All of the above"
+                ],
+                answer: "Downside risk",
+                explanation: "The text defines 'Downside risk' as 'The possibility that an event will occur and adversely affect the achievement of objectives.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "The difference between the highest and lowest value in a set of data is the:",
+                options: [
+                    "Variance",
+                    "Deviation",
+                    "Range",
+                    "Mean"
+                ],
+                answer: "Range",
+                explanation: "The document defines 'Range' as 'The difference between the highest and lowest value in a set of data.'",
+                type: "Fill in the blank"
+            },
+            {
+                question: "The risk arising from staff constraints, incompetence, or a corporate culture that does not cultivate risk awareness is classified as:",
+                options: [
+                    "Systems risk",
+                    "People risk",
+                    "Process risk",
+                    "Event risk"
+                ],
+                answer: "People risk",
+                explanation: "The document defines 'People risk' as 'the risk arising from staff constraints... incompetence, dishonesty, or a corporate culture that does not cultivate risk awareness...'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business’s risk assessment map categorizes a particular risk as 'Low impact, low probability'. What is the most common response to this risk?",
+                options: [
+                    "Avoidance",
+                    "Reduction",
+                    "Acceptance",
+                    "Sharing through insurance"
+                ],
+                answer: "Acceptance",
+                explanation: "The document's risk assessment map for 'Low impact, low probability' risks states, 'Often these risks are just accepted, as the cost of avoiding, reducing or sharing them exceeds the benefits'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "An investment's volatility is defined as:",
+                options: [
+                    "The possibility of wide variations in returns from year to year.",
+                    "The measure of the amount of loss if an undesired outcome occurs.",
+                    "How likely it is that a particular outcome will occur.",
+                    "The inability to predict the outcome from an activity."
+                ],
+                answer: "The possibility of wide variations in returns from year to year.",
+                explanation: "The text states that 'Risk is greater for shareholders when there is a greater possibility of wide variations in profits, dividends and share prices from year to year. The range of potential variation in returns is known as the volatility of return'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "What is the key principle of business resilience?",
+                options: [
+                    "Minimizing financial losses from all risks.",
+                    "Preventing all risks from occurring.",
+                    "The ability to manage and survive against unplanned shocks and disruption.",
+                    "Taking on high-risk projects for high returns."
+                ],
+                answer: "The ability to manage and survive against unplanned shocks and disruption.",
+                explanation: "The definition of Business resilience is 'A business’s ability to manage and survive against planned or unplanned shocks and disruption to its operations.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business faces the risk that a key supplier goes bankrupt and cannot fulfill its contract. This is a type of:",
+                options: [
+                    "Legal/regulatory crisis",
+                    "Management crisis",
+                    "Systemic risk",
+                    "Business crisis"
+                ],
+                answer: "Systemic risk",
+                explanation: "The document defines 'systemic risk' as the 'failure by a participant in the business's supply chain or system to meet its contractual obligations'. The collapse of a key supplier is a direct example of this.",
+                type: "Scenario/Case-Based Question"
+            },
+            {
+                question: "Which of the following is a type of 'sustainability and climate related risk'?",
+                options: [
+                    "Risks caused by climate change.",
+                    "Reputational risks due to poor environmental behavior.",
+                    "Regulatory risks related to anti-bribery laws.",
+                    "All of the above."
+                ],
+                answer: "All of the above.",
+                explanation: "The document lists 'Risks caused by climate change', 'Reputational risks', and 'Regulatory risks' as important examples of sustainability and climate related risks.",
+                type: "Standard MCQ - 'All of the above' style"
+            },
+            {
+                question: "What is the formula for the 'Coefficient of variation'?",
+                options: [
+                    "Standard Deviation / Mean",
+                    "Mean / Standard Deviation",
+                    "Range / Mean",
+                    "Standard Deviation / Variance"
+                ],
+                answer: "Standard Deviation / Mean",
+                explanation: "The document provides the formula for Coefficient of variation as 'Co-efficient of variation = Standard deviation / Mean'.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "A business is exposed to greater liquidity risk if it has:",
+                options: [
+                    "A high proportion of fixed costs.",
+                    "Low borrowing in relation to shareholders' capital.",
+                    "A high proportion of variable costs.",
+                    "Customers who pay on time."
+                ],
+                answer: "A high proportion of fixed costs.",
+                explanation: "The text states, 'A business is exposed to greater liquidity risk if, for instance, it has a high proportion of fixed costs which must be paid whatever its level of revenue.'",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "The risk that a business’s information and communication systems, such as security and availability, may fail is known as:",
+                options: [
+                    "Cyber risk",
+                    "Systems risk",
+                    "People risk",
+                    "Event risk"
+                ],
+                answer: "Systems risk",
+                explanation: "The document defines 'Systems risk' as 'the risk arising from information and communication systems such as systems capacity, security and availability...'. Cyber risk is a key aspect of this, but systems risk is the broader category.",
+                type: "Fill in the blank"
+            },
+            {
+                question: "Which of the following is a key issue in crisis management?",
+                options: [
+                    "To prevent crises and have contingency plans.",
+                    "To recover mission critical systems and resume business activities.",
+                    "To protect the safety and well-being of employees.",
+                    "To deal with minor breakdowns and short-term recovery plans."
+                ],
+                answer: "To prevent crises and have contingency plans.",
+                explanation: "The document states that a business should 'seek to prevent crises, and to have contingency plans should a crisis occur' as a part of crisis management.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "When a business decides to finance itself primarily by debt rather than shares, it is exposed to which type of risk?",
+                options: [
+                    "Credit risk",
+                    "Liquidity risk",
+                    "Gearing risk",
+                    "Market risk"
+                ],
+                answer: "Gearing risk",
+                explanation: "The text identifies 'Gearing risk' as a type of controllable financial risk arising from 'How far the business chooses to finance itself by debt rather than shares'.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A company’s monthly profits for the last year were (in £'000): 50, 52, 74, 105, 120, 125, 120, 85, 65, 58, 52, 54. What is the sum of the data?",
+                options: [
+                    "800",
+                    "960",
+                    "1000",
+                    "1200"
+                ],
+                answer: "960",
+                explanation: "The sum of the values is 50 + 52 + 74 + 105 + 120 + 125 + 120 + 85 + 65 + 58 + 52 + 54 = 960.",
+                type: "Mathematical/Calculation-Based MCQ"
+            },
+            {
+                question: "What is the difference between a crisis management plan and a business continuity plan?",
+                options: [
+                    "A crisis management plan is for long-term recovery, while a business continuity plan is for immediate response.",
+                    "A crisis management plan is for minor breakdowns, while a business continuity plan is for major disasters.",
+                    "A crisis management plan is the initial response to a disaster, while a business continuity plan covers a broader range of activities from initial response to full recovery.",
+                    "There is no difference; the terms are interchangeable."
+                ],
+                answer: "A crisis management plan is the initial response to a disaster, while a business continuity plan covers a broader range of activities from initial response to full recovery.",
+                explanation: "The document states that a business continuity plan 'must cover all activities from the initial response to the disaster (crisis management), through to damage limitation and full recovery.' This implies crisis management is a component of the broader business continuity plan.",
+                type: "Standard MCQ - Choose one correct answer"
+            },
+            {
+                question: "A business’s risk appetite should be decided:",
+                options: [
+                    "After finding strategies to achieve objectives.",
+                    "Before deciding on the strategic objective.",
+                    "As part of the strategic planning process.",
+                    "After the risk management process is completed."
+                ],
+                answer: "As part of the strategic planning process.",
+                explanation: "The text states, 'As part of the planning process, the business needs to decide what its 'appetite' for risk is and apply this in choosing appropriate strategies.'",
+                type: "Standard MCQ - Choose one correct answer"
+            }
+        ];
+
+        // Global state variables
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let flagged = {};
+        let showResults = false;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let quizStarted = false;
+        let shuffledQuizData = [];
+        let timerInterval = null;
+        let showWarning = false;
+
+        // Helper function to shuffle array (Fisher-Yates)
+        function shuffleArray(array) {
+            let newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Timer formatting
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // Start Quiz Logic
+        function startQuiz() {
+            shuffledQuizData = shuffleArray(quizData);
+            quizStarted = true;
+            renderQuiz(); // Render quiz UI
+            startTimer(); // Start the timer
+        }
+
+        // Timer function
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval); // Clear any existing timer
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResults = true;
+                    quizStarted = false; // Stop quiz, show results
+                    renderQuiz();
+                }
+            }, 1000);
+        }
+
+        // Update timer display in the UI
+        function updateTimerDisplay() {
+            const timerElement = document.getElementById('timer-display');
+            if (timerElement) {
+                timerElement.textContent = formatTime(timeLeft);
+            }
+        }
+
+        // Handle answering a question
+        function handleAnswer(option) {
+            const question = shuffledQuizData[currentQuestionIndex];
+            if (Array.isArray(question.answer)) {
+                // Multiple correct answers logic
+                if (!answers[currentQuestionIndex]) {
+                    answers[currentQuestionIndex] = [];
+                }
+                if (answers[currentQuestionIndex].includes(option)) {
+                    answers[currentQuestionIndex] = answers[currentQuestionIndex].filter(o => o !== option);
+                } else {
+                    answers[currentQuestionIndex].push(option);
+                }
+            } else {
+                // Single correct answer logic
+                answers[currentQuestionIndex] = option;
+            }
+            renderQuestionTracker(); // Update question tracker immediately
+            updateOptionButtons(); // Update styles of option buttons
+        }
+
+        // Check if an option is selected for the current question
+        function isOptionSelected(option, qIndex = currentQuestionIndex) {
+            const selectedAnswer = answers[qIndex];
+            if (Array.isArray(selectedAnswer)) {
+                return selectedAnswer.includes(option);
+            }
+            return selectedAnswer === option;
+        }
+
+        // Toggle question flag
+        function toggleFlag() {
+            flagged[currentQuestionIndex] = !flagged[currentQuestionIndex];
+            renderQuestionTracker(); // Update question tracker to show flag
+            updateFlagButton(); // Update flag button style
+        }
+
+        // Handle quiz submission
+        function handleSubmit() {
+            if (Object.keys(answers).length < shuffledQuizData.length) {
+                showWarning = true;
+                renderWarningModal(); // Show warning modal
+            } else {
+                // All questions attempted, submit directly
+                showResults = true;
+                quizStarted = false;
+                clearInterval(timerInterval);
+                renderQuiz();
+            }
+        }
+
+        // Handle submission after warning
+        function handleSubmitAnyway() {
+            showWarning = false;
+            showResults = true;
+            quizStarted = false;
+            clearInterval(timerInterval);
+            renderQuiz();
+        }
+
+        // Calculate quiz results
+        function getResults() {
+            let correctCount = 0;
+            let attemptedCount = 0;
+            let correctAnswers = {};
+            let incorrectAnswers = {};
+            let allMistakes = [];
+
+            shuffledQuizData.forEach((q, index) => {
+                let isCorrect = false;
+                const userAnswer = answers[index];
+                if (userAnswer !== undefined && (Array.isArray(userAnswer) ? userAnswer.length > 0 : userAnswer !== null)) {
+                    attemptedCount++;
+                }
+
+                if (Array.isArray(q.answer)) {
+                    if (userAnswer && userAnswer.length === q.answer.length && userAnswer.every(o => q.answer.includes(o))) {
+                        isCorrect = true;
+                    }
+                } else {
+                    if (userAnswer === q.answer) {
+                        isCorrect = true;
+                    }
+                }
+
+                if (isCorrect) {
+                    correctCount++;
+                    correctAnswers[index] = true;
+                } else {
+                    incorrectAnswers[index] = true;
+                    allMistakes.push(q);
+                }
+            });
+
+            const totalQuestions = shuffledQuizData.length;
+            const correctPercentage = (correctCount / totalQuestions) * 100;
+            const incorrectPercentage = ((totalQuestions - correctCount) / totalQuestions) * 100;
+
+            const mistakeTopics = allMistakes.map(q => q.type);
+            const uniqueMistakeTopics = [...new Set(mistakeTopics)];
+
+            const allTopics = shuffledQuizData.map(q => q.type);
+            const uniqueAllTopics = [...new Set(allTopics)];
+            // Assuming 5 general types of questions: Standard MCQ, Mathematical, Scenario/Case-Based, Fill in the blank, All of the above style.
+            const quizCoveragePercentage = (uniqueAllTopics.length / 5) * 100;
+
+            return {
+                correctCount,
+                totalQuestions,
+                correctPercentage,
+                incorrectPercentage,
+                mistakeTopics: uniqueMistakeTopics,
+                quizCoveragePercentage,
+                correctAnswers,
+                incorrectAnswers
+            };
+        }
+
+        // Function to render the question tracker
+        function renderQuestionTracker() {
+            const trackerContainer = document.getElementById('question-tracker-grid');
+            if (!trackerContainer) return;
+            trackerContainer.innerHTML = ''; // Clear previous buttons
+
+            shuffledQuizData.forEach((_, index) => {
+                const button = document.createElement('button');
+                button.textContent = index + 1;
+                button.onclick = () => {
+                    currentQuestionIndex = index;
+                    renderQuizContent(); // Only re-render the question area
+                    updateNavigationButtons();
+                    updateFlagButton();
+                    updateOptionButtons();
+                };
+
+                let classes = 'p-2 rounded-md text-sm font-medium transition duration-200 ease-in-out transform hover:scale-105';
+                if (index === currentQuestionIndex) {
+                    classes += ' bg-blue-600 text-white scale-110 shadow-lg';
+                } else if (answers[index] !== undefined && (Array.isArray(answers[index]) ? answers[index].length > 0 : answers[index] !== null)) {
+                    classes += ' bg-green-400 text-white';
+                } else if (flagged[index]) {
+                    classes += ' bg-yellow-400 text-gray-800';
+                } else {
+                    classes += ' bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200';
+                }
+                button.className = classes;
+                trackerContainer.appendChild(button);
+            });
+        }
+
+        // Function to render the current question content
+        function renderQuestionContent() {
+            const questionContainer = document.getElementById('question-content-area');
+            if (!questionContainer) return;
+
+            const currentQuestion = shuffledQuizData[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+                    Question ${currentQuestionIndex + 1} of ${shuffledQuizData.length}
+                </h3>
+                <p class="text-lg mb-6 leading-relaxed text-gray-700 dark:text-gray-200">${currentQuestion.question}</p>
+                <div id="options-container" class="space-y-4">
+                    <!-- Options will be dynamically added here -->
+                </div>
+            `;
+            updateOptionButtons(); // Populate and style options
+        }
+
+        // Function to update the styles of option buttons based on selection
+        function updateOptionButtons() {
+            const optionsContainer = document.getElementById('options-container');
+            if (!optionsContainer) return;
+
+            optionsContainer.innerHTML = ''; // Clear existing options
+            const currentQuestion = shuffledQuizData[currentQuestionIndex];
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => handleAnswer(option);
+                button.className = `block w-full text-left p-4 rounded-lg border-2 transition-all duration-300 ease-in-out
+                    ${isOptionSelected(option)
+                        ? 'bg-blue-600 text-white border-blue-700 shadow-md transform scale-105'
+                        : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    }`;
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Function to update navigation buttons (Previous/Next/Submit)
+        function updateNavigationButtons() {
+            const navContainer = document.getElementById('navigation-buttons');
+            if (!navContainer) return;
+
+            navContainer.innerHTML = `
+                <button id="prev-btn" class="px-6 py-3 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-full shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 ease-in-out">
+                    Previous
+                </button>
+                <button id="next-submit-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200 ease-in-out">
+                    Next
+                </button>
+            `;
+
+            const prevBtn = document.getElementById('prev-btn');
+            const nextSubmitBtn = document.getElementById('next-submit-btn');
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            prevBtn.onclick = () => {
+                currentQuestionIndex = Math.max(0, currentQuestionIndex - 1);
+                renderQuizContent();
+                updateNavigationButtons();
+                renderQuestionTracker();
+                updateFlagButton();
+            };
+
+            if (currentQuestionIndex < shuffledQuizData.length - 1) {
+                nextSubmitBtn.textContent = 'Next';
+                nextSubmitBtn.className = 'px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow-md hover:bg-blue-700 transition-colors duration-200 ease-in-out';
+                nextSubmitBtn.onclick = () => {
+                    currentQuestionIndex = currentQuestionIndex + 1;
+                    renderQuizContent();
+                    updateNavigationButtons();
+                    renderQuestionTracker();
+                    updateFlagButton();
+                };
+            } else {
+                nextSubmitBtn.textContent = 'Submit';
+                nextSubmitBtn.className = 'px-8 py-3 bg-green-600 text-white font-bold rounded-full shadow-md hover:bg-green-700 transition-colors duration-200 ease-in-out';
+                nextSubmitBtn.onclick = handleSubmit;
+            }
+        }
+
+        // Update Flag Button style
+        function updateFlagButton() {
+            const flagBtn = document.getElementById('flag-button');
+            if (flagBtn) {
+                if (flagged[currentQuestionIndex]) {
+                    flagBtn.className = 'p-2 rounded-full transition-colors duration-200 ease-in-out bg-yellow-400 text-gray-800';
+                } else {
+                    flagBtn.className = 'p-2 rounded-full transition-colors duration-200 ease-in-out bg-gray-200 dark:bg-gray-700 hover:bg-yellow-300 dark:hover:bg-yellow-400 text-gray-600 dark:text-gray-300';
+                }
+            }
+        }
+
+        // Render the entire quiz content (left panel, right panel structure)
+        function renderQuizContent() {
+            const appRoot = document.getElementById('app-root');
+            appRoot.innerHTML = `
+                <div class="flex flex-1 overflow-hidden">
+                    <!-- Left Side: Question Tracker -->
+                    <div class="w-1/4 p-4 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 scrollable-content">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Question Tracker</h2>
+                        </div>
+                        <div id="question-tracker-grid" class="grid grid-cols-5 gap-2">
+                            <!-- Question numbers will be rendered here -->
+                        </div>
+                        <div class="mt-6">
+                            <h3 class="font-bold mb-2">Legend:</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center">
+                                    <span class="inline-block w-4 h-4 rounded-full bg-green-400 mr-2"></span>
+                                    Attempted
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="inline-block w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700 mr-2"></span>
+                                    Unattempted
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="inline-block w-4 h-4 rounded-full bg-yellow-400 mr-2"></span>
+                                    Flagged
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Quiz Content -->
+                    <div class="flex-1 p-8 scrollable-content">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+                            <h1 class="text-xl md:text-2xl font-extrabold text-blue-600 dark:text-blue-400">
+                                ICAB Accounting Exam – Chapter: Introduction to Risk Management
+                            </h1>
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center text-red-500 font-bold text-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 lucide lucide-timer"><path d="M10 2h4"/><path d="M12 14v-4"/><path d="M4 13a8 8 0 0 0 8 8 8 8 0 0 0 8-8V5l-1.6.94"/><path d="M6.8 7.3L4 5"/></svg>
+                                    <span id="timer-display"></span>
+                                </div>
+                                <button id="flag-button" title="Flag this question">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flag"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Question and Options -->
+                        <div id="question-content-area" class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg mb-8">
+                            <!-- Question and options will be here -->
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div id="navigation-buttons" class="flex justify-between items-center mt-6">
+                            <!-- Buttons will be here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Warning Modal -->
+                <div id="warning-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl max-w-md w-full text-center transform transition-all duration-300 scale-100">
+                        <h3 class="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-4">Warning</h3>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6">
+                            You have not attempted all questions. Are you sure you want to submit?
+                        </p>
+                        <div class="flex justify-center space-x-4">
+                            <button id="cancel-warning-btn" class="px-6 py-3 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold rounded-full shadow-md hover:bg-gray-400 transition duration-200">
+                                Cancel
+                            </button>
+                            <button id="submit-anyway-btn" class="px-6 py-3 bg-red-600 text-white font-bold rounded-full shadow-md hover:bg-red-700 transition duration-200">
+                                Submit Anyway
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            // Attach event listeners for the modal buttons once they are rendered
+            document.getElementById('cancel-warning-btn').onclick = () => {
+                showWarning = false;
+                renderWarningModal(); // Hide modal
+            };
+            document.getElementById('submit-anyway-btn').onclick = handleSubmitAnyway;
+
+            document.getElementById('flag-button').onclick = toggleFlag; // Attach event listener to flag button
+
+            renderQuestionTracker(); // Initial render of tracker
+            renderQuestionContent(); // Initial render of current question
+            updateNavigationButtons(); // Initial render of nav buttons
+            updateTimerDisplay(); // Initial display of timer
+            updateFlagButton(); // Initial display of flag button state
+        }
+
+
+        // Render results view
+        function renderResults() {
+            const appRoot = document.getElementById('app-root');
+            const results = getResults(); // Calculate results here
+            appRoot.innerHTML = `
+                <div class="p-8 bg-gray-50 dark:bg-gray-800 min-h-screen">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 dark:text-blue-400 text-center mb-6">Quiz Results</h1>
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Performance Summary</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-center">
+                            <div class="bg-blue-100 dark:bg-blue-800 p-6 rounded-lg shadow-md">
+                                <p class="text-4xl font-extrabold text-blue-700 dark:text-blue-200">${results.correctCount}/${results.totalQuestions}</p>
+                                <p class="text-lg font-semibold text-blue-900 dark:text-blue-100">Correct Answers</p>
+                            </div>
+                            <div class="bg-green-100 dark:bg-green-800 p-6 rounded-lg shadow-md">
+                                <p class="text-4xl font-extrabold text-green-700 dark:text-green-200">${results.correctPercentage.toFixed(2)}%</p>
+                                <p class="text-lg font-semibold text-green-900 dark:text-green-100">Accuracy</p>
+                            </div>
+                            <div class="bg-red-100 dark:bg-red-800 p-6 rounded-lg shadow-md">
+                                <p class="text-4xl font-extrabold text-red-700 dark:text-red-200">${results.incorrectPercentage.toFixed(2)}%</p>
+                                <p class="text-lg font-semibold text-red-900 dark:text-red-100">Incorrect</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                            Auto-Analysis & Revision Suggestions
+                        </h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            Based on your performance, here are some insights:
+                        </p>
+                        <ul class="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
+                            ${results.mistakeTopics.length > 0 ? (
+                                results.mistakeTopics.map(topic => `
+                                    <li>
+                                        You made mistakes in questions related to: <span class="font-bold text-red-600 dark:text-red-400">${topic}</span>.
+                                        You may need to review this topic further.
+                                    </li>
+                                `).join('')
+                            ) : (
+                                `<li>Great job! You answered all questions correctly. No specific revision needed.</li>`
+                            )}
+                            <li>The quiz covered ${results.quizCoveragePercentage.toFixed(2)}% of the key exam standard types mentioned.</li>
+                            <li>Exam Standard Type: <span class="font-bold text-green-600 dark:text-green-400">Regular ✅</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">Detailed Explanations (Review Mode)</h2>
+                        ${shuffledQuizData.map((q, index) => `
+                            <div class="mb-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm border-l-4 border-gray-400 dark:border-gray-600">
+                                <p class="text-xl font-semibold mb-2 flex items-start text-gray-900 dark:text-gray-50">
+                                    <span class="w-8 h-8 rounded-full flex items-center justify-center mr-3 font-bold text-white ${results.correctAnswers[index] ? 'bg-green-500' : 'bg-red-500'}">
+                                        ${results.correctAnswers[index] ?
+                                            `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>` :
+                                            `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`
+                                        }
+                                    </span>
+                                    Q${index + 1}: ${q.question}
+                                </p>
+                                <div class="space-y-2 pl-12">
+                                    ${q.options.map((option, i) => `
+                                        <div class="p-2 rounded-md ${isOptionSelected(option, index) && (results.correctAnswers[index] || results.incorrectAnswers[index]) ? (
+                                            Array.isArray(q.answer) ? (q.answer.includes(option) ? 'bg-green-200 dark:bg-green-700' : 'bg-red-200 dark:bg-red-700') : (option === q.answer ? 'bg-green-200 dark:bg-green-700' : 'bg-red-200 dark:bg-red-700')
+                                        ) : (
+                                            (Array.isArray(q.answer) ? q.answer.includes(option) : option === q.answer) ? 'bg-green-200 dark:bg-green-700' : 'bg-gray-200 dark:bg-gray-600'
+                                        )}">
+                                            <span class="font-medium text-gray-800 dark:text-gray-100">${option}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="mt-4 p-4 bg-blue-100 dark:bg-blue-900 rounded-md border-l-4 border-blue-500">
+                                    <h4 class="font-bold text-blue-800 dark:text-blue-100 mb-1">Explanation:</h4>
+                                    <p class="text-blue-700 dark:text-blue-200">${q.explanation}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render warning modal visibility
+        function renderWarningModal() {
+            const warningModal = document.getElementById('warning-modal');
+            if (warningModal) {
+                if (showWarning) {
+                    warningModal.classList.remove('hidden');
+                } else {
+                    warningModal.classList.add('hidden');
+                }
+            }
+        }
+
+        // Main render function to control overall app view
+        function renderQuiz() {
+            const appRoot = document.getElementById('app-root');
+            if (!appRoot) return;
+
+            if (!quizStarted) {
+                appRoot.innerHTML = `
+                    <div class="flex flex-col items-center justify-center flex-1 text-center p-8 bg-gray-50 dark:bg-gray-800 rounded-lg shadow-xl">
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 dark:text-blue-400 mb-4">ICAB Accounting Exam</h1>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">Chapter: Introduction to Risk Management</h2>
+                        <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg w-full max-w-2xl">
+                            <h3 class="text-xl md:text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-4">Quiz Instructions</h3>
+                            <ul class="list-disc list-inside text-left text-gray-600 dark:text-gray-300 space-y-2 mb-6">
+                                <li>Total Questions: 50 MCQs</li>
+                                <li>Total Time: 45 minutes</li>
+                                <li>Question types include Standard, Scenario-based, and Mathematical questions.</li>
+                                <li>You can flag questions for review.</li>
+                                <li>Click a number on the left to navigate to a question.</li>
+                                <li>The timer will start once you click 'Start Quiz'.</li>
+                            </ul>
+                            <button id="start-quiz-button" class="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-full shadow-lg transform transition duration-300 ease-in-out hover:scale-105">
+                                Start Quiz
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('start-quiz-button').onclick = startQuiz;
+            } else if (showResults) {
+                renderResults();
+            } else {
+                renderQuizContent();
+            }
+            renderWarningModal(); // Ensure warning modal state is correct on re-render
+        }
+
+        // Initial render when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', renderQuiz);
+    </script>
+</body>
+</html>

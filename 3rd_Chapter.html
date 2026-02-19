@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB Accounting Exam – Chapter 3: Recording financial transactions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the quiz app */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-tracker-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .not-answered {
+            background-color: #ffffff;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        .answered {
+            background-color: #10B981; /* Green-500 */
+            color: #ffffff;
+            border: 1px solid #10B981;
+        }
+        .flagged {
+            background-color: #EF4444; /* Red-500 */
+            color: #ffffff;
+            border: 1px solid #EF4444;
+        }
+        .current {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border: 2px solid #3B82F6; /* Blue-500 */
+        }
+        .option.selected {
+            background-color: #3B82F6; /* Blue-500 */
+            color: white;
+            border-color: #2563EB; /* Blue-600 */
+        }
+        .results-correct {
+            border-left: 5px solid #10B981; /* Green-500 */
+        }
+        .results-incorrect {
+            border-left: 5px solid #EF4444; /* Red-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Main Container -->
+    <div id="app-container" class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center bg-white p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-700 mb-2">ICAB Accounting Exam</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-blue-600 mb-6">Chapter 3: Recording financial transactions</h2>
+            <div class="text-left max-w-2xl mx-auto space-y-4 text-gray-600 mb-8">
+                <p><strong>📝 Quiz Specifications:</strong></p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li><strong>Total Questions:</strong> 50 MCQs</li>
+                    <li><strong>Time Limit:</strong> 45 minutes</li>
+                    <li><strong>Marks:</strong> 2 marks per question</li>
+                    <li><strong>Difficulty:</strong> Exam-standard and tricky</li>
+                </ul>
+                <p>Click the button below to begin the exam. Good luck!</p>
+            </div>
+            <button onclick="startQuiz()" class="bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz View -->
+        <div id="quiz-view" class="hidden">
+            <header class="bg-white p-4 rounded-xl shadow-md mb-6 flex justify-between items-center">
+                <h1 class="text-xl md:text-2xl font-bold text-gray-700">ICAB Accounting Exam – Chapter 3</h1>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <!-- Left Side: Question Tracker -->
+                <aside class="md:col-span-3 lg:col-span-2 bg-white p-4 rounded-xl shadow-lg">
+                    <h3 class="font-bold mb-4 text-center">Question Tracker</h3>
+                    <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                        <!-- Tracker items will be generated here -->
+                    </div>
+                </aside>
+
+                <!-- Center: Question and Options -->
+                <main class="md:col-span-9 lg:col-span-7">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <span id="question-number" class="text-lg font-semibold text-blue-600"></span>
+                            <!-- Right Side: Timer + Flag (Mobile View) -->
+                            <div class="md:hidden flex flex-col items-end space-y-2">
+                                <div id="timer-mobile" class="text-lg font-bold text-red-600 bg-red-100 px-3 py-1 rounded-md"></div>
+                                <button id="flag-btn-mobile" onclick="toggleFlag()" class="text-sm text-yellow-600 hover:text-yellow-800 font-semibold">🚩 Flag for Review</button>
+                            </div>
+                        </div>
+                        <p id="question-text" class="text-lg mb-6"></p>
+                        <div id="options-container" class="space-y-3">
+                            <!-- Options will be generated here -->
+                        </div>
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button onclick="prevQuestion()" id="prev-btn" class="bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition">Previous</button>
+                        <button onclick="nextQuestion()" id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-8 rounded-lg hover:bg-blue-700 transition">Next</button>
+                    </div>
+                     <div class="text-center mt-8">
+                        <button onclick="confirmSubmit()" class="bg-green-600 text-white font-bold py-3 px-12 rounded-lg shadow-lg hover:bg-green-700 transition-transform transform hover:scale-105">Submit Quiz</button>
+                    </div>
+                </main>
+
+                <!-- Right Side: Timer + Flag (Desktop View) -->
+                <aside class="hidden md:block md:col-span-3 lg:col-span-3 bg-white p-4 rounded-xl shadow-lg text-center h-fit">
+                    <h3 class="font-bold mb-2">Time Remaining</h3>
+                    <div id="timer-desktop" class="text-3xl font-bold text-red-600 bg-red-100 py-2 rounded-lg mb-4"></div>
+                    <button id="flag-btn-desktop" onclick="toggleFlag()" class="w-full bg-yellow-400 text-yellow-800 font-bold py-2 px-4 rounded-lg hover:bg-yellow-500 transition">🚩 Flag for Review</button>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Results View -->
+        <div id="results-view" class="hidden bg-white p-6 md:p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl font-bold text-center text-gray-700 mb-4">Quiz Results</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center mb-8">
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <p class="text-sm text-blue-700 font-semibold">Total Score</p>
+                    <p id="total-score" class="text-3xl font-bold text-blue-800"></p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <p class="text-sm text-green-700 font-semibold">Correct</p>
+                    <p id="correct-answers" class="text-3xl font-bold text-green-800"></p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <p class="text-sm text-red-700 font-semibold">Incorrect</p>
+                    <p id="incorrect-answers" class="text-3xl font-bold text-red-800"></p>
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                    <p class="text-sm text-yellow-700 font-semibold">Incorrect %</p>
+                    <p id="incorrect-percentage" class="text-3xl font-bold text-yellow-800"></p>
+                </div>
+            </div>
+
+            <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                <h2 class="text-xl font-bold mb-3">Areas for Improvement</h2>
+                <p class="mb-3">Based on your incorrect answers, you should focus more on the following topics:</p>
+                <ul id="improvement-topics" class="list-disc list-inside space-y-1 text-gray-700">
+                    <!-- Topics will be generated here -->
+                </ul>
+                 <p class="mt-4 text-sm font-semibold"><strong>Quiz Difficulty:</strong> <span id="quiz-difficulty" class="text-red-600">Tricky</span></p>
+            </div>
+            
+            <div class="text-center mb-8">
+                 <button onclick="retakeQuiz()" class="bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-blue-700 transition">Retake Quiz</button>
+            </div>
+
+            <h2 class="text-2xl font-bold text-center mb-6 border-t pt-6">Detailed Question Review</h2>
+            <div id="detailed-review" class="space-y-6">
+                <!-- Detailed review will be generated here -->
+            </div>
+
+            <footer class="text-center text-sm text-gray-500 mt-12 border-t pt-6">
+                <p class="font-bold">Prepared by:</p>
+                <p>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/k-m-mahafuzul-alam</a></p>
+                <p>📞 WhatsApp: 01728-928984</p>
+                <p>📧 Email: kmmhafuzulalam@gmail.com</p>
+            </footer>
+        </div>
+        
+        <!-- Confirmation Modal -->
+        <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-8 rounded-lg shadow-xl text-center">
+                <h2 class="text-xl font-bold mb-4">Confirm Submission</h2>
+                <p class="mb-6">Are you sure you want to submit the quiz? You cannot change your answers after this.</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="cancelSubmit()" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button onclick="submitQuiz()" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">Submit</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- QUIZ DATA ---
+        // All questions are derived from the provided PDF "Chapter 3: Recording financial transactions"
+        const quizData = [
+            {
+                question: "Which of the following is NOT considered a source document for recording financial transactions in a business's accounts?",
+                options: ["Sales Invoice", "Purchase Order", "Credit Note", "Bank Transaction Report"],
+                answer: "B",
+                explanation: "A purchase order is a commercial document issued by a buyer to a seller, indicating types, quantities, and agreed prices for products or services. However, it is not a source document for recording a financial transaction as no liability has yet been incurred.",
+                topic: "Source Documents"
+            },
+            {
+                question: "The use of accounting software provided by a service provider via the internet, where data is stored remotely, is known as:",
+                options: ["Batch Processing", "Real-time Processing", "Cloud Accounting", "Bespoke Accounting"],
+                answer: "C",
+                explanation: "Cloud accounting is an application of cloud computing where accounting software is provided in the cloud by a service provider. This allows users to access their accounting records from any device with an internet connection.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "A business maintains a petty cash float with an imprest amount of BDT 10,000. During a period, payments totaling BDT 7,200 were made. How much cash needs to be reimbursed to restore the petty cash to the imprest amount?",
+                options: ["BDT 10,000", "BDT 2,800", "BDT 17,200", "BDT 7,200"],
+                answer: "D",
+                explanation: "Under an imprest system, the amount reimbursed at the end of a period is equal to the total of the vouchers for payments made. Therefore, BDT 7,200 is required to 'top up' the float back to the BDT 10,000 imprest amount.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "Which of the following documents would a business issue to a customer who returned faulty goods purchased on credit?",
+                options: ["A new Sales Invoice", "A Debit Note", "A Credit Note", "A Goods Received Note"],
+                answer: "C",
+                explanation: "A credit note is a document issued to a customer relating to returned goods or refunds for overcharges. It acts as a negative invoice, reducing the amount the customer owes.",
+                topic: "Source Documents"
+            },
+            {
+                question: "In a computerised accounting system, reference data that does not change regularly, such as a business's name, address, and VAT registration number, is referred to as:",
+                options: ["Transactional Data", "Source Data", "Standing Data", "Output Data"],
+                answer: "C",
+                explanation: "Standing data is reference data that does not regularly change. It is crucial for the accuracy of transactions, and access to modify it should be tightly controlled.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "Which of the following are deductions from an employee's gross pay? (Choose TWO)",
+                options: ["Employer's Pension Contribution", "Employee's Income Tax (PAYE)", "Employer's Social Security Contribution", "Employee's Pension Contribution"],
+                answer: ["B", "D"],
+                isMultiple: true,
+                explanation: "An employee's net pay is calculated by deducting items like income tax (PAYE) and the employee's own pension contributions from their gross pay. Employer contributions are an additional cost to the business above gross pay.",
+                topic: "The Payroll"
+            },
+            {
+                question: "True or False: A Goods Received Note (GRN) is a source document used to record a purchase liability in the accounting system.",
+                options: ["True", "False"],
+                answer: "B",
+                explanation: "False. A GRN is raised by a business to record the receipt of goods and is used to confirm delivery before paying an invoice. However, the purchase invoice from the supplier is the source document that creates the accounting entry for the liability.",
+                topic: "Source Documents"
+            },
+            {
+                question: "A sophisticated accounting software package integrated with a bank feed shows a payment that it cannot automatically identify. This transaction would typically be reported on an:",
+                options: ["Exception Report", "Aged Receivables Report", "Sales Day Book", "Cash Flow Statement"],
+                answer: "A",
+                explanation: "When an automated system cannot match a transaction (e.g., a bank payment), it flags it for manual investigation. These unmatched items are reported on an exception report for the accountant to review and correctly allocate.",
+                topic: "Recording Bank Transactions"
+            },
+            {
+                question: "The total payroll cost for an employer is calculated as:",
+                options: ["Employee Gross Pay - All Deductions", "Employee Net Pay + Employer Contributions", "Employee Gross Pay + Employer Contributions", "Employee Net Pay + Employee Contributions"],
+                answer: "C",
+                explanation: "The total cost of employment to a business is the employee's gross pay plus any additional employer-specific costs, such as employer's pension contributions and social security contributions.",
+                topic: "The Payroll"
+            },
+            {
+                question: "Which document initiates the purchasing process from the buyer's side but does not create a financial transaction?",
+                options: ["Purchase Invoice", "Goods Received Note", "Credit Note", "Purchase Order"],
+                answer: "D",
+                explanation: "A purchase order is raised by the buyer to request goods from a supplier. It details the requirements but is not a source document for accounting because the financial obligation (liability) is only created upon receipt of the goods and the corresponding invoice.",
+                topic: "Source Documents"
+            },
+            {
+                question: "Which of the following is a significant drawback of cloud accounting?",
+                options: ["Requires expensive, sophisticated IT equipment for the business.", "Data can only be accessed from a single, dedicated computer.", "Inability to generate financial reports automatically.", "Requires a reliable internet connection to access accounting records."],
+                answer: "D",
+                explanation: "A key disadvantage of cloud accounting is its dependency on the internet. If a business's internet connection is unreliable, or the service provider's servers are down, accessing the accounting data becomes difficult or impossible.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "At the end of a period, the petty cash box contains BDT 850 in cash and vouchers for payments totaling BDT 4,150. What is the imprest amount of the petty cash float?",
+                options: ["BDT 3,300", "BDT 4,150", "BDT 5,000", "BDT 850"],
+                answer: "C",
+                explanation: "Under the imprest system, the imprest amount (the fixed float) is equal to the cash remaining plus the total of the payment vouchers. Therefore, BDT 850 (cash) + BDT 4,150 (vouchers) = BDT 5,000.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "The process where a number of transactions are grouped together and processed at the end of a day or week is known as:",
+                options: ["Real-time processing", "Cloud processing", "Manual processing", "Batch processing"],
+                answer: "D",
+                explanation: "Batch processing involves processing a number of transactions together in a group, or batch, as opposed to real-time processing where each transaction is processed individually as it occurs.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "A remittance advice slip is included with an invoice to:",
+                options: ["Offer the customer a discount for early payment.", "Help the seller identify which invoice a payment relates to.", "Correct an overcharge on the original invoice.", "Confirm that goods have been delivered successfully."],
+                answer: "B",
+                explanation: "When a customer pays (often by cheque or bank transfer), they include the remittance advice. This helps the seller's accounting department correctly allocate the incoming funds to the specific outstanding invoice being paid.",
+                topic: "Source Documents"
+            },
+            {
+                question: "Which of the following items are paid by an employer to the tax authority (e.g., NBR in Bangladesh) as part of the payroll process? (Choose TWO)",
+                options: ["Employee's Net Pay", "Employee's Income Tax (PAYE)", "Employer's Social Security Contributions", "Employee's personal loan repayments"],
+                answer: ["B", "C"],
+                isMultiple: true,
+                explanation: "The employer is responsible for withholding the employee's income tax (PAYE) from their gross pay and remitting it to the tax authority. Additionally, the employer must pay its own social security contributions to the authority.",
+                topic: "The Payroll"
+            },
+            // Scenario 1
+            {
+                question: "<strong>Scenario:</strong> ABC Ltd sells goods on credit to XYZ Enterprise for BDT 50,000 plus 15% VAT. XYZ Enterprise later returns one-fifth of the goods as they were damaged. ABC Ltd agrees to the return and issues the appropriate document. <br><br>What is the value, including VAT, of the document ABC Ltd will issue to XYZ Enterprise?",
+                options: ["BDT 10,000", "BDT 1,500", "BDT 11,500", "BDT 8,500"],
+                answer: "C",
+                explanation: "ABC Ltd will issue a credit note. The value of the returned goods is BDT 50,000 / 5 = BDT 10,000. The VAT on these goods is 15% of BDT 10,000 = BDT 1,500. The total value of the credit note will be BDT 10,000 + BDT 1,500 = BDT 11,500.",
+                topic: "Source Documents & Calculations"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> Which document is the primary source document for recording the return of goods in ABC Ltd's accounting system?",
+                options: ["Goods Returned Note from XYZ", "Sales Invoice", "Credit Note", "Delivery Note"],
+                answer: "C",
+                explanation: "The credit note issued by ABC Ltd is the source document that evidences the reduction in the amount owed by the customer (trade receivable) and the reduction in sales revenue (sales return).",
+                topic: "Source Documents"
+            },
+            {
+                question: "The main benefit of cloud accounting is that a business can access its accounting records from any computer with an internet connection. Is this statement true or false?",
+                options: ["True", "False"],
+                answer: "A",
+                explanation: "True. This is the primary advantage of cloud accounting, offering flexibility and remote access to financial data without being tied to a specific local machine.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "Which of the following is NOT a component of the total amount paid to the pension plan provider by an employer?",
+                options: ["Employee's pension contribution", "Employer's pension contribution", "Employee's income tax (PAYE)", "All of the above are paid to the pension plan"],
+                answer: "C",
+                explanation: "The employer collects the employee's pension contribution and combines it with its own employer contribution, paying the total to the pension plan. Employee's income tax (PAYE) is paid to the government tax authority, not the pension provider.",
+                topic: "The Payroll"
+            },
+            {
+                question: "A business receives a purchase invoice from a supplier. Before payment is authorized, the accounts department should ideally match the invoice details with which two documents?",
+                options: ["Sales Order and Sales Invoice", "Purchase Order and Goods Received Note", "Bank Statement and Remittance Advice", "Credit Note and Delivery Note"],
+                answer: "B",
+                explanation: "To ensure validity, a purchase invoice should be matched with the original purchase order (to confirm the goods were ordered at the agreed price) and the goods received note (to confirm the quantity of goods was actually received).",
+                topic: "Source Documents"
+            },
+            {
+                question: "The record of all payments out of and receipts into the cash kept on premises for incidental expenditure is the:",
+                options: ["Bank Statement", "Sales Day Book", "Petty Cash Book", "Cash Flow Statement"],
+                answer: "C",
+                explanation: "The petty cash book is the specific record used to track small cash payments and receipts. It serves as the source document for these transactions.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "In an accounting system, what is the purpose of assigning a unique code to each account?",
+                options: ["To make the financial statements look more professional.", "To make it easier to input and process accounting information.", "To comply with international data privacy laws.", "To calculate the total VAT payable automatically."],
+                answer: "B",
+                explanation: "Unique account codes are used in computerised systems to standardize and simplify the process of data entry and processing, reducing errors and making it easier to categorize and report on transactions.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "An employee has a gross pay of BDT 40,000. Deductions are: Income Tax BDT 4,000 and Employee Pension BDT 2,000. The employer also contributes BDT 3,000 to the pension. What is the employee's net pay?",
+                options: ["BDT 40,000", "BDT 34,000", "BDT 31,000", "BDT 38,000"],
+                answer: "B",
+                explanation: "Net pay is calculated as Gross Pay minus employee deductions. Net Pay = BDT 40,000 - BDT 4,000 (Tax) - BDT 2,000 (Pension) = BDT 34,000. The employer's contribution does not affect the employee's net pay.",
+                topic: "The Payroll"
+            },
+            {
+                question: "Following on from the previous question, what is the total payroll cost to the employer for this employee?",
+                options: ["BDT 40,000", "BDT 34,000", "BDT 43,000", "BDT 37,000"],
+                answer: "C",
+                explanation: "The total payroll cost is the employee's Gross Pay plus any additional employer contributions. Total Cost = BDT 40,000 (Gross Pay) + BDT 3,000 (Employer Pension) = BDT 43,000.",
+                topic: "The Payroll"
+            },
+            {
+                question: "Which of these is an example of a transaction that a computerised accounting system might NOT be able to automatically match from a bank feed?",
+                options: ["A payment to a supplier for the exact amount of a recorded purchase invoice.", "A receipt from a credit customer for the exact amount of a sales invoice.", "A bank charge levied by the bank.", "A direct debit to a utility company for a variable amount each month."],
+                answer: "C",
+                explanation: "While direct debits can sometimes be matched by rules, a bank charge is often an 'unknown' transaction as there is no corresponding invoice in the system. It would likely appear on an exception report for manual allocation.",
+                topic: "Recording Bank Transactions"
+            },
+            {
+                question: "A document sent by a buyer to a supplier to formally request a credit note is known as a:",
+                options: ["Purchase Order", "Debit Note", "Credit Note", "Remittance Advice"],
+                answer: "B",
+                explanation: "A debit note may be issued by a customer to a supplier as a formal means of requesting a credit note, for instance, for returned goods. It is not a source document for the supplier's accounting system.",
+                topic: "Source Documents"
+            },
+            {
+                question: "Which of the following correctly describes the flow of documents in a credit sales transaction?",
+                options: ["Sales Invoice -> Sales Order -> Delivery Note", "Sales Order -> Sales Invoice -> Delivery Note", "Sales Order -> Delivery Note -> Sales Invoice", "Delivery Note -> Sales Invoice -> Sales Order"],
+                answer: "C",
+                explanation: "The correct sequence is: the customer places a Sales Order, the seller dispatches the goods with a Delivery Note, and then the seller issues a Sales Invoice to request payment.",
+                topic: "Source Documents"
+            },
+            {
+                question: "An imprest system for petty cash ensures that:",
+                options: ["No cash can be stolen from the petty cash box.", "The amount of cash and vouchers in the box always equals a predetermined float.", "All petty cash payments are approved by a director.", "The petty cash is reimbursed on a daily basis."],
+                answer: "B",
+                explanation: "The core principle of an imprest system is that the cash held plus the value of payment vouchers must always equal the fixed imprest amount (the float).",
+                topic: "Petty Cash"
+            },
+            {
+                question: "Which two of the following are benefits of using Cloud Accounting? (Choose TWO)",
+                options: ["It eliminates the need for source documents.", "The business does not need to purchase expensive IT equipment.", "It guarantees complete data security against all hacking attempts.", "Business can access accounting records from any device with internet."],
+                answer: ["B", "D"],
+                isMultiple: true,
+                explanation: "Key benefits include the ability to access records remotely and the reduction in capital expenditure on IT infrastructure, as the processing and storage are handled by the service provider.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "The payroll is the source document for recording expenses related to:",
+                options: ["Suppliers", "Non-current assets", "Employees", "Bank charges"],
+                answer: "C",
+                explanation: "The payroll summarises all costs related to employees, including gross pay and employer contributions, and is the source document for recording the wages and salaries expense.",
+                topic: "The Payroll"
+            },
+            {
+                question: "A sales invoice shows a total of BDT 23,000, which includes VAT at 15%. What is the amount of VAT on the invoice?",
+                options: ["BDT 3,450", "BDT 3,000", "BDT 2,300", "BDT 20,000"],
+                answer: "B",
+                explanation: "The total invoice amount (BDT 23,000) represents 115% (100% for the goods + 15% for VAT). To find the VAT amount (15%), the calculation is (23,000 / 115) * 15 = BDT 3,000.",
+                topic: "Calculations"
+            },
+            {
+                question: "A company's bank transaction report is considered a source document. Is this statement true or false?",
+                options: ["True", "False"],
+                answer: "A",
+                explanation: "True. The transaction report downloaded from the electronic banking system is the source document for all receipts and payments made through the business's bank account.",
+                topic: "Recording Bank Transactions"
+            },
+            {
+                question: "Which of the following would be paid for using petty cash?",
+                options: ["Purchase of a new delivery van", "Monthly office rent payment", "Payment of the weekly payroll", "Buying milk and sugar for the office kitchen"],
+                answer: "D",
+                explanation: "Petty cash is used for small, incidental expenses. Buying office refreshments is a classic example. The other options are significant expenditures that would be paid through the main bank account.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "What is the primary purpose of a sales invoice?",
+                options: ["To confirm the quantity of goods delivered.", "To request payment from a customer for goods or services.", "To place an order for goods with a supplier.", "To acknowledge receipt of a customer's payment."],
+                answer: "B",
+                explanation: "The primary purpose of a sales invoice is to formally request payment from a customer for goods or services that have been delivered or rendered on credit.",
+                topic: "Source Documents"
+            },
+            {
+                question: "The amount of pay an employee actually receives in their bank account is called:",
+                options: ["Gross Pay", "Total Payroll Cost", "Net Pay", "Taxable Pay"],
+                answer: "C",
+                explanation: "Net pay is the amount paid to the employee after all deductions (like tax and employee pension contributions) have been taken from their gross pay.",
+                topic: "The Payroll"
+            },
+            // Scenario 2
+            {
+                question: "<strong>Scenario:</strong> A company's total payroll cost for a month was BDT 550,000. The total gross pay for all employees was BDT 500,000. The company paid BDT 380,000 in net pay to its employees. The total amount paid to the pension plan (both employee and employer portions) was BDT 70,000. <br><br>How much did the company pay to the tax authority (for income tax and social security)?",
+                options: ["BDT 120,000", "BDT 170,000", "BDT 50,000", "BDT 100,000"],
+                answer: "D",
+                explanation: "Total Payroll Cost (550k) = Net Pay (380k) + Pension Payments (70k) + Payments to Tax Authority. Therefore, Payment to Tax Authority = 550,000 - 380,000 - 70,000 = BDT 100,000.",
+                topic: "The Payroll & Calculations"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> What was the total amount of employee deductions for the month?",
+                options: ["BDT 50,000", "BDT 120,000", "BDT 170,000", "BDT 70,000"],
+                answer: "B",
+                explanation: "Employee deductions are the difference between Gross Pay and Net Pay. Deductions = 500,000 (Gross) - 380,000 (Net) = BDT 120,000.",
+                topic: "The Payroll & Calculations"
+            },
+            {
+                question: "<strong>Scenario (cont.):</strong> How much was the employer's contribution to payroll costs (pension and social security)?",
+                options: ["BDT 50,000", "BDT 120,000", "BDT 70,000", "BDT 100,000"],
+                answer: "A",
+                explanation: "Employer's contribution is the difference between the Total Payroll Cost and the employee's Gross Pay. Contribution = 550,000 (Total Cost) - 500,000 (Gross Pay) = BDT 50,000.",
+                topic: "The Payroll & Calculations"
+            },
+            {
+                question: "An accounting system where transactions are entered and accounts updated at the exact point the transaction occurs is using:",
+                options: ["Batch processing", "Manual processing", "Real-time processing", "Cloud processing"],
+                answer: "C",
+                explanation: "Real-time processing means that master files and records are updated at the point at which the transaction takes place, providing up-to-the-minute information.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "Which of the following is NOT typically found on a sales invoice?",
+                options: ["Quantity and unit price of goods sold", "Details of trade discount", "The supplier's bank account details for payment", "The signature of the employee who packed the goods"],
+                answer: "D",
+                explanation: "A sales invoice contains financial and payment information. While internal documents might track who packed an order, this detail is not typically included on the formal invoice sent to the customer.",
+                topic: "Source Documents"
+            },
+            {
+                question: "A petty cash system with a float of BDT 2,000 is reimbursed for BDT 1,500. After the reimbursement, the cash in the box is BDT 1,800. What is the value of a missing voucher?",
+                options: ["BDT 500", "BDT 200", "BDT 300", "BDT 1,500"],
+                answer: "B",
+                explanation: "After reimbursement, the cash in the box should equal the imprest amount (BDT 2,000). Since there is only BDT 1,800, there is a shortage of BDT 200, which implies a missing voucher for that amount.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "The main accounting record in a computerised software package interacts with various other components, such as payroll and sales management. These components are known as:",
+                options: ["Source Documents", "Modules", "Account Codes", "Journals"],
+                answer: "B",
+                explanation: "Accounting software packages typically contain several different modules (e.g., payroll module, sales module) that interact with each other and the main accounting record.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "Which document provides evidence that goods have been received by a business?",
+                options: ["Purchase Order", "Purchase Invoice", "Goods Received Note (GRN)", "Delivery Note from supplier"],
+                answer: "C",
+                explanation: "A Goods Received Note (GRN) is an internal document raised by the business itself to formally record the receipt of goods from a supplier, confirming what was received and when.",
+                topic: "Source Documents"
+            },
+            {
+                question: "All transactions involving petty cash must be recorded, otherwise the cash could be abused or stolen. Is this statement true or false?",
+                options: ["True", "False"],
+                answer: "A",
+                explanation: "True. It is crucial to record all petty cash transactions, including any VAT on payments, to maintain control and prevent misuse or theft, even though the individual amounts may be small.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "Which of the following would NOT be recorded in the petty cash book?",
+                options: ["Payment for taxi fare for a client", "Purchase of postage stamps", "A cash sale to a customer for BDT 200", "Receipt of a BDT 50,000 payment from a credit customer"],
+                answer: "D",
+                explanation: "Petty cash is for small, incidental items. A large payment from a credit customer would be paid into the main business bank account, not the petty cash float.",
+                topic: "Petty Cash"
+            },
+            {
+                question: "The payroll is a source document that contains information entered into the accounting system. Which TWO of the following are created from payroll data?",
+                options: ["A liability to the tax authority", "A sales revenue entry", "A wages and salaries expense", "A trade payable to a supplier"],
+                answer: ["A", "C"],
+                isMultiple: true,
+                explanation: "The payroll data is used to record the wages and salaries expense for the period. It also creates liabilities for the amounts owed to employees (net pay), the tax authority (PAYE and social security), and the pension provider.",
+                topic: "The Payroll"
+            },
+            {
+                question: "A credit note can be described as a 'negative invoice'.",
+                options: ["True", "False"],
+                answer: "A",
+                explanation: "True. A credit note reverses all or part of an original sales invoice, reducing the amount owed by the customer, hence it can be considered a negative invoice.",
+                topic: "Source Documents"
+            },
+            {
+                question: "A key control feature in a computerised system is restricting access to, and maintenance of, standing data. Why is this important?",
+                options: ["To prevent employees from seeing the company's profits.", "Because many transactions rely on the accuracy of this underlying data.", "To ensure the system runs faster.", "Because it is a legal requirement under company law."],
+                answer: "B",
+                explanation: "Standing data (e.g., VAT rates, payment terms, customer addresses) is used by many different transactions. An error in standing data could lead to widespread inaccuracies across the accounting system, making its control essential.",
+                topic: "Computerised Accounting Systems"
+            },
+            {
+                question: "A business receives an invoice for BDT 5,750 which includes 15% VAT. The business is offered a 2% early settlement discount on the net amount. What is the amount of the discount available?",
+                options: ["BDT 115", "BDT 100", "BDT 50", "BDT 5,000"],
+                answer: "B",
+                explanation: "First, find the net amount: BDT 5,750 / 1.15 = BDT 5,000. The 2% discount is calculated on this net amount: 2% of BDT 5,000 = BDT 100.",
+                topic: "Calculations"
+            },
+            {
+                question: "The document that details goods delivered, quantities, date of delivery, and delivery address, which often accompanies the goods, is the:",
+                options: ["Sales Order", "Sales Invoice", "Delivery Note", "Credit Note"],
+                answer: "C",
+                explanation: "A delivery note is prepared by the seller and sent with the goods to the customer. It details what has been delivered and is used to confirm receipt and later to create the sales invoice.",
+                topic: "Source Documents"
+            }
+        ].map(q => ({ ...q, userAnswer: q.isMultiple ? [] : null, flagged: false }));
+
+        // --- DOM ELEMENTS ---
+        const startScreen = document.getElementById('start-screen');
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtnMobile = document.getElementById('flag-btn-mobile');
+        const flagBtnDesktop = document.getElementById('flag-btn-desktop');
+        const timerMobile = document.getElementById('timer-mobile');
+        const timerDesktop = document.getElementById('timer-desktop');
+        const confirmationModal = document.getElementById('confirmation-modal');
+
+        // --- STATE VARIABLES ---
+        let currentQuestionIndex = 0;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let timerInterval;
+
+        // --- FUNCTIONS ---
+
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizView.classList.remove('hidden');
+            initializeTracker();
+            loadQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function initializeTracker() {
+            questionTracker.innerHTML = '';
+            quizData.forEach((_, index) => {
+                const trackerItem = document.createElement('div');
+                trackerItem.textContent = index + 1;
+                trackerItem.className = 'question-tracker-item w-10 h-10 flex items-center justify-center rounded-full font-bold cursor-pointer not-answered';
+                trackerItem.onclick = () => jumpToQuestion(index);
+                trackerItem.id = `tracker-${index}`;
+                questionTracker.appendChild(trackerItem);
+            });
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const question = quizData[index];
+            
+            questionNumberEl.textContent = `Question ${index + 1} of ${quizData.length}`;
+            questionTextEl.innerHTML = question.question; // Use innerHTML to render bold/br tags in scenarios
+            optionsContainer.innerHTML = '';
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, i) => {
+                const optionWrapper = document.createElement('div');
+                optionWrapper.className = 'option border-2 border-gray-300 rounded-lg p-3 hover:bg-gray-100 cursor-pointer transition';
+                
+                let isSelected = false;
+                if (question.isMultiple) {
+                    optionWrapper.innerHTML = `
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" onchange="handleMultipleChoice('${optionLetters[i]}', this)">
+                            <span class="ml-3">${optionLetters[i]}. ${option}</span>
+                        </label>`;
+                    const checkbox = optionWrapper.querySelector('input');
+                    if (question.userAnswer.includes(optionLetters[i])) {
+                        checkbox.checked = true;
+                        isSelected = true;
+                    }
+                } else {
+                    optionWrapper.innerHTML = `<span class="font-semibold">${optionLetters[i]}.</span> ${option}`;
+                    optionWrapper.onclick = () => selectAnswer(optionLetters[i]);
+                    if (question.userAnswer === optionLetters[i]) {
+                         isSelected = true;
+                    }
+                }
+                
+                if (isSelected) {
+                    optionWrapper.classList.add('selected');
+                }
+                
+                optionsContainer.appendChild(optionWrapper);
+            });
+
+            updateNavigationButtons();
+            updateFlagButton();
+            updateActiveTracker();
+        }
+        
+        function selectAnswer(selectedOption) {
+            quizData[currentQuestionIndex].userAnswer = selectedOption;
+            loadQuestion(currentQuestionIndex); // Reload to show selection
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+        
+        function handleMultipleChoice(optionLetter, checkbox) {
+            const userAnswer = quizData[currentQuestionIndex].userAnswer;
+            if (checkbox.checked) {
+                if (!userAnswer.includes(optionLetter)) {
+                    userAnswer.push(optionLetter);
+                }
+            } else {
+                const index = userAnswer.indexOf(optionLetter);
+                if (index > -1) {
+                    userAnswer.splice(index, 1);
+                }
+            }
+            // Sort to make answer checking easier later
+            userAnswer.sort();
+            
+            // Update UI
+            const label = checkbox.parentElement;
+            const wrapper = label.parentElement;
+            if (checkbox.checked) {
+                wrapper.classList.add('selected');
+            } else {
+                wrapper.classList.remove('selected');
+            }
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+
+        function updateNavigationButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            nextBtn.classList.toggle('opacity-50', nextBtn.disabled);
+        }
+        
+        function updateFlagButton() {
+            const isFlagged = quizData[currentQuestionIndex].flagged;
+            const flagText = isFlagged ? '🚩 Unflag Question' : '🚩 Flag for Review';
+            flagBtnMobile.innerHTML = flagText;
+            flagBtnDesktop.innerHTML = flagText;
+            flagBtnDesktop.classList.toggle('bg-red-500', isFlagged);
+            flagBtnDesktop.classList.toggle('text-white', isFlagged);
+            flagBtnDesktop.classList.toggle('bg-yellow-400', !isFlagged);
+            flagBtnDesktop.classList.toggle('text-yellow-800', !isFlagged);
+        }
+
+        function updateQuestionTrackerStatus(index) {
+            const item = document.getElementById(`tracker-${index}`);
+            item.classList.remove('not-answered', 'answered', 'flagged');
+            
+            const question = quizData[index];
+            if (question.flagged) {
+                item.classList.add('flagged');
+            } else if ((question.isMultiple && question.userAnswer.length > 0) || (!question.isMultiple && question.userAnswer !== null)) {
+                item.classList.add('answered');
+            } else {
+                item.classList.add('not-answered');
+            }
+        }
+        
+        function updateActiveTracker() {
+            document.querySelectorAll('.question-tracker-item').forEach(item => {
+                item.classList.remove('current');
+            });
+            document.getElementById(`tracker-${currentQuestionIndex}`).classList.add('current');
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+        
+        function jumpToQuestion(index) {
+            loadQuestion(index);
+        }
+        
+        function toggleFlag() {
+            const question = quizData[currentQuestionIndex];
+            question.flagged = !question.flagged;
+            updateFlagButton();
+            updateQuestionTrackerStatus(currentQuestionIndex);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const formattedTime = formatTime(timeLeft);
+                timerMobile.textContent = formattedTime;
+                timerDesktop.textContent = formattedTime;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        function confirmSubmit() {
+            confirmationModal.classList.remove('hidden');
+        }
+
+        function cancelSubmit() {
+            confirmationModal.classList.add('hidden');
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizView.classList.add('hidden');
+            resultsView.classList.remove('hidden');
+            confirmationModal.classList.add('hidden');
+            calculateAndDisplayResults();
+        }
+
+        function calculateAndDisplayResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            const incorrectTopics = new Set();
+
+            quizData.forEach((q, index) => {
+                let isCorrect = false;
+                if (q.isMultiple) {
+                    // Check if arrays are equal
+                    if (q.userAnswer.length === q.answer.length && q.userAnswer.every((val, i) => val === q.answer[i])) {
+                        isCorrect = true;
+                    }
+                } else {
+                    if (q.userAnswer === q.answer) {
+                        isCorrect = true;
+                    }
+                }
+                
+                q.isCorrect = isCorrect;
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                    incorrectTopics.add(q.topic);
+                }
+            });
+
+            const totalQuestions = quizData.length;
+            const score = correctCount * 2;
+            const percentage = totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0;
+            const incorrectPercentage = totalQuestions > 0 ? (incorrectCount / totalQuestions) * 100 : 0;
+
+            document.getElementById('total-score').textContent = `${score} / ${totalQuestions * 2}`;
+            document.getElementById('correct-answers').textContent = `${correctCount} / ${totalQuestions}`;
+            document.getElementById('incorrect-answers').textContent = `${incorrectCount} / ${totalQuestions}`;
+            document.getElementById('incorrect-percentage').textContent = `${incorrectPercentage.toFixed(1)}%`;
+            
+            const improvementTopicsEl = document.getElementById('improvement-topics');
+            improvementTopicsEl.innerHTML = '';
+            if(incorrectTopics.size > 0) {
+                incorrectTopics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.textContent = topic;
+                    improvementTopicsEl.appendChild(li);
+                });
+            } else {
+                improvementTopicsEl.innerHTML = '<li>Congratulations! No specific areas for improvement identified.</li>';
+            }
+
+
+            displayDetailedReview();
+        }
+        
+        function displayDetailedReview() {
+            const reviewContainer = document.getElementById('detailed-review');
+            reviewContainer.innerHTML = '';
+            const optionLetters = ['A', 'B', 'C', 'D'];
+
+            quizData.forEach((q, index) => {
+                const resultClass = q.isCorrect ? 'results-correct' : 'results-incorrect';
+                let userAnswerText = 'Not Answered';
+                if (q.isMultiple) {
+                    if(q.userAnswer.length > 0) userAnswerText = q.userAnswer.join(', ');
+                } else {
+                    if(q.userAnswer) userAnswerText = q.userAnswer;
+                }
+                
+                const correctAnswerText = Array.isArray(q.answer) ? q.answer.join(', ') : q.answer;
+
+                const reviewCard = `
+                    <div class="p-4 rounded-lg bg-gray-50 ${resultClass}">
+                        <p class="font-bold mb-2">Q${index + 1}: ${q.question.replace(/<strong>.*?<\/strong>|<br>/g, '')}</p>
+                        <p class="text-sm"><strong>Your Answer:</strong> <span class="${q.isCorrect ? 'text-green-700' : 'text-red-700'} font-semibold">${userAnswerText}</span></p>
+                        <p class="text-sm mb-2"><strong>✅ Correct Answer:</strong> ${correctAnswerText}</p>
+                        <div class="mt-2 pt-2 border-t text-sm text-gray-600">
+                            <p><strong>📖 Explanation:</strong> ${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+                reviewContainer.innerHTML += reviewCard;
+            });
+        }
+
+        function retakeQuiz() {
+            window.location.reload();
+        }
+
+    </script>
+
+</body>
+</html>

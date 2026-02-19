@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB Accounting Exam - Chapter 1 & 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+        .question-card {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 400px;
+        }
+        .question-list-item {
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .question-list-item.answered {
+            background-color: #34d399; /* Green */
+            color: white;
+        }
+        .question-list-item.flagged {
+            background-color: #f87171; /* Red */
+            color: white;
+        }
+        .question-list-item.answered.flagged {
+            background-color: #f87171; /* Red wins over green */
+        }
+        .option-button {
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .option-button.selected {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+        .option-button.selected-multi {
+            background-color: #d1fae5;
+            border-color: #10b981;
+        }
+        .option-button.correct {
+            background-color: #d1fae5; /* Green light */
+            border-color: #10b981; /* Green */
+        }
+        .option-button.incorrect {
+            background-color: #fee2e2; /* Red light */
+            border-color: #ef4444; /* Red */
+        }
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .explanation-box {
+            background-color: #f0fdf4;
+            border-left: 4px solid #34d399;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container p-6 flex flex-col md:flex-row gap-6">
+        <!-- Main Quiz Content -->
+        <div id="quiz-container" class="w-full md:w-3/4">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">ICAB Accounting Exam – Chapter 1 & 2</h1>
+                <div class="flex items-center text-xl font-medium text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="timer">45:00</span>
+                </div>
+            </div>
+
+            <!-- Quiz Body -->
+            <div class="bg-white rounded-xl shadow-md p-8 flex flex-col items-start min-h-[400px]">
+                <!-- Question Section -->
+                <div id="question-section" class="w-full">
+                    <p id="question-number" class="text-lg font-semibold text-gray-500 mb-2"></p>
+                    <h2 id="question-text" class="text-2xl font-semibold mb-6"></h2>
+                    <div id="options-container" class="space-y-4"></div>
+                </div>
+
+                <!-- Navigation and Flag -->
+                <div id="navigation-section" class="mt-auto pt-6 w-full flex justify-between items-center border-t border-gray-200">
+                    <button id="prev-btn" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-semibold hover:bg-gray-300 transition-colors duration-200">Previous</button>
+                    <button id="flag-btn" class="px-6 py-3 bg-yellow-400 text-yellow-900 rounded-full font-semibold hover:bg-yellow-500 transition-colors duration-200">Flag</button>
+                    <button id="next-btn" class="px-6 py-3 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors duration-200">Next</button>
+                </div>
+            </div>
+
+            <!-- Submit Quiz Button -->
+            <div class="mt-6 flex justify-center">
+                <button id="submit-quiz-btn" class="px-8 py-4 bg-red-600 text-white rounded-full font-bold text-lg hover:bg-red-700 transition-colors duration-200">Submit Quiz</button>
+            </div>
+        </div>
+
+        <!-- Right Sidebar (Question Tracker) -->
+        <div class="w-full md:w-1/4">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h3 class="text-lg font-semibold mb-4">Question Tracker</h3>
+                <div id="question-tracker" class="grid grid-cols-5 gap-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section (Initially Hidden) -->
+    <div id="results-container" class="hidden container p-6">
+        <div class="bg-white rounded-xl shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">Quiz Results</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-center">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium text-gray-500">Total Score</p>
+                    <p id="final-score" class="text-3xl font-bold text-blue-600 mt-1">0/100</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium text-gray-500">Correct Answers</p>
+                    <p id="correct-count" class="text-3xl font-bold text-green-600 mt-1">0</p>
+                </div>
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium text-gray-500">Incorrect Answers</p>
+                    <p id="incorrect-count" class="text-3xl font-bold text-red-600 mt-1">0</p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm font-medium text-gray-500">Percentage Score</p>
+                    <p id="percentage-score" class="text-3xl font-bold text-gray-600 mt-1">0%</p>
+                </div>
+            </div>
+
+            <div id="quiz-summary" class="mb-8"></div>
+            
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Detailed Review</h2>
+            <div id="review-container" class="space-y-8"></div>
+
+            <div class="flex flex-col items-center mt-10">
+                <button id="retake-quiz-btn" class="px-8 py-4 bg-blue-600 text-white rounded-full font-bold text-lg hover:bg-blue-700 transition-colors duration-200">Retake Quiz</button>
+                <div class="mt-8 text-center text-sm text-gray-500">
+                    <p>Prepared by:</p>
+                    <p><strong>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-500 hover:underline">https://www.linkedin.com/in/k-m-mahafuzul-alam</a></strong></p>
+                    <p><strong>📞 WhatsApp: 01728-928984</strong></p>
+                    <p><strong>📧 Email: kmmhafuzulalam@gmail.com</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal fixed inset-0 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg p-6 shadow-xl w-full max-w-sm text-center">
+            <h3 class="text-lg font-bold mb-4">Are you sure?</h3>
+            <p class="mb-6">Once submitted, you cannot go back and change your answers.</p>
+            <div class="flex justify-around gap-4">
+                <button id="modal-cancel-btn" class="w-full py-2 bg-gray-200 text-gray-700 rounded-full font-semibold">Cancel</button>
+                <button id="modal-confirm-btn" class="w-full py-2 bg-red-600 text-white rounded-full font-semibold">Submit</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Quiz Data - 50 Questions
+        const quizData = [
+            // Chapter 1: Introduction to Business
+            {
+                number: 1,
+                questionText: 'According to the ICAB syllabus, which of the following best defines an organisation?',
+                marks: 2,
+                options: [
+                    { text: 'A group of people working together to achieve a profit.', id: 'A' },
+                    { text: 'A collection of individuals operating under a formal structure to achieve specific objectives.', id: 'B' },
+                    { text: 'Any collection of people working together to a common end.', id: 'C' },
+                    { text: 'A business registered under the Companies Act, 1994 (Bangladesh).', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The ICAB syllabus defines an organisation broadly as any collection of people working together to a common end, regardless of its legal structure or objectives.'
+            },
+            {
+                number: 2,
+                questionText: 'What is the primary objective of a business, according to traditional economic theory?',
+                marks: 2,
+                options: [
+                    { text: 'Social responsibility', id: 'A' },
+                    { text: 'Revenue maximisation', id: 'B' },
+                    { text: 'Shareholder wealth maximisation', id: 'C' },
+                    { text: 'Profit satisficing', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'The syllabus identifies revenue maximisation as a key objective in traditional economic theory, distinct from concepts like profit satisficing, which relates to achieving a satisfactory level of profit rather than the maximum possible.'
+            },
+            {
+                number: 3,
+                questionText: 'The concept of "sustainability" in business includes which of the following three pillars?',
+                marks: 2,
+                options: [
+                    { text: 'Economic, Environmental, and Social', id: 'A' },
+                    { text: 'Profit, People, and Planet', id: 'B' },
+                    { text: 'Financial, Legal, and Ethical', id: 'C' },
+                    { text: 'Growth, Innovation, and Efficiency', id: 'D' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'The three pillars of sustainability are widely recognized as Economic, Environmental, and Social. The concept of "Profit, People, and Planet" is a similar framework often referred to as the Triple Bottom Line.'
+            },
+            {
+                number: 4,
+                questionText: 'Which of the following is considered an "internal" stakeholder for a company?',
+                marks: 2,
+                options: [
+                    { text: 'Customers', id: 'A' },
+                    { text: 'Suppliers', id: 'B' },
+                    { text: 'Employees', id: 'C' },
+                    { text: 'Government', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Internal stakeholders are directly part of the business itself. Customers, suppliers, and the government are all external stakeholders. The syllabus confirms employees as a core internal stakeholder group.'
+            },
+            {
+                number: 5,
+                questionText: 'Which of the following are examples of a business objective? (Select all that apply)',
+                marks: 2,
+                options: [
+                    { text: 'Increasing market share', id: 'A' },
+                    { text: 'Ensuring employee welfare', id: 'B' },
+                    { text: 'Maximising shareholder returns', id: 'C' },
+                    { text: 'All of the above', id: 'D' }
+                ],
+                correctAnswer: ['A', 'B', 'C'],
+                explanation: 'The syllabus highlights that businesses can have a variety of objectives beyond just profit, including market-based goals, social objectives like employee welfare, and financial goals for shareholders.'
+            },
+            {
+                number: 6,
+                questionText: 'The statement "A business’s mission is its basic function in society expressed in terms of how it satisfies its stakeholders" is:',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'This statement is a direct definition from the provided syllabus regarding a business’s mission. It correctly ties the mission to the basic function of the business and its relationship with stakeholders.'
+            },
+            {
+                number: 7,
+                questionText: 'A local factory has the objective to "increase manufacturing output by 15%." Why might this objective NOT be considered "SMART"?',
+                marks: 2,
+                options: [
+                    { text: 'It is not Specific', id: 'A' },
+                    { text: 'It is not Measurable', id: 'B' },
+                    { text: 'It is not Achievable', id: 'C' },
+                    { text: 'It is not Time-bound', id: 'D' }
+                ],
+                correctAnswer: ['D'],
+                explanation: 'The provided syllabus material on SMART goals notes that such an objective lacks a time frame, making it impossible to determine if the goal was achieved within a specific period. This is a direct test of the information in the PDF.'
+            },
+            {
+                number: 8,
+                questionText: 'An organisation that is not a business would have which of the following as a primary objective?',
+                marks: 2,
+                options: [
+                    { text: 'Profit generation', id: 'A' },
+                    { text: 'Sales maximisation', id: 'B' },
+                    { text: 'Providing a service at cost', id: 'C' },
+                    { text: 'Generating revenue', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'While non-business organisations like charities and public sector bodies may generate revenue, their primary objective is often to provide a service, sometimes at cost, rather than to make a profit. This is a core distinction mentioned in the syllabus.'
+            },
+            {
+                number: 9,
+                questionText: 'In the context of the ICAB syllabus, the term "stakeholders" refers to:',
+                marks: 2,
+                options: [
+                    { text: 'Only the owners of the business', id: 'A' },
+                    { text: 'Only the people who have a financial interest in the business', id: 'B' },
+                    { text: 'Any group or individual who is affected by or can affect the achievement of the organisation’s objectives', id: 'C' },
+                    { text: 'The top management team of the business', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The syllabus provides a broad definition of stakeholders, encompassing any individual or group that has an interest in the business\'s activities and can influence or be influenced by them. This is a foundational concept.'
+            },
+            {
+                number: 10,
+                questionText: 'According to the ICAB syllabus, accountants have a role to play in managing risks, including those related to climate change.',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'The provided PDF directly states this. This is a key point in the "Sustainability and climate change" section of the syllabus, highlighting the expanding role of accountants.'
+            },
+            // Chapter 2: Managing a Business
+            {
+                number: 11,
+                questionText: 'Management involves all of the following except:',
+                marks: 2,
+                options: [
+                    { text: 'Setting goals and objectives', id: 'A' },
+                    { text: 'Planning and controlling activities', id: 'B' },
+                    { text: 'Delegating work to others', id: 'C' },
+                    { text: 'Arbitrary decision-making', id: 'D' }
+                ],
+                correctAnswer: ['D'],
+                explanation: 'Management is defined in the syllabus as a systematic process of planning, organising, directing, and controlling resources. Arbitrary decision-making is contrary to this process.'
+            },
+            {
+                number: 12,
+                questionText: 'A manager who focuses on ensuring tasks are completed correctly and on time is primarily performing which function?',
+                marks: 2,
+                options: [
+                    { text: 'Planning', id: 'A' },
+                    { text: 'Coordinating', id: 'B' },
+                    { text: 'Controlling', id: 'C' },
+                    { text: 'Organising', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The "Controlling" function of management involves monitoring performance against objectives and taking corrective action to ensure the plan is followed. This aligns directly with the description.'
+            },
+            {
+                number: 13,
+                questionText: 'Which of the following is the most important concept to ensure effective delegation?',
+                marks: 2,
+                options: [
+                    { text: 'Responsibility', id: 'A' },
+                    { text: 'Authority', id: 'B' },
+                    { text: 'Accountability', id: 'C' },
+                    { text: 'Power', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'To effectively delegate a task, the manager must transfer the necessary authority to the subordinate to carry it out. While responsibility and accountability are also part of the process, authority is the enabler.'
+            },
+            {
+                number: 14,
+                questionText: 'Which of the following is an example of a "line manager"?',
+                marks: 2,
+                options: [
+                    { text: 'The Head of the Human Resources Department', id: 'A' },
+                    { text: 'The Chief Financial Officer', id: 'B' },
+                    { text: 'The Production Supervisor', id: 'C' },
+                    { text: 'The Legal Advisor', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'A line manager is someone directly involved in the core operations of the business and has direct authority over subordinates. A production supervisor fits this description perfectly, unlike staff managers in HR or Legal.'
+            },
+            {
+                number: 15,
+                questionText: 'The process of a manager ensuring that the activities of different parts of the organisation are synchronised is known as:',
+                marks: 2,
+                options: [
+                    { text: 'Planning', id: 'A' },
+                    { text: 'Controlling', id: 'B' },
+                    { text: 'Coordinating', id: 'C' },
+                    { text: 'Organising', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Coordination is the function of management that brings together the activities of different departments or individuals to achieve a common goal harmoniously. This is a direct definition from the syllabus.'
+            },
+            {
+                number: 16,
+                questionText: 'A business’s "mission" is defined by its basic function in society. The mission is expressed in terms of how it satisfies its:',
+                marks: 2,
+                options: [
+                    { text: 'Customers', id: 'A' },
+                    { text: 'Shareholders', id: 'B' },
+                    { text: 'Stakeholders', id: 'C' },
+                    { text: 'Employees', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The syllabus explicitly states that the mission is about satisfying its stakeholders. This is a key definition and a direct test of knowledge from the provided PDF.'
+            },
+            {
+                number: 17,
+                questionText: 'Which of the following business functions is primarily concerned with turning raw materials into finished goods?',
+                marks: 2,
+                options: [
+                    { text: 'Procurement', id: 'A' },
+                    { text: 'Operations and production', id: 'B' },
+                    { text: 'Human resource management', id: 'C' },
+                    { text: 'Marketing', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'Operations and production is the business function responsible for the transformation of inputs (raw materials, labour, etc.) into outputs (finished products or services). This is a foundational concept in Chapter 2.'
+            },
+            {
+                number: 18,
+                questionText: 'The process of obtaining all the goods, services, and works needed by an organisation is known as:',
+                marks: 2,
+                options: [
+                    { text: 'Supply Chain Management', id: 'A' },
+                    { text: 'Logistics', id: 'B' },
+                    { text: 'Procurement', id: 'C' },
+                    { text: 'Operations', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Procurement is a key business function defined in the syllabus as the process of acquiring goods and services needed for the business to operate.'
+            },
+            {
+                number: 19,
+                questionText: 'The roles of a manager, according to Henry Mintzberg, are categorized into three groups: Interpersonal, Informational, and ____________.',
+                marks: 2,
+                options: [
+                    { text: 'Directional', id: 'A' },
+                    { text: 'Financial', id: 'B' },
+                    { text: 'Supervisory', id: 'C' },
+                    { text: 'Decisional', id: 'D' }
+                ],
+                correctAnswer: ['D'],
+                explanation: 'Mintzberg\'s managerial roles are divided into three categories: Interpersonal (figurehead, leader, liaison), Informational (monitor, disseminator, spokesperson), and Decisional (entrepreneur, disturbance handler, resource allocator, negotiator).'
+            },
+            {
+                number: 20,
+                questionText: 'In the context of management, "Accountability" means:',
+                marks: 2,
+                options: [
+                    { text: 'The right to give commands to subordinates', id: 'A' },
+                    { text: 'The obligation to carry out assigned tasks', id: 'B' },
+                    { text: 'Being liable for the outcome of delegated tasks', id: 'C' },
+                    { text: 'Having the power to make decisions independently', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Accountability is the concept of being held responsible or liable for the results of a task. It cannot be delegated and ultimately rests with the manager who delegated the task. Responsibility is the obligation to perform the task itself.'
+            },
+            // The rest of the 50 questions continue here, following the same format.
+            // Questions 21-50 are based on the same PDF content, mixed in difficulty and type.
+            {
+                number: 21,
+                questionText: 'An accountant working for a non-profit organisation is primarily concerned with:',
+                marks: 2,
+                options: [
+                    { text: 'Maximising profit for shareholders', id: 'A' },
+                    { text: 'Ensuring compliance and financial accountability', id: 'B' },
+                    { text: 'Generating revenue from sales', id: 'C' },
+                    { text: 'Minimizing tax liabilities', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'While profit is not the primary objective of a non-profit, financial accountability and compliance with legal and regulatory frameworks are critical. This is a practical application of the syllabus content.'
+            },
+            {
+                number: 22,
+                questionText: 'The strategic management process involves which of the following? (Select all that apply)',
+                marks: 2,
+                options: [
+                    { text: 'Vision', id: 'A' },
+                    { text: 'Mission', id: 'B' },
+                    { text: 'Strategic objectives', id: 'C' },
+                    { text: 'Operational plans', id: 'D' }
+                ],
+                correctAnswer: ['A', 'B', 'C'],
+                explanation: 'The syllabus highlights the interrelationship between a business\'s vision, mission, and strategic objectives as core components of the strategic management process. Operational plans are part of the execution but are not the core strategic components.'
+            },
+            {
+                number: 23,
+                questionText: 'Which of the following is an example of an external stakeholder with a legal or regulatory interest?',
+                marks: 2,
+                options: [
+                    { text: 'Customers', id: 'A' },
+                    { text: 'Employees', id: 'B' },
+                    { text: 'The Bangladesh Bank', id: 'C' },
+                    { text: 'Shareholders', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The Bangladesh Bank, as the central bank, has a regulatory interest in the financial system and companies within it. This is a specific example of a key external stakeholder group with legal authority.'
+            },
+            {
+                number: 24,
+                questionText: 'The concept of "profit satisficing" suggests that managers will always seek to maximize profits to the highest possible level.',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'The term "satisficing" means to seek a "satisfactory" level, not the absolute maximum. Managers may seek a level of profit that is acceptable to owners and other stakeholders, rather than constantly striving for the highest possible profit.'
+            },
+            {
+                number: 25,
+                questionText: 'A functional manager is one who has authority over a specific business function, such as marketing or finance.',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'A functional manager, as described in the syllabus, is a manager who specialises in a particular area or function of the business, such as the head of the marketing department or the finance manager.'
+            },
+            {
+                number: 26,
+                questionText: 'Which of the following is a key characteristic of "organisational culture"? (Select all that apply)',
+                marks: 2,
+                options: [
+                    { text: 'Shared values and beliefs', id: 'A' },
+                    { text: 'Strictly defined in the company’s mission statement', id: 'B' },
+                    { text: 'Can be formal or informal', id: 'C' },
+                    { text: 'Dictated by the company\'s legal structure', id: 'D' }
+                ],
+                correctAnswer: ['A', 'C'],
+                explanation: 'Organisational culture is defined by shared values and beliefs, often informally, which influence how employees behave and interact. While it may align with the mission, it is not strictly defined by it and is not dictated by legal structure.'
+            },
+            {
+                number: 27,
+                questionText: 'Which business function is most closely associated with the phrase "the right product, in the right place, at the right price, at the right time"?',
+                marks: 2,
+                options: [
+                    { text: 'Procurement', id: 'A' },
+                    { text: 'Operations and Production', id: 'B' },
+                    { text: 'Marketing', id: 'C' },
+                    { text: 'Human Resource Management', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'This phrase is a classic definition of effective logistics and operations management, ensuring the product is available to the customer as and when they need it.'
+            },
+            {
+                number: 28,
+                questionText: 'The phrase "All of the above" can be a valid answer in a multiple-choice question when:',
+                marks: 2,
+                options: [
+                    { text: 'All other options are correct', id: 'A' },
+                    { text: 'Only one of the options is correct', id: 'B' },
+                    { text: 'It is a tricky question', id: 'C' },
+                    { text: 'The question has multiple correct answers', id: 'D' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'This question tests your understanding of the question format itself. "All of the above" is a correct answer only when every other provided option is also correct.'
+            },
+            {
+                number: 29,
+                questionText: 'A key difference between a line manager and a staff manager is that a staff manager:',
+                marks: 2,
+                options: [
+                    { text: 'Has direct authority over production', id: 'A' },
+                    { text: 'Provides expert advice to line managers', id: 'B' },
+                    { text: 'Is responsible for achieving the business’s core objectives', id: 'C' },
+                    { text: 'Is involved in setting strategic goals', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'Staff managers, such as those in HR or legal, support the line managers by providing specialist advice and services, rather than having direct authority over core production or service delivery.'
+            },
+            {
+                number: 30,
+                questionText: 'An organisation\'s vision is best described as:',
+                marks: 2,
+                options: [
+                    { text: 'The detailed plan for achieving objectives', id: 'A' },
+                    { text: 'A long-term aspirational statement about what the company wants to become', id: 'B' },
+                    { text: 'The current function of the business in society', id: 'C' },
+                    { text: 'The formal rules of the company', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'The syllabus differentiates between a mission (current function) and a vision (future aspiration). A vision is a forward-looking, high-level statement about the company\'s ideal future state.'
+            },
+            {
+                number: 31,
+                questionText: 'The process of management includes all of the following steps except:',
+                marks: 2,
+                options: [
+                    { text: 'Planning', id: 'A' },
+                    { text: 'Organising', id: 'B' },
+                    { text: 'Coordinating', id: 'C' },
+                    { text: 'Maximising', id: 'D' }
+                ],
+                correctAnswer: ['D'],
+                explanation: 'The classic management process includes planning, organising, commanding, coordinating, and controlling. "Maximising" is a business objective, not a step in the management process.'
+            },
+            {
+                number: 32,
+                questionText: 'A manager responsible for the entire company, such as a CEO, is a:',
+                marks: 2,
+                options: [
+                    { text: 'First-line manager', id: 'A' },
+                    { text: 'Middle manager', id: 'B' },
+                    { text: 'Top-level manager', id: 'C' },
+                    { text: 'Staff manager', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Top-level managers, like CEOs and directors, are responsible for the overall strategic direction of the company, as outlined in the syllabus. This is a straightforward test of the types of managers.'
+            },
+            {
+                number: 33,
+                questionText: 'According to the syllabus, which of the following is NOT a characteristic of a "SMART" objective?',
+                marks: 2,
+                options: [
+                    { text: 'Specific', id: 'A' },
+                    { text: 'Measurable', id: 'B' },
+                    { text: 'Responsible', id: 'C' },
+                    { text: 'Time-bound', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'The SMART acronym stands for Specific, Measurable, Achievable, Relevant, and Time-bound. "Responsible" is not part of this framework.'
+            },
+            {
+                number: 34,
+                questionText: 'The objective of a business to "increase profit by 10% in the next quarter" is:',
+                marks: 2,
+                options: [
+                    { text: 'Specific and time-bound but not measurable', id: 'A' },
+                    { text: 'Measurable and achievable but not specific', id: 'B' },
+                    { text: 'Specific, measurable, and time-bound', id: 'C' },
+                    { text: 'None of the above', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'This objective is specific ("increase profit"), measurable ("by 10%"), and time-bound ("in the next quarter"). It meets three of the five SMART criteria, which is a key concept in the syllabus.'
+            },
+            {
+                number: 35,
+                questionText: 'Which business function deals with the recruitment, training, and development of employees?',
+                marks: 2,
+                options: [
+                    { text: 'Operations', id: 'A' },
+                    { text: 'Procurement', id: 'B' },
+                    { text: 'Human Resource Management (HRM)', id: 'C' },
+                    { text: 'Marketing', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Human Resource Management (HRM) is the function responsible for all aspects of managing the people within an organisation, from recruitment to performance appraisal and training, as specified in the syllabus.'
+            },
+            {
+                number: 36,
+                questionText: 'A business mission statement will typically not include:',
+                marks: 2,
+                options: [
+                    { text: 'The business’s core function', id: 'A' },
+                    { text: 'The target market', id: 'B' },
+                    { text: 'The company\'s current financial position', id: 'C' },
+                    { text: 'How it aims to satisfy its stakeholders', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'While financial performance is an outcome of the mission, the mission statement itself is a forward-looking, qualitative statement about purpose and function, not a report on current financial standing.'
+            },
+            {
+                number: 37,
+                questionText: 'In the context of management, "responsibility" is:',
+                marks: 2,
+                options: [
+                    { text: 'The right to command subordinates', id: 'A' },
+                    { text: 'The obligation to perform a task', id: 'B' },
+                    { text: 'Liability for the outcome of an action', id: 'C' },
+                    { text: 'The power to make decisions', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'The syllabus distinguishes between responsibility (the obligation to do the work) and accountability (liability for the outcome). Responsibility can be delegated, while accountability cannot.'
+            },
+            {
+                number: 38,
+                questionText: 'Which of the following is an internal stakeholder? (Select all that apply)',
+                marks: 2,
+                options: [
+                    { text: 'Managers', id: 'A' },
+                    { text: 'Suppliers', id: 'B' },
+                    { text: 'Employees', id: 'C' },
+                    { text: 'Lenders', id: 'D' }
+                ],
+                correctAnswer: ['A', 'C'],
+                explanation: 'Managers and employees are both part of the internal structure of the company. Suppliers and lenders are external stakeholders who interact with the company but are not part of its internal operations.'
+            },
+            {
+                number: 39,
+                questionText: 'The business function that is most concerned with creating customer relationships is:',
+                marks: 2,
+                options: [
+                    { text: 'Procurement', id: 'A' },
+                    { text: 'Information Technology', id: 'B' },
+                    { text: 'Marketing', id: 'C' },
+                    { text: 'Operations', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Marketing is the key business function focused on understanding customer needs, promoting products and services, and building long-term relationships with customers.'
+            },
+            {
+                number: 40,
+                questionText: 'A manager who spends a significant amount of time communicating with external parties, such as investors and regulators, is performing a key role according to which managerial theorist?',
+                marks: 2,
+                options: [
+                    { text: 'Henri Fayol', id: 'A' },
+                    { text: 'Henry Mintzberg', id: 'B' },
+                    { text: 'Frederick Taylor', id: 'C' },
+                    { text: 'Peter Drucker', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'This describes Mintzberg\'s "Spokesperson" role, which is part of the Informational category. The syllabus links Mintzberg directly to these specific managerial roles.'
+            },
+            {
+                number: 41,
+                questionText: 'All businesses have the same primary objective of maximizing profit.',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'The syllabus explicitly states that businesses can have multiple objectives, including revenue maximization, profit satisficing, or social and environmental goals, not just a single, overriding profit-maximization objective.'
+            },
+            {
+                number: 42,
+                questionText: 'A business\'s goals are typically more detailed and short-term than its mission or vision.',
+                marks: 2,
+                options: [
+                    { text: 'True', id: 'A' },
+                    { text: 'False', id: 'B' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'This is a key distinction from the syllabus. Goals are concrete steps taken to achieve the broader, more abstract mission and vision statements.'
+            },
+            {
+                number: 43,
+                questionText: 'Which of the following is NOT a typical characteristic of a non-governmental organisation (NGO)?',
+                marks: 2,
+                options: [
+                    { text: 'Operates independently of government', id: 'A' },
+                    { text: 'Primarily aims to make a profit', id: 'B' },
+                    { text: 'Often focused on social or environmental causes', id: 'C' },
+                    { text: 'Can be funded by donations', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'NGOs, by definition, are non-profit and are not focused on generating a profit. Their objectives are typically social, environmental, or political, and their funding comes from various sources, including donations.'
+            },
+            {
+                number: 44,
+                questionText: 'Which of the following would be an example of a "Tricky" question according to the ICAB exam standards?',
+                marks: 2,
+                options: [
+                    { text: 'A question that has confusing but plausible options', id: 'A' },
+                    { text: 'A question with a single correct answer', id: 'B' },
+                    { text: 'A question based on a direct definition', id: 'C' },
+                    { text: 'All of the above', id: 'D' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'A tricky question, as per ICAB standards, is not necessarily one with multiple answers or a direct definition. It is one where the options are designed to confuse the test-taker, requiring a deep understanding of the subtle nuances in the material.'
+            },
+            {
+                number: 45,
+                questionText: 'Which of the following correctly describes the relationship between Power, Authority, and Responsibility?',
+                marks: 2,
+                options: [
+                    { text: 'Power is the ability to influence, while authority is the right to command.', id: 'A' },
+                    { text: 'Responsibility is the same as accountability.', id: 'B' },
+                    { text: 'Authority cannot be delegated, but responsibility can.', id: 'C' },
+                    { text: 'All of the above', id: 'D' }
+                ],
+                correctAnswer: ['A'],
+                explanation: 'The syllabus distinguishes between these concepts. Power is a broader concept of influence, while authority is a specific right to command based on position. Responsibility is the obligation to perform a task, and accountability is the liability for its outcome. Both authority and responsibility are often delegated, but accountability is not.'
+            },
+            // Case-Based MCQs
+            // Case 1: A local textile company, 'Shaheen Textiles', is considering a new production line.
+            // The General Manager, Mr. Rahman, is an expert in textile production but relies on his finance manager, Ms. Jashim, for financial forecasting.
+            // Mr. Rahman wants to increase output by 20% in the next two years, but Ms. Jashim is concerned about the capital investment required.
+            {
+                number: 46,
+                questionText: 'Based on the case, Mr. Rahman is acting as a:',
+                marks: 2,
+                options: [
+                    { text: 'Staff manager', id: 'A' },
+                    { text: 'Line manager', id: 'B' },
+                    { text: 'Top-level manager', id: 'C' },
+                    { text: 'Financial manager', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'As a General Manager of a production unit, Mr. Rahman is directly responsible for the core operations of the business and has authority over subordinates in that area. This makes him a line manager.'
+            },
+            {
+                number: 47,
+                questionText: 'Ms. Jashim\'s role, in relation to Mr. Rahman, can be described as providing:',
+                marks: 2,
+                options: [
+                    { text: 'Directional authority', id: 'A' },
+                    { text: 'Direct responsibility', id: 'B' },
+                    { text: 'Staff advice', id: 'C' },
+                    { text: 'Line authority', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Ms. Jashim, as a finance manager, provides specialised financial expertise and advice. This is the role of a staff manager, who supports line managers like Mr. Rahman.'
+            },
+            {
+                number: 48,
+                questionText: 'Mr. Rahman\'s objective to "increase output by 20% in the next two years" is:',
+                marks: 2,
+                options: [
+                    { text: 'Specific', id: 'A' },
+                    { text: 'Measurable', id: 'B' },
+                    { text: 'Time-bound', id: 'C' },
+                    { text: 'All of the above', id: 'D' }
+                ],
+                correctAnswer: ['D'],
+                explanation: 'This objective is specific ("increase output"), measurable ("by 20%"), and time-bound ("in the next two years"), thus meeting key SMART criteria as per the syllabus.'
+            },
+            // Mathematical/Calculation MCQs
+            {
+                number: 49,
+                questionText: 'A company makes a profit of BDT 500,000 and has a revenue of BDT 2,500,000. What is the profit margin percentage?',
+                marks: 2,
+                options: [
+                    { text: '10%', id: 'A' },
+                    { text: '15%', id: 'B' },
+                    { text: '20%', id: 'C' },
+                    { text: '25%', id: 'D' }
+                ],
+                correctAnswer: ['C'],
+                explanation: 'Profit Margin = (Profit / Revenue) x 100%. Therefore, (500,000 / 2,500,000) * 100 = 0.20 * 100 = 20%. This tests a basic financial calculation relevant to business objectives.'
+            },
+            {
+                number: 50,
+                questionText: 'A business has total assets of BDT 10,000,000 and total liabilities of BDT 4,000,000. What is the total equity?',
+                marks: 2,
+                options: [
+                    { text: 'BDT 4,000,000', id: 'A' },
+                    { text: 'BDT 6,000,000', id: 'B' },
+                    { text: 'BDT 14,000,000', id: 'C' },
+                    { text: 'None of the above', id: 'D' }
+                ],
+                correctAnswer: ['B'],
+                explanation: 'Based on the fundamental accounting equation (Assets = Liabilities + Equity), Equity = Assets - Liabilities. Therefore, BDT 10,000,000 - BDT 4,000,000 = BDT 6,000,000.'
+            }
+        ];
+        
+        // State variables
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let flaggedQuestions = {};
+        let timer = 45 * 60; // 45 minutes in seconds
+        let timerInterval;
+
+        // DOM elements
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsContainer = document.getElementById('results-container');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const timerEl = document.getElementById('timer');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        const reviewContainer = document.getElementById('review-container');
+        const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        
+        // Utility Functions
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Main Quiz Logic
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            flaggedQuestions = {};
+            timer = 45 * 60;
+            quizContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            renderQuestionTracker();
+            loadQuestion(currentQuestionIndex);
+            
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timer--;
+                timerEl.textContent = formatTime(timer);
+                if (timer <= 0) {
+                    clearInterval(timerInterval);
+                    handleSubmit();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion(index) {
+            if (index < 0 || index >= quizData.length) return;
+
+            currentQuestionIndex = index;
+            const question = quizData[currentQuestionIndex];
+            
+            questionNumberEl.textContent = `Question ${question.number} (2 Marks)`;
+            questionTextEl.textContent = question.questionText;
+            optionsContainer.innerHTML = '';
+            
+            const userSelection = userAnswers[currentQuestionIndex] || [];
+            
+            question.options.forEach(option => {
+                const isSelected = userSelection.includes(option.id);
+                const button = document.createElement('button');
+                button.className = `option-button w-full text-left px-6 py-4 rounded-lg border-2 border-gray-300 ${isSelected ? (question.correctAnswer.length > 1 ? 'selected-multi' : 'selected') : ''} hover:bg-gray-50`;
+                button.textContent = `${option.id}. ${option.text}`;
+                button.onclick = () => selectAnswer(option.id);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update navigation buttons and flag status
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.textContent = currentQuestionIndex === quizData.length - 1 ? 'Finish' : 'Next';
+            flagBtn.textContent = flaggedQuestions[currentQuestionIndex] ? 'Unflag' : 'Flag';
+            flagBtn.classList.toggle('bg-red-400', flaggedQuestions[currentQuestionIndex]);
+            flagBtn.classList.toggle('bg-yellow-400', !flaggedQuestions[currentQuestionIndex]);
+        }
+        
+        function selectAnswer(optionId) {
+            const question = quizData[currentQuestionIndex];
+            if (!userAnswers[currentQuestionIndex]) {
+                userAnswers[currentQuestionIndex] = [];
+            }
+            
+            const currentSelection = userAnswers[currentQuestionIndex];
+            const optionIndex = currentSelection.indexOf(optionId);
+
+            if (question.correctAnswer.length > 1) { // Multiple choice
+                if (optionIndex > -1) {
+                    currentSelection.splice(optionIndex, 1);
+                } else {
+                    currentSelection.push(optionId);
+                }
+            } else { // Single choice
+                userAnswers[currentQuestionIndex] = [optionId];
+            }
+            
+            renderQuestionTracker();
+            loadQuestion(currentQuestionIndex); // Reload to show selection
+        }
+        
+        function renderQuestionTracker() {
+            questionTracker.innerHTML = '';
+            for (let i = 0; i < quizData.length; i++) {
+                const div = document.createElement('div');
+                div.className = `question-list-item w-10 h-10 rounded-full flex items-center justify-center font-semibold text-gray-700 bg-gray-200 transition-colors duration-200`;
+                div.textContent = i + 1;
+                div.onclick = () => loadQuestion(i);
+                
+                if (userAnswers[i] && userAnswers[i].length > 0) {
+                    div.classList.add('answered');
+                } else {
+                    div.classList.remove('answered');
+                }
+                
+                if (flaggedQuestions[i]) {
+                    div.classList.add('flagged');
+                } else {
+                    div.classList.remove('flagged');
+                }
+                questionTracker.appendChild(div);
+            }
+        }
+        
+        function navigate(direction) {
+            const newIndex = currentQuestionIndex + direction;
+            if (newIndex >= 0 && newIndex < quizData.length) {
+                loadQuestion(newIndex);
+            }
+        }
+        
+        function flagQuestion() {
+            if (flaggedQuestions[currentQuestionIndex]) {
+                delete flaggedQuestions[currentQuestionIndex];
+            } else {
+                flaggedQuestions[currentQuestionIndex] = true;
+            }
+            renderQuestionTracker();
+            loadQuestion(currentQuestionIndex); // To update the button text
+        }
+        
+        function handleSubmit() {
+            clearInterval(timerInterval);
+            quizContainer.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            showResults();
+        }
+        
+        function showResults() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let totalMarks = 0;
+            const topicMistakes = {};
+            const questionResults = [];
+            
+            quizData.forEach((question, index) => {
+                const userSelection = userAnswers[index] || [];
+                const correctAnswers = question.correctAnswer;
+                
+                const isCorrect = userSelection.length === correctAnswers.length &&
+                    userSelection.every(ans => correctAnswers.includes(ans));
+                
+                if (isCorrect) {
+                    correctCount++;
+                    totalMarks += question.marks;
+                } else {
+                    incorrectCount++;
+                    // Basic topic analysis for mistakes
+                    const topic = question.explanation.split(':')[0].trim();
+                    topicMistakes[topic] = (topicMistakes[topic] || 0) + 1;
+                }
+                
+                const result = {
+                    ...question,
+                    isCorrect: isCorrect,
+                    userSelection: userSelection,
+                };
+                questionResults.push(result);
+            });
+            
+            // Display overall stats
+            document.getElementById('final-score').textContent = `${totalMarks}/${quizData.length * 2}`;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+            document.getElementById('percentage-score').textContent = `${((totalMarks / (quizData.length * 2)) * 100).toFixed(2)}%`;
+
+            // Display quiz summary
+            let summaryHTML = '';
+            const mistakePercentage = (incorrectCount / quizData.length) * 100;
+            const quizDifficulty = mistakePercentage > 40 ? 'Tricky' : 'Regular';
+            
+            summaryHTML += `<p class="text-lg text-center mb-4">This quiz was classified as <span class="font-bold ${quizDifficulty === 'Tricky' ? 'text-red-500' : 'text-green-500'}">${quizDifficulty}</span> based on your performance.</p>`;
+            
+            const topicsToPractice = Object.entries(topicMistakes)
+                .sort(([, a], [, b]) => b - a)
+                .map(([topic, count]) => `<li>${topic}</li>`)
+                .join('');
+            
+            if (topicsToPractice) {
+                summaryHTML += `
+                    <div class="p-4 rounded-lg bg-yellow-50 border-l-4 border-yellow-400">
+                        <p class="font-semibold text-gray-700">Topics that need more practice:</p>
+                        <ul class="list-disc list-inside mt-2 text-gray-600">${topicsToPractice}</ul>
+                    </div>
+                `;
+            }
+            document.getElementById('quiz-summary').innerHTML = summaryHTML;
+
+            // Display detailed review
+            reviewContainer.innerHTML = questionResults.map(result => {
+                const userSelectedText = result.userSelection.map(sel => {
+                    const option = result.options.find(opt => opt.id === sel);
+                    return option ? option.text : 'N/A';
+                }).join(', ');
+                
+                const correctText = result.correctAnswer.map(ans => {
+                    const option = result.options.find(opt => opt.id === ans);
+                    return option ? option.text : 'N/A';
+                }).join(', ');
+                
+                return `
+                    <div class="bg-gray-50 p-6 rounded-lg shadow">
+                        <p class="font-bold text-lg mb-2">Question ${result.number}. ${result.questionText} <span class="${result.isCorrect ? 'text-green-600' : 'text-red-600'}">(${result.isCorrect ? 'Correct' : 'Incorrect'})</span></p>
+                        <ul class="space-y-2 mb-4">
+                            ${result.options.map(option => `
+                                <li class="px-4 py-2 rounded-lg ${result.userSelection.includes(option.id) ? (result.isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800') : ''} ${result.correctAnswer.includes(option.id) && !result.isCorrect ? 'bg-green-100 text-green-800 font-semibold' : ''}">
+                                    <span class="font-bold">${option.id}.</span> ${option.text}
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <div class="explanation-box p-4 rounded-md">
+                            <p class="font-bold text-green-700 mb-1">✅ Correct Answer: ${result.correctAnswer.join(', ')}</p>
+                            <p class="font-bold text-green-700">📖 Explanation:</p>
+                            <p class="text-green-700">${result.explanation}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Event Listeners
+        prevBtn.addEventListener('click', () => navigate(-1));
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex === quizData.length - 1) {
+                confirmationModal.classList.remove('hidden');
+            } else {
+                navigate(1);
+            }
+        });
+        flagBtn.addEventListener('click', flagQuestion);
+        
+        submitQuizBtn.addEventListener('click', () => {
+             confirmationModal.classList.remove('hidden');
+        });
+
+        modalCancelBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+
+        modalConfirmBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+            handleSubmit();
+        });
+
+        retakeQuizBtn.addEventListener('click', startQuiz);
+        
+        // Initial call
+        window.onload = startQuiz;
+        
+    </script>
+</body>
+</html>

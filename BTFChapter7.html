@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB MCQ Exam – Business Finance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-tracker-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .question-tracker-btn.not-answered { background-color: #ffffff; border: 1px solid #d1d5db; color: #374151; }
+        .question-tracker-btn.answered { background-color: #10b981; color: #ffffff; border-color: #10b981;}
+        .question-tracker-btn.flagged { background-color: #ef4444; color: #ffffff; border-color: #ef4444; }
+        .question-tracker-btn.current { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); }
+        .option-btn { transition: background-color 0.2s ease; }
+        .option-btn.selected { background-color: #3b82f6; color: white; }
+        .blinking { animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Main Container -->
+    <div id="app-container" class="max-w-7xl mx-auto p-4">
+
+        <!-- Home Page -->
+        <div id="home-page" class="text-center bg-white p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">ICAB MCQ Exam – Business Finance</h1>
+            <h2 class="text-xl md:text-2xl font-semibold text-blue-600 mb-6">(The Financial System and Sources of Finance)</h2>
+            
+            <div class="max-w-2xl mx-auto bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 class="text-lg font-bold mb-4 text-left">Instructions:</h3>
+                <ul class="list-disc list-inside text-left space-y-2 text-gray-700">
+                    <li><b>Total Questions:</b> 50</li>
+                    <li><b>Time Limit:</b> 45 minutes</li>
+                    <li><b>Marks:</b> 2 marks per question</li>
+                    <li>Questions are designed to be tricky and meet ICAB exam standards, based strictly on the provided syllabus.</li>
+                    <li>You can flag questions for review and navigate between questions at any time.</li>
+                    <li>The quiz can be submitted at any point during the test.</li>
+                </ul>
+            </div>
+
+            <button id="start-quiz-btn" class="mt-8 bg-blue-600 text-white font-bold py-3 px-10 rounded-lg shadow-md hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz-page" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Panel: Question Tracker -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-xl shadow-lg order-2 lg:order-1">
+                    <h3 class="text-lg font-bold mb-4 text-center">Question Tracker</h3>
+                    <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                        <!-- Tracker buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Center Panel: Question -->
+                <div class="lg:col-span-6 bg-white p-6 rounded-xl shadow-lg order-1 lg:order-2">
+                    <div id="question-container">
+                        <!-- Question content will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Right Panel: Timer and Actions -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-xl shadow-lg order-3 lg:order-3">
+                    <div class="sticky top-4">
+                        <div id="timer-container" class="text-center bg-gray-100 p-4 rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold">Time Remaining</h3>
+                            <div id="timer" class="text-4xl font-bold text-red-600">45:00</div>
+                        </div>
+                        <button id="flag-btn" class="w-full bg-yellow-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-yellow-600 transition">
+                            Flag for Review
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <button id="submit-quiz-btn" class="bg-green-600 text-white font-bold py-3 px-12 rounded-lg shadow-md hover:bg-green-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300">
+                    Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="results-page" class="hidden bg-white p-8 rounded-xl shadow-lg">
+            <div id="results-summary" class="text-center border-b pb-6 mb-6">
+                <!-- Summary will be injected here -->
+            </div>
+            <div id="topic-analysis" class="mb-6">
+                <!-- Topic analysis will be injected here -->
+            </div>
+            <div id="results-details">
+                <!-- Detailed question review will be injected here -->
+            </div>
+            <div class="text-center mt-8">
+                <button id="retake-quiz-btn" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition mr-4">Retake Quiz</button>
+                <button id="back-to-home-btn" class="bg-gray-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-600 transition">Back to Home</button>
+            </div>
+            <footer class="text-center mt-10 pt-4 border-t text-sm text-gray-500">
+                <p class="font-semibold">Prepared by:</p>
+                <p>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-600 hover:underline">linkedin.com/in/k-m-mahafuzul-alam</a></p>
+                <p>📞 WhatsApp: 01728-928984</p>
+                <p>📧 Email: kmmhafuzulalam@gmail.com</p>
+            </footer>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA ---
+        const questions = [
+            {
+                topic: "The Banking System",
+                question: "In Bangladesh, which entity is primarily responsible for ensuring financial stability by taking action to remove or reduce systemic risks in the financial system as a whole, a role similar to the Bank of England's Financial Policy Committee?",
+                options: [
+                    "Bangladesh Securities and Exchange Commission (BSEC)",
+                    "Ministry of Finance",
+                    "Bangladesh Bank",
+                    "Dhaka Stock Exchange (DSE)"
+                ],
+                correct: [2],
+                explanation: "Bangladesh Bank, as the central bank, is tasked with maintaining monetary and financial stability. This includes identifying and mitigating systemic risks to the entire financial system, which is analogous to the role of the FPC in the UK."
+            },
+            {
+                topic: "The Banking System",
+                question: "A customer deposits funds into their bank account, which is currently in credit. According to the primary contractual relationship, which statement is correct?",
+                options: [
+                    "The bank is the debtor, and the customer is the creditor.",
+                    "The customer is the debtor, and the bank is the creditor.",
+                    "The bank is the bailee, and the customer is the bailor.",
+                    "The bank is the agent, and the customer is the principal."
+                ],
+                correct: [0],
+                explanation: "When a customer's account is in credit, the bank owes money to the customer. Therefore, the bank is the debtor (borrower) and the customer is the creditor (lender). The relationship reverses if the account is overdrawn."
+            },
+            {
+                topic: "Money Transmission",
+                question: "A large corporation in Dhaka needs to make a high-value, same-day payment of BDT 5 crore to another corporate bank account within Bangladesh. Which payment system is most suitable for this transaction?",
+                options: [
+                    "Bangladesh Automated Clearing House (BACH)",
+                    "National Payment Switch Bangladesh (NPSB)",
+                    "Bangladesh Electronic Funds Transfer Network (BEFTN)",
+                    "Bangladesh Real Time Gross Settlement (BD-RTGS)"
+                ],
+                correct: [3],
+                explanation: "BD-RTGS is designed for high-value, time-critical transactions that are settled individually on a gross basis in real-time. BEFTN and BACH are typically used for lower-value batch payments like salaries and direct debits, analogous to BACS and Faster Payments in the UK."
+            },
+            {
+                topic: "The Banking System",
+                question: "A bank in Bangladesh provides investment advice to a high-net-worth individual. Beyond the specific contractual terms, the bank is expected to act with utmost good faith. This overarching obligation arises from what type of relationship?",
+                options: [
+                    "Bailor/Bailee relationship",
+                    "Debtor/Creditor relationship",
+                    "Fiduciary relationship",
+                    "Mortgagor/Mortgagee relationship"
+                ],
+                correct: [2],
+                explanation: "A fiduciary relationship exists where one party (the bank) is expected to act in the best interests of the other (the customer) with good faith and trust, especially when there is a power imbalance or the bank is providing advice. This duty goes beyond standard contractual obligations."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A small manufacturing company in Gazipur experiences seasonal fluctuations in cash flow and needs a flexible way to finance its short-term working capital deficits. The amount needed varies each month. What is the most appropriate source of short-term debt finance?",
+                options: [
+                    "A 5-year term loan",
+                    "Issuing commercial paper",
+                    "A bank overdraft",
+                    "Leasing its machinery"
+                ],
+                correct: [2],
+                explanation: "A bank overdraft is ideal for managing short-term, fluctuating cash deficits. It is flexible, as interest is only charged on the overdrawn amount, and can be used as needed up to an agreed limit. A term loan is for a fixed period, commercial paper is for large corporations, and leasing is for asset financing, not general working capital."
+            },
+            {
+                topic: "Money Markets",
+                question: "Which of the following money market instruments are issued by the Bangladesh Government through Bangladesh Bank to manage its short-term funding needs and are considered highly secure but offer low returns?",
+                options: [
+                    "Commercial Paper",
+                    "Certificates of Deposit (CDs)",
+                    "Treasury Bills (T-Bills)",
+                    "Corporate Bonds"
+                ],
+                correct: [2],
+                explanation: "Treasury Bills (T-Bills) are short-term debt instruments issued by the government (via the central bank) to finance its short-term cash requirements. They are considered one of the safest investments, hence they typically offer lower yields compared to riskier instruments like commercial paper or corporate bonds."
+            },
+            {
+                topic: "Capital Markets",
+                question: "The Dhaka Stock Exchange (DSE) facilitates both the issuance of new shares to the public for the first time and the subsequent trading of those shares among investors. These two functions represent its role as:",
+                options: [
+                    "A wholesale and retail market",
+                    "A primary and secondary market",
+                    "A debt and equity market",
+                    "A regulated and over-the-counter market"
+                ],
+                correct: [1],
+                explanation: "The primary market is where new securities are issued and sold to investors for the first time (e.g., an IPO). The secondary market is where existing securities are traded among investors. A stock exchange like the DSE serves both functions."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A publicly listed company on the CSE (Chittagong Stock Exchange) wants to raise new equity capital. To protect existing shareholders from dilution of ownership, the Companies Act 1994 requires that new shares are first offered to them. This is known as a:",
+                options: [
+                    "Placing",
+                    "Initial Public Offering (IPO)",
+                    "Rights Issue",
+                    "Bonus Issue"
+                ],
+                correct: [2],
+                explanation: "A rights issue gives existing shareholders the 'pre-emption right' to purchase new shares in proportion to their current holding, thus allowing them to maintain their percentage of ownership. An IPO is for a first-time listing, a placing involves selling to institutions, and a bonus issue is a capitalization of profits with no new cash raised."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "Scenario: A large, well-established company plans a high-profile Initial Public Offering (IPO) on the DSE. To ensure the full amount of capital is raised, it pays a 1.5% fee to an investment bank which agrees to purchase any shares not subscribed for by the public. This process is called:",
+                options: [
+                    "Placing",
+                    "Offer for sale by tender",
+                    "Underwriting",
+                    "Debt factoring"
+                ],
+                correct: [2],
+                explanation: "Underwriting is an insurance mechanism for new share issues. An underwriter (typically an investment bank) guarantees that the required capital will be raised by agreeing to buy any unsold shares, in exchange for a fee."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A garments factory in Savar sells goods on 60-day credit terms to large European buyers. This creates a significant cash flow gap. To solve this, the factory sells its trade receivables to a financial institution, which advances 85% of the invoice value immediately. This financing arrangement is:",
+                options: [
+                    "An overdraft",
+                    "A letter of credit",
+                    "Debt factoring",
+                    "Leasing"
+                ],
+                correct: [2],
+                explanation: "Debt factoring involves a business selling its accounts receivable (invoices) to a third party (a factor) at a discount. The factor provides immediate cash, manages the sales ledger, and collects the debt from the customer. This is a common way to finance working capital tied up in receivables."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "A tech startup in Dhaka has a high-growth potential product but is too new and risky for traditional bank loans or a stock market listing. It secures BDT 2 crore in funding from a specialized firm that takes a 30% equity stake and a seat on the board, aiming for a profitable exit in 5-7 years. This type of financing is best described as:",
+                options: [
+                    "Business Angel Investment",
+                    "Crowdfunding",
+                    "Venture Capital",
+                    "A rights issue"
+                ],
+                correct: [2],
+                explanation: "Venture Capital (VC) firms provide risk-bearing capital to early-stage, high-potential companies in exchange for an equity stake. Key features include active participation in management, a long-term investment horizon, and an exit strategy (like a trade sale or IPO) to realize capital gains."
+            },
+            {
+                topic: "Financing Exports",
+                question: "An exporter in Bangladesh is shipping goods to a new buyer in a politically unstable country. To eliminate the risk of non-payment, the exporter insists on a payment method where the buyer's bank provides an irrevocable undertaking to pay, provided the exporter presents specific shipping documents. This instrument is a:",
+                options: [
+                    "Bill of Exchange",
+                    "Letter of Credit (L/C)",
+                    "Export Credit Insurance",
+                    "Open Account"
+                ],
+                correct: [1],
+                explanation: "A Letter of Credit (L/C) is a guarantee from a bank that a buyer's payment to a seller will be received on time and for the correct amount. The bank's creditworthiness replaces the buyer's, making it one of the most secure payment methods for exporters, especially in high-risk situations."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "Which of the following is generally considered the most important and widely used source of long-term finance for most established, profitable businesses?",
+                options: [
+                    "New issues of shares to the public",
+                    "Rights issues to existing shareholders",
+                    "Retained earnings",
+                    "Venture capital"
+                ],
+                correct: [2],
+                explanation: "For most companies, retained earnings (profits reinvested back into the business instead of being paid out as dividends) are the primary and most significant source of finance. It is readily available, has no issuance costs, and does not dilute control."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A company issues a debt instrument with a BDT 1,000 nominal value and a 9% coupon rate. The interest is paid annually. What does the 'coupon rate' determine?",
+                options: [
+                    "The market price of the instrument.",
+                    "The amount the company will repay at maturity.",
+                    "The annual interest payment in BDT.",
+                    "The credit rating of the instrument."
+                ],
+                correct: [2],
+                explanation: "The coupon rate is the nominal interest rate fixed on the debt security. It determines the periodic interest payment, which is calculated as the coupon rate multiplied by the nominal (or par) value of the bond. In this case, the annual interest payment is 9% of BDT 1,000 = BDT 90."
+            },
+            {
+                topic: "The Banking System",
+                question: "Which TWO of the following are duties of a bank towards its customer under their fiduciary and contractual relationship?",
+                options: [
+                    "To provide investment advice that guarantees a profit.",
+                    "To maintain the confidentiality of the customer's affairs.",
+                    "To automatically check every bank statement for the customer.",
+                    "To honour the customer's payment orders if sufficient funds exist."
+                ],
+                correct: [1, 3],
+                explanation: "A bank has a duty of confidentiality and a duty to execute the customer's valid instructions (like cheques or transfers) if the account has adequate funds or an overdraft facility. There is no duty to guarantee profits on advice, and the legal duty to check statements falls on the customer, not the bank."
+            },
+            {
+                topic: "Green Finance",
+                question: "A corporation in Bangladesh issues a bond where the legal documentation explicitly states that the proceeds will be used exclusively to fund a new solar power plant and a water recycling facility. This type of instrument is best classified as a:",
+                options: [
+                    "Zero-coupon bond",
+                    "Floating rate note",
+                    "Green Bond",
+                    "Convertible bond"
+                ],
+                correct: [2],
+                explanation: "A Green Bond is a debt security where the proceeds are specifically earmarked for financing or re-financing projects with clear environmental benefits. The use of proceeds is the defining characteristic, often aligned with principles like the ICMA Green Bond Principles."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "The market operated by the stock exchanges in Bangladesh for smaller, growing companies that may not meet the stringent requirements for a main board listing is analogous to the UK's AIM. This market provides an alternative source of capital with less stringent regulations. This refers to the:",
+                options: [
+                    "SME Platform of the DSE/CSE",
+                    "Inter-bank money market",
+                    "Over-The-Counter (OTC) market",
+                    "Government securities market"
+                ],
+                correct: [0],
+                explanation: "The SME Platforms of the Dhaka and Chittagong Stock Exchanges are designed for Small and Medium Enterprises to raise capital from the public market under more relaxed listing and compliance requirements, similar to the function of the Alternative Investment Market (AIM) in London."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A transport company acquires a new fleet of trucks. Instead of buying them outright, it enters an agreement to pay a monthly fee to a finance company for the right to use the trucks for five years. The finance company retains legal ownership. This arrangement is a form of:",
+                options: [
+                    "Term Loan",
+                    "Overdraft",
+                    "Hire Purchase",
+                    "Leasing"
+                ],
+                correct: [3],
+                explanation: "Leasing is a contract where one party (the lessor) provides an asset for use to another party (the lessee) for a specified period in return for periodic payments. It's a major source of finance for acquiring capital assets without a large upfront cash outlay."
+            },
+            {
+                topic: "Financing Exports",
+                question: "An exporter sends goods to a buyer but the buyer's country suddenly imposes a moratorium on all foreign currency payments, preventing the buyer from paying. This type of risk, which can be covered by export credit insurance, is classified as:",
+                options: [
+                    "Buyer Risk",
+                    "Physical Risk",
+                    "Liquidity Risk",
+                    "Country Risk"
+                ],
+                correct: [3],
+                explanation: "Country risk refers to losses arising from political or economic events within the importing country that are beyond the control of the buyer or seller. This includes government actions like a debt moratorium, war, or currency inconvertibility. Buyer risk relates to the customer's insolvency or failure to pay."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A company's initial public offering (IPO) price is set too low. What is the most likely immediate consequence for the company and its original shareholders?",
+                options: [
+                    "The IPO will fail due to lack of interest.",
+                    "The company will raise more capital than intended.",
+                    "The wealth of the original shareholders is diluted more than necessary.",
+                    "The underwriter will be forced to buy all the shares."
+                ],
+                correct: [2],
+                explanation: "Setting the IPO price too low means the company sells its shares for less than their market value. To raise the desired amount of capital, it must issue more shares than would have been necessary at a higher price. This results in the original shareholders' stake being diluted more than was required."
+            },
+            {
+                topic: "The Banking System",
+                question: "Which of the following is NOT a primary duty of a customer towards their bank?",
+                options: [
+                    "To keep their PIN and passwords secure.",
+                    "To inform the bank of any unauthorised transactions they discover.",
+                    "To exercise reasonable care when drawing cheques to prevent fraud.",
+                    "To examine their bank statements meticulously for errors."
+                ],
+                correct: [3],
+                explanation: "While it is prudent for a customer to check their bank statements, there is no specific legal duty on them to do so. The other options are established duties: the customer must take reasonable steps to protect their account access details and prevent fraudulent activity."
+            },
+            {
+                topic: "Money Markets",
+                question: "Fill in the blank: __________ are short-term, unsecured promissory notes (IOUs) issued by large, creditworthy corporations to raise finance, which can be held to maturity or sold in the secondary market.",
+                options: [
+                    "Treasury Bills",
+                    "Commercial Paper",
+                    "Certificates of Deposit",
+                    "Gilt-edged securities"
+                ],
+                correct: [1],
+                explanation: "Commercial Paper (CP) is essentially an unsecured IOU issued by a large corporation with a good credit rating to meet its short-term funding requirements. Banks and other corporations are the primary investors."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A private company wishes to 'go public' by getting a listing on the main board of the Dhaka Stock Exchange. Which of the following is a significant DISADVANTAGE of this process?",
+                options: [
+                    "Improved marketability of the company's shares.",
+                    "Access to a much larger pool of capital.",
+                    "Dilution of control for the original owners and increased scrutiny.",
+                    "Enhanced public standing and reputation."
+                ],
+                correct: [2],
+                explanation: "While going public has many advantages like access to capital and improved reputation, a major drawback is the dilution of control for the founders/original owners, as a portion of the company must be sold to the public. Furthermore, listed companies face intense scrutiny from regulators, investors, and the media."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A key difference between a bank overdraft and a term loan is that an overdraft is typically __________, whereas a term loan has a fixed repayment schedule.",
+                options: [
+                    "secured against assets",
+                    "cheaper in all circumstances",
+                    "a long-term source of capital",
+                    "repayable on demand"
+                ],
+                correct: [3],
+                explanation: "The defining feature of an overdraft is that the bank can demand repayment at any time, making it a risky source for long-term finance. A term loan, by contrast, is granted for a specific period and cannot be recalled unless the borrower defaults on the terms."
+            },
+            {
+                topic: "The Banking System",
+                question: "When a bank accepts a customer's valuable items (e.g., jewelry, important documents) for storage in a safe deposit box, the contractual relationship established is that of:",
+                options: [
+                    "Mortgagor and Mortgagee",
+                    "Principal and Agent",
+                    "Bailor and Bailee",
+                    "Debtor and Creditor"
+                ],
+                correct: [2],
+                explanation: "This is a bailment relationship. The customer (bailor) entrusts property to the bank (bailee) for safekeeping. The bank's duty is to take reasonable care of the property and return it upon request to the bailor."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A company wants to issue new shares to the public. Instead of setting a fixed price, it invites investors to bid for the shares at or above a minimum price. The final issue price is then set at the level which clears the entire issue. This method is known as an:",
+                options: [
+                    "Offer for sale by tender",
+                    "Initial Public Offering (IPO)",
+                    "Underwritten issue",
+                    "Placing"
+                ],
+                correct: [0],
+                explanation: "An offer for sale by tender is a pricing mechanism used to discover the market price for a new issue. By allowing investors to bid, the company can set a strike price that more accurately reflects demand, reducing the risk of underpricing or overpricing."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "Which THREE of the following are typical characteristics of Venture Capital (VC) financing?",
+                options: [
+                    "It is usually provided as a long-term loan with fixed interest.",
+                    "The VC investor often takes an active role on the company's board.",
+                    "The primary return for the VC is through capital gains on exit.",
+                    "It is readily available to any small business, regardless of risk.",
+                    "The investment is made in companies with high growth potential."
+                ],
+                correct: [1, 2, 4],
+                explanation: "Venture capital is equity finance (not a loan) for high-growth, high-risk companies. VCs are active investors who seek high returns primarily through capital gains when they sell their stake (exit). It is highly selective and not available to all businesses."
+            },
+            {
+                topic: "Money Transmission",
+                question: "When a customer uses a debit card at a shop in Bangladesh, the electronic transaction that transfers money from the customer's account to the merchant's account is a form of:",
+                options: [
+                    "BD-RTGS",
+                    "SWIFT transfer",
+                    "Electronic Funds Transfer at Point of Sale (EFTPOS)",
+                    "Cheque clearing"
+                ],
+                correct: [2],
+                explanation: "EFTPOS is the specific term for electronic transactions initiated at a point of sale using a payment card. This system facilitates the immediate debiting of the customer's account and crediting of the retailer's account."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A company uses a debt factor to manage its receivables. The agreement is 'non-recourse'. What does this mean?",
+                options: [
+                    "The company must repay the factor for any bad debts.",
+                    "The factor bears the risk of any customer non-payment (bad debts).",
+                    "The company's customers are not aware that a factor is involved.",
+                    "The factor only provides the service of collecting debts, not finance."
+                ],
+                correct: [1],
+                explanation: "In non-recourse factoring, the factor provides credit insurance and assumes the risk of bad debts. If a customer fails to pay, the factor absorbs the loss, and the client company does not have to repay the advance for that specific invoice. 'With recourse' means the client bears the bad debt risk."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "Preference shares are often described as a hybrid security. Which feature makes them similar to debt?",
+                options: [
+                    "They carry voting rights in the company.",
+                    "They participate in the excess profits of the company.",
+                    "They typically pay a fixed-rate dividend.",
+                    "The dividend payment is legally guaranteed every year."
+                ],
+                correct: [2],
+                explanation: "Like debt (e.g., a bond), preference shares usually offer a fixed percentage dividend based on their par value. This fixed return is a key characteristic that makes them similar to debt. However, unlike debt interest, the dividend is not guaranteed if profits are insufficient."
+            },
+            {
+                topic: "The Banking System",
+                question: "The regulatory body in Bangladesh responsible for regulating the conduct of all financial services firms to ensure market integrity and consumer protection, similar to the UK's Financial Conduct Authority (FCA), is the:",
+                options: [
+                    "Registrar of Joint Stock Companies and Firms (RJSC)",
+                    "Bangladesh Bank",
+                    "Insurance Development and Regulatory Authority (IDRA)",
+                    "Bangladesh Securities and Exchange Commission (BSEC)"
+                ],
+                correct: [3],
+                explanation: "The BSEC is the primary regulator of the capital market in Bangladesh. Its role includes protecting investors, ensuring fair practices, and regulating market intermediaries like stockbrokers and investment banks, which is analogous to the conduct regulation role of the FCA."
+            },
+            {
+                topic: "Financing Exports",
+                question: "A Bangladeshi exporter draws up a document ordering an overseas buyer to pay a specified sum of money at a future date. The buyer's bank 'accepts' this document, guaranteeing payment. The exporter can then sell this document to its own bank at a discount for immediate cash. This instrument is a:",
+                options: [
+                    "Letter of Credit",
+                    "Promissory Note",
+                    "Bill of Exchange (or Bank Acceptance)",
+                    "Export credit guarantee"
+                ],
+                correct: [2],
+                explanation: "A Bill of Exchange is an order written by the exporter (drawer) instructing the importer (drawee) or their bank to pay a certain amount on a specific date. When the drawee's bank accepts it, it becomes a 'Banker's Acceptance', a negotiable instrument that can be discounted for cash."
+            },
+            {
+                topic: "Green Finance",
+                question: "According to the ICMA Green Bond Principles, which of the following is NOT one of the four core components required for a bond to be classified as 'green'?",
+                options: [
+                    "Use of Proceeds",
+                    "Process for Project Evaluation and Selection",
+                    "Guarantee of a higher financial return than non-green bonds",
+                    "Management and Reporting of Proceeds"
+                ],
+                correct: [2],
+                explanation: "The four core components of the Green Bond Principles are: 1) Use of Proceeds for green projects, 2) Process for Project Evaluation and Selection, 3) Management of Proceeds (e.g., in a separate account), and 4) Reporting. There is no principle that guarantees a higher financial return; the return is market-driven."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A company takes out a term loan with a variable interest rate. The rate is quoted as '6-month BTR + 2.5%'. What does this structure imply for the company?",
+                options: [
+                    "The interest rate is fixed for the entire loan term.",
+                    "The company's interest payments will change periodically based on a benchmark rate.",
+                    "The loan is risk-free for the company.",
+                    "The loan can be repaid on demand by the bank."
+                ],
+                correct: [1],
+                explanation: "A variable or floating rate loan has an interest rate that is reset periodically based on a benchmark rate. In Bangladesh, BTR (Bengal Treasury Rate) or similar benchmarks are used. This means the company's interest expense will rise or fall with movements in the benchmark, creating uncertainty in cash flow planning."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "A group of wealthy, experienced individuals pool their personal funds to invest in several early-stage startups. They provide capital and mentorship, often investing at an earlier stage than formal VC funds. These investors are known as:",
+                options: [
+                    "Underwriters",
+                    "Debt Factors",
+                    "Venture Capitalists",
+                    "Business Angels"
+                ],
+                correct: [3],
+                explanation: "Business Angels are affluent individuals who provide capital for a business start-up, usually in exchange for convertible debt or ownership equity. They often invest their own money and may provide mentorship, filling the funding gap between friends/family and formal venture capital."
+            },
+            {
+                topic: "Capital Markets",
+                question: "Loan stocks (or debentures) issued by a company can have various features. If a loan stock is 'secured', what does this mean for the lender?",
+                options: [
+                    "The interest rate is guaranteed by the government.",
+                    "The lender has a charge over specific assets of the company, giving them priority in a liquidation.",
+                    "The loan stock can be converted into equity shares at a later date.",
+                    "The loan stock is traded on the Dhaka Stock Exchange."
+                ],
+                correct: [1],
+                explanation: "A secured loan stock (or debenture) is backed by collateral. The lender has a legal claim over specific assets (a fixed charge) or a general pool of assets (a floating charge). If the company defaults or is liquidated, the secured lender has priority to be repaid from the proceeds of those assets."
+            },
+            {
+                topic: "Money Transmission",
+                question: "For international money transfers, banks worldwide use a secure messaging network to send payment instructions. This network does not transfer funds itself but facilitates the communication for the transfer. This system is:",
+                options: [
+                    "CHAPS (in UK) / BD-RTGS (in BD)",
+                    "SWIFT",
+                    "BACS (in UK) / BEFTN (in BD)",
+                    "EFTPOS"
+                ],
+                correct: [1],
+                explanation: "The Society for Worldwide Interbank Financial Telecommunication (SWIFT) provides a network that enables financial institutions worldwide to send and receive information about financial transactions in a secure, standardized, and reliable environment."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "Which statement correctly distinguishes a rights issue from a new public offer (IPO/Offer for Sale)?",
+                options: [
+                    "A rights issue raises debt, while a public offer raises equity.",
+                    "A rights issue is offered to the general public, while a public offer is for existing shareholders.",
+                    "A rights issue is offered to existing shareholders, while a public offer is for new investors.",
+                    "A rights issue is always underwritten, while a public offer is not."
+                ],
+                correct: [2],
+                explanation: "The fundamental difference is the target audience. A rights issue is an offer made exclusively to a company's existing shareholders to buy more shares. A public offer (like an IPO) is an invitation to the general public and institutional investors to become new shareholders."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "Scenario: A company needs to finance the purchase of a BDT 2 crore machine. It can take a 5-year term loan at 11% interest. Alternatively, it can lease the machine for 5 years. Which of the following is a key advantage of leasing over buying with a loan?",
+                options: [
+                    "The total cash outflow over 5 years will always be lower with leasing.",
+                    "The company gains legal ownership of the asset from day one.",
+                    "It avoids a large initial cash outlay and may not require a down payment.",
+                    "The lease payments are not a legally binding commitment."
+                ],
+                correct: [2],
+                explanation: "A major advantage of leasing is cash flow. It allows a company to acquire and use an asset without the large upfront cost of purchasing it, as payments are spread over the lease term. The total cost might be higher, ownership is not transferred (in an operating lease), and lease payments are legally binding."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "A key problem for small, unlisted businesses in raising equity finance is the lack of a secondary market for their shares. What is the primary consequence of this?",
+                options: [
+                    "It is illegal for them to issue new shares.",
+                    "The cost of debt finance becomes extremely low for them.",
+                    "Equity investors are hesitant to invest because they cannot easily sell their shares to realize a return (poor marketability).",
+                    "The company must pay higher dividends than listed companies."
+                ],
+                correct: [2],
+                explanation: "Investors in private companies face an 'illiquidity' problem. Without a public stock market, it's difficult to find a buyer for their shares. This lack of a clear exit route makes the investment less attractive and riskier, thus making it harder for the company to raise equity capital."
+            },
+            {
+                topic: "The Banking System",
+                question: "A bank's duty to provide reasonable notice before closing a customer's account (that is in credit) is an example of its:",
+                options: [
+                    "Duty to use care and skill",
+                    "Implied contractual duty",
+                    "Statutory duty under the Companies Act 1994",
+                    "Duty as a bailee"
+                ],
+                correct: [1],
+                explanation: "The relationship between a bank and customer is a contract. While not always explicitly written, it is an implied term of this contract that the bank will not terminate the relationship arbitrarily and will provide reasonable notice to allow the customer to make alternative arrangements."
+            },
+
+            {
+                topic: "Money Markets",
+                question: "A bank issues a document that certifies a deposit has been made for a fixed period (e.g., 1 year) at a fixed interest rate. This document is negotiable and can be sold to another investor before maturity. This instrument is a:",
+                options: [
+                    "Treasury Bill",
+                    "Commercial Paper",
+                    "Certificate of Deposit (CD)",
+                    "Gilt"
+                ],
+                correct: [2],
+                explanation: "A Certificate of Deposit (CD) is a time deposit with a bank. Its key feature is that it is a negotiable instrument, meaning the holder can sell it in the secondary money market before the maturity date, providing liquidity."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A 'placing' (or private placement) as a method of issuing new shares typically involves:",
+                options: [
+                    "Selling shares directly to the general public through newspaper advertisements.",
+                    "Selling shares to a small number of institutional investors, such as mutual funds and insurance companies.",
+                    "Giving shares away for free to existing shareholders.",
+                    "Inviting the public to tender for shares at various prices."
+                ],
+                correct: [1],
+                explanation: "A placing is a non-public offer where the issuing company or its investment bank sells the new shares directly to a select group of institutional investors. It is generally quicker and cheaper than a full public offer."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A company's loan stock is described as '10% Unsecured Debenture 2028-2030'. What does the 'Unsecured' part signify?",
+                options: [
+                    "The debenture holders have no legal right to interest payments.",
+                    "The debenture holders have no specific assets pledged as collateral and rank as ordinary creditors in a liquidation.",
+                    "The debenture can be redeemed by the company at any time without notice.",
+                    "The interest rate is not secure and can float with market rates."
+                ],
+                correct: [1],
+                explanation: "Unsecured debt is not backed by any specific collateral. In the event of liquidation, unsecured debenture holders are treated as general creditors and are paid only after secured and preferential creditors have been satisfied. This makes it a riskier investment than secured debt."
+            },
+            {
+                topic: "Financing a Growing Business",
+                question: "A new business finances its project by raising small amounts of money from a large number of people, typically via an online platform. This method is known as:",
+                options: [
+                    "Venture Capital",
+                    "Business Angel Investment",
+                    "Crowdfunding",
+                    "A stock market flotation"
+                ],
+                correct: [2],
+                explanation: "Crowdfunding is the practice of funding a project or venture by raising many small amounts of money from a large number of people, typically via the Internet. It can be donation-based, reward-based, debt-based (peer-to-peer lending), or equity-based."
+            },
+            {
+                topic: "Financing Exports",
+                question: "An exporter in Chittagong wants to offer 90-day credit to a buyer in Germany but is worried about the liquidity risk (i.e., financing the credit period). Which TWO of the following instruments can help the exporter receive cash earlier than 90 days?",
+                options: [
+                    "An open account transaction",
+                    "Discounting a Bill of Exchange accepted by the buyer's bank",
+                    "Export credit insurance",
+                    "Negotiating a Letter of Credit that allows for early payment"
+                ],
+                correct: [1, 3],
+                explanation: "Discounting a Bill of Exchange or a Banker's Acceptance allows the exporter to sell the promise of future payment to a bank for immediate cash (less a discount). Similarly, a Letter of Credit can be structured (e.g., a 'usance L/C payable at sight') to allow the exporter to get paid immediately by a confirming bank, which then waits for reimbursement from the issuing bank. Export credit insurance protects against non-payment risk but doesn't inherently provide finance. An open account offers no payment security or early finance."
+            },
+            {
+                topic: "Capital Markets",
+                question: "Which of the following is NOT typically considered a source of finance from the capital markets?",
+                options: [
+                    "Issuing ordinary shares on the Dhaka Stock Exchange.",
+                    "A short-term bank overdraft.",
+                    "Issuing long-term corporate bonds.",
+                    "A rights issue of shares by a listed company."
+                ],
+                correct: [1],
+                explanation: "Capital markets are for raising long-term finance. A bank overdraft is a short-term financing tool used for managing working capital and is considered part of the money markets, not the capital markets."
+            },
+            {
+                topic: "Sources of Equity Finance",
+                question: "A company with a premium listing on a major stock exchange is expected to adhere to the highest standards of regulation and corporate governance. What is a primary benefit of achieving this status?",
+                options: [
+                    "Guaranteed increase in share price every year.",
+                    "Exemption from paying corporate taxes.",
+                    "A lower cost of capital due to greater investor confidence and transparency.",
+                    "The ability to make decisions without shareholder approval."
+                ],
+                correct: [2],
+                explanation: "By meeting the highest governance and disclosure standards, a company reduces the perceived risk for investors. This increased trust and transparency can lead to a higher demand for its securities, resulting in a higher share price and thus a lower cost of equity capital."
+            },
+            {
+                topic: "Sources of Debt Finance",
+                question: "A company has a permanent overdraft that it rolls over each year. Which statement best describes the risk of this financing strategy?",
+                options: [
+                    "It is a very secure form of long-term finance because the bank is a trusted partner.",
+                    "The interest rate is fixed, protecting the company from rate increases.",
+                    "It is a high-risk strategy because the overdraft is repayable on demand and not suitable as a permanent source of capital.",
+                    "It is low-risk because overdrafts do not require any security."
+                ],
+                correct: [2],
+                explanation: "Using an overdraft as a permanent source of finance is inherently risky. Because the facility is repayable on demand, the bank could withdraw or reduce it at short notice, potentially causing a severe financial crisis for the company. It is meant for short-term, not long-term, funding."
+            },
+            {
+                topic: "The Banking System",
+                question: "When a bank executes a standing order to pay a customer's monthly insurance premium, it is acting in which capacity?",
+                options: [
+                    "As a Bailee",
+                    "As a Mortgagee",
+                    "As an Agent",
+                    "As a Creditor"
+                ],
+                correct: [2],
+                explanation: "In this transaction, the bank is acting as an agent, carrying out a specific instruction on behalf of its customer, who is the principal. The bank is authorized to make payments from the customer's account as directed."
+            }
+        ];
+
+        // --- STATE ---
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let flaggedQuestions = new Array(questions.length).fill(false);
+        let timerInterval;
+        let timeRemaining = 45 * 60; // 45 minutes in seconds
+
+        // --- DOM ELEMENTS ---
+        const homePage = document.getElementById('home-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultsPage = document.getElementById('results-page');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionContainer = document.getElementById('question-container');
+        const timerDisplay = document.getElementById('timer');
+        const flagBtn = document.getElementById('flag-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        const resultsSummary = document.getElementById('results-summary');
+        const topicAnalysis = document.getElementById('topic-analysis');
+        const resultsDetails = document.getElementById('results-details');
+        const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+
+        // --- FUNCTIONS ---
+
+        function initializeQuiz() {
+            // Shuffle questions for variety on retake
+            // For a consistent experience as per prompt, we can disable shuffling
+            // questions.sort(() => Math.random() - 0.5); 
+            
+            currentQuestionIndex = 0;
+            userAnswers.fill(null);
+            flaggedQuestions.fill(false);
+            timeRemaining = 45 * 60;
+            
+            homePage.style.display = 'block';
+            quizPage.style.display = 'none';
+            resultsPage.style.display = 'none';
+        }
+
+        function startQuiz() {
+            homePage.style.display = 'none';
+            quizPage.style.display = 'block';
+            renderQuestionTracker();
+            renderQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if(timeRemaining <= 60) {
+                    timerDisplay.classList.add('blinking');
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function renderQuestionTracker() {
+            questionTracker.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i + 1;
+                btn.classList.add('question-tracker-btn', 'w-10', 'h-10', 'rounded-md', 'font-semibold');
+                updateTrackerButtonStatus(btn, i);
+                btn.addEventListener('click', () => navigateToQuestion(i));
+                questionTracker.appendChild(btn);
+            }
+        }
+
+        function updateTrackerButtonStatus(btn, index) {
+            btn.classList.remove('not-answered', 'answered', 'flagged', 'current');
+            if (flaggedQuestions[index]) {
+                btn.classList.add('flagged');
+            } else if (userAnswers[index] !== null) {
+                btn.classList.add('answered');
+            } else {
+                btn.classList.add('not-answered');
+            }
+            if (index === currentQuestionIndex) {
+                btn.classList.add('current');
+            }
+        }
+
+        function renderQuestion(index) {
+            const question = questions[index];
+            let optionsHTML = '';
+            
+            const isMultipleChoice = question.correct.length > 1;
+
+            question.options.forEach((option, i) => {
+                let isSelected = false;
+                if (isMultipleChoice) {
+                    isSelected = userAnswers[index] && userAnswers[index].includes(i);
+                } else {
+                    isSelected = userAnswers[index] === i;
+                }
+
+                optionsHTML += `
+                    <button class="option-btn w-full text-left p-4 my-2 border rounded-lg ${isSelected ? 'selected' : 'bg-gray-50 hover:bg-gray-200'}">
+                        <span class="font-bold mr-2">${String.fromCharCode(65 + i)}.</span> ${option}
+                    </button>
+                `;
+            });
+
+            questionContainer.innerHTML = `
+                <h2 class="text-lg font-semibold mb-1">Question ${index + 1} of ${questions.length}</h2>
+                <p class="text-gray-500 text-sm mb-4">Topic: ${question.topic}</p>
+                <p class="text-xl mb-4">${question.question} <span class="text-gray-500 font-medium">(2 Marks)</span></p>
+                <div class="mb-4 text-sm font-semibold text-blue-600">${isMultipleChoice ? `(Choose ${question.correct.length})` : '(Choose ONE)'}</div>
+                <div id="options-container">${optionsHTML}</div>
+            `;
+
+            document.querySelectorAll('.option-btn').forEach((btn, i) => {
+                btn.addEventListener('click', () => selectAnswer(index, i));
+            });
+
+            updateFlagButton();
+            renderQuestionTracker(); // Re-render to update current question highlight
+        }
+        
+        function selectAnswer(questionIndex, optionIndex) {
+            const question = questions[questionIndex];
+            const isMultipleChoice = question.correct.length > 1;
+
+            if (isMultipleChoice) {
+                if (userAnswers[questionIndex] === null) {
+                    userAnswers[questionIndex] = [];
+                }
+                const answerIndex = userAnswers[questionIndex].indexOf(optionIndex);
+                if (answerIndex > -1) {
+                    userAnswers[questionIndex].splice(answerIndex, 1);
+                } else {
+                    userAnswers[questionIndex].push(optionIndex);
+                }
+                // Sort to make comparison easier later
+                userAnswers[questionIndex].sort((a,b) => a - b);
+                if(userAnswers[questionIndex].length === 0) {
+                    userAnswers[questionIndex] = null;
+                }
+
+            } else {
+                userAnswers[questionIndex] = optionIndex;
+            }
+            
+            renderQuestion(questionIndex); // Re-render to show selection
+        }
+
+        function toggleFlag() {
+            flaggedQuestions[currentQuestionIndex] = !flaggedQuestions[currentQuestionIndex];
+            updateFlagButton();
+            renderQuestionTracker();
+        }
+
+        function updateFlagButton() {
+            if (flaggedQuestions[currentQuestionIndex]) {
+                flagBtn.textContent = 'Unflag Question';
+                flagBtn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                flagBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+            } else {
+                flagBtn.textContent = 'Flag for Review';
+                flagBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+                flagBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+            }
+        }
+
+        function navigateToQuestion(index) {
+            currentQuestionIndex = index;
+            renderQuestion(index);
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizPage.style.display = 'none';
+            resultsPage.style.display = 'block';
+            renderResults();
+            window.scrollTo(0, 0);
+        }
+
+        function renderResults() {
+            let correctAnswers = 0;
+            let detailedHTML = '';
+            let topicScores = {};
+
+            questions.forEach((q, i) => {
+                // Initialize topic scores
+                if (!topicScores[q.topic]) {
+                    topicScores[q.topic] = { correct: 0, total: 0 };
+                }
+                topicScores[q.topic].total++;
+
+                const userAnswer = userAnswers[i];
+                let isCorrect = false;
+
+                if (q.correct.length > 1) { // Multiple choice
+                    isCorrect = userAnswer !== null && userAnswer.length === q.correct.length && userAnswer.every(val => q.correct.includes(val));
+                } else { // Single choice
+                    isCorrect = userAnswer === q.correct[0];
+                }
+
+                if (isCorrect) {
+                    correctAnswers++;
+                    topicScores[q.topic].correct++;
+                }
+
+                const correctOptionsText = q.correct.map(c => String.fromCharCode(65 + c)).join(', ');
+                let userAnswerText = 'Not Answered';
+                if (userAnswer !== null) {
+                    if (Array.isArray(userAnswer)) {
+                        userAnswerText = userAnswer.map(u => String.fromCharCode(65 + u)).join(', ');
+                    } else {
+                        userAnswerText = String.fromCharCode(65 + userAnswer);
+                    }
+                }
+
+                let optionsReviewHTML = '';
+                q.options.forEach((opt, optIndex) => {
+                    let optClass = 'border-gray-300';
+                    if (q.correct.includes(optIndex)) {
+                        optClass = 'border-green-500 bg-green-50';
+                    }
+                    if (userAnswer !== null) {
+                        if (Array.isArray(userAnswer) && userAnswer.includes(optIndex) && !q.correct.includes(optIndex)) {
+                            optClass = 'border-red-500 bg-red-50';
+                        } else if (!Array.isArray(userAnswer) && userAnswer === optIndex && !q.correct.includes(optIndex)) {
+                             optClass = 'border-red-500 bg-red-50';
+                        }
+                    }
+                    
+                    optionsReviewHTML += `<div class="p-3 my-2 border-2 rounded-lg ${optClass}"><strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}</div>`;
+                });
+
+                detailedHTML += `
+                    <div class="mb-8 p-4 border rounded-lg ${isCorrect ? 'bg-green-50' : 'bg-red-50'}">
+                        <p class="font-bold text-lg mb-2">Question ${i + 1}: ${q.question}</p>
+                        ${optionsReviewHTML}
+                        <div class="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                            <p>Your Answer: <span class="font-bold ${isCorrect ? 'text-green-700' : 'text-red-700'}">${userAnswerText}</span></p>
+                            <p>Correct Answer: <span class="font-bold text-green-700">${correctOptionsText}</span></p>
+                            <hr class="my-2">
+                            <p class="font-semibold">📖 Explanation:</p>
+                            <p class="text-gray-700">${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const totalQuestions = questions.length;
+            const score = correctAnswers * 2;
+            const totalMarks = totalQuestions * 2;
+            const percentage = ((correctAnswers / totalQuestions) * 100).toFixed(2);
+
+            resultsSummary.innerHTML = `
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">Quiz Results</h2>
+                <p class="text-4xl font-bold text-blue-600 mb-4">You scored ${score} out of ${totalMarks}</p>
+                <div class="flex justify-center space-x-8 text-lg">
+                    <div><span class="font-bold text-green-600">${correctAnswers} (${percentage}%)</span> Correct</div>
+                    <div><span class="font-bold text-red-600">${totalQuestions - correctAnswers} (${(100 - percentage).toFixed(2)}%)</span> Incorrect</div>
+                </div>
+                <p class="mt-4 text-md font-semibold">Difficulty Level: <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded">Tricky</span></p>
+            `;
+
+            let topicAnalysisHTML = '<h3 class="text-2xl font-bold mb-4">Topics for Improvement</h3>';
+            const topicsToImprove = Object.entries(topicScores)
+                .map(([topic, scores]) => ({ topic, percentage: (scores.correct / scores.total) * 100 }))
+                .filter(item => item.percentage < 75)
+                .sort((a, b) => a.percentage - b.percentage);
+
+            if (topicsToImprove.length > 0) {
+                topicAnalysisHTML += '<ul class="list-disc list-inside bg-yellow-50 p-4 rounded-lg">';
+                topicsToImprove.forEach(t => {
+                    topicAnalysisHTML += `<li class="mb-1">${t.topic} <span class="font-semibold">(${t.percentage.toFixed(0)}% correct)</span></li>`;
+                });
+                topicAnalysisHTML += '</ul>';
+            } else {
+                topicAnalysisHTML += '<p class="text-green-600 font-semibold bg-green-50 p-4 rounded-lg">Excellent work! You showed strong performance across all topics.</p>';
+            }
+            topicAnalysis.innerHTML = topicAnalysisHTML;
+
+            resultsDetails.innerHTML = detailedHTML;
+        }
+
+        // --- EVENT LISTENERS ---
+        startQuizBtn.addEventListener('click', startQuiz);
+        flagBtn.addEventListener('click', toggleFlag);
+        submitQuizBtn.addEventListener('click', () => {
+            // Removed the confirm() dialog which was causing the issue.
+            submitQuiz();
+        });
+        retakeQuizBtn.addEventListener('click', () => {
+            initializeQuiz();
+            startQuiz();
+            window.scrollTo(0, 0);
+        });
+        backToHomeBtn.addEventListener('click', () => {
+            initializeQuiz();
+            window.scrollTo(0, 0);
+        });
+
+        // --- INITIALIZE ---
+        initializeQuiz();
+
+    </script>
+</body>
+</html>

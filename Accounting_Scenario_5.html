@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Accounting Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .quiz-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 280px;
+            background-color: #1a202c;
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .sidebar-item {
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        .sidebar-item.active {
+            background-color: #4a5568;
+        }
+        .sidebar-item.completed {
+            background-color: #2d3748;
+            color: #a0aec0;
+        }
+        .sidebar-item:not(.active):not(.completed):hover {
+            background-color: #2d3748;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+            height: 90vh;
+        }
+        .scenario {
+            display: none;
+        }
+        .scenario.active {
+            display: block;
+        }
+        .input-field {
+            width: 120px;
+            border: 1px solid #cbd5e0;
+            padding: 6px 8px;
+            border-radius: 6px;
+            text-align: right;
+            font-family: monospace;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.5);
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin-top: 2rem;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .results-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        .results-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .results-content {
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.5s;
+        }
+        .results-overlay.visible .results-content {
+            transform: scale(1);
+        }
+        .footer {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            margin-top: 30px;
+        }
+        .flag-container {
+            text-align: right;
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e53e3e;
+            text-align: center;
+            margin-top: auto;
+            padding: 1rem;
+            background: #2d3748;
+            border-radius: 8px;
+        }
+        .data-table th, .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .data-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+        }
+        .correct-answer {
+            background-color: #c6f6d5;
+            color: #22543d;
+            font-weight: bold;
+        }
+        .incorrect-answer {
+            background-color: #fed7d7;
+            color: #822727;
+            font-weight: bold;
+            text-decoration: line-through;
+        }
+        .solution-value {
+            color: #2f855a;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div>
+                <h2 class="text-2xl font-bold mb-8">Scenarios</h2>
+                <div id="sidebar-items">
+                    <div id="sidebar-1" class="sidebar-item active" onclick="switchScenario(1)">1. Profit & Loss Statement</div>
+                    <div id="sidebar-2" class="sidebar-item" onclick="switchScenario(2)">2. Adjusted Trial Balance</div>
+                    <div id="sidebar-3" class="sidebar-item" onclick="switchScenario(3)">3. Statement of Financial Position</div>
+                    <div id="sidebar-4" class="sidebar-item" onclick="switchScenario(4)">4. Statement of Cash Flows</div>
+                </div>
+            </div>
+            <div id="timer" class="timer">30:00</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="flag-container">
+                Progress: <span id="progress-percentage">0%</span>
+            </div>
+
+            <!-- Scenario 1: Profit and Loss Statement -->
+            <div id="scenario-1" class="scenario active">
+                <h1 class="text-3xl font-bold mb-4">Scenario 1: Statement of Profit and Loss</h1>
+                <p class="mb-6 text-gray-600">From the unadjusted trial balance and additional information for XYZ Corp., prepare a multi-step Statement of Profit and Loss for the year ended December 31, 2024.</p>
+                
+                <h3 class="text-xl font-semibold mb-2">Unadjusted Trial Balance (Excerpt)</h3>
+                <table class="w-full text-sm mb-6 data-table">
+                    <thead><tr><th>Account</th><th>Debit (Taka)</th><th>Credit (Taka)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Sales Revenue</td><td></td><td>9,500,000</td></tr>
+                        <tr><td>Sales Returns and Allowances</td><td>150,000</td><td></td></tr>
+                        <tr><td>Cost of Goods Sold</td><td>5,200,000</td><td></td></tr>
+                        <tr><td>Advertising Expense</td><td>450,000</td><td></td></tr>
+                        <tr><td>Salaries and Wages Expense</td><td>1,800,000</td><td></td></tr>
+                        <tr><td>Rent Expense</td><td>600,000</td><td></td></tr>
+                        <tr><td>Interest Expense</td><td>120,000</td><td></td></tr>
+                        <tr><td>Gain on Sale of Equipment</td><td></td><td>80,000</td></tr>
+                    </tbody>
+                </table>
+
+                <h3 class="text-xl font-semibold mb-2">Additional Information:</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Accrued salaries at year-end are Taka 75,000.</li>
+                    <li>Rent is allocated 60% to selling expenses and 40% to administrative expenses.</li>
+                    <li>The income tax rate is 25% on profit before tax.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-4">Answer Sheet: Statement of Profit and Loss</h3>
+                <table class="w-full text-sm data-table">
+                    <tbody>
+                        <tr><td class="font-bold">Net Sales</td><td><input id="s1-1" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Less: Cost of Goods Sold</td><td><input id="s1-2" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Gross Profit</td><td><input id="s1-3" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Operating Expenses:</td><td></td></tr>
+                        <tr><td class="pl-8">Selling Expenses</td><td><input id="s1-4" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Administrative Expenses</td><td><input id="s1-5" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-4">Total Operating Expenses</td><td><input id="s1-6" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Profit from Operations</td><td><input id="s1-7" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Other Income and Expenses:</td><td></td></tr>
+                        <tr><td class="pl-8">Gain on Sale of Equipment</td><td><input id="s1-8" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Interest Expense</td><td><input id="s1-9" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Profit Before Tax</td><td><input id="s1-10" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Less: Income Tax Expense</td><td><input id="s1-11" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold text-lg">Net Profit</td><td class="font-bold text-lg"><input id="s1-12" type="text" class="input-field" placeholder="Answer"></td></tr>
+                    </tbody>
+                </table>
+                <button class="submit-btn" onclick="completeScenario(1)">Complete Scenario 1 & Proceed</button>
+            </div>
+
+            <!-- Scenario 2: Adjusted Trial Balance -->
+            <div id="scenario-2" class="scenario">
+                <h1 class="text-3xl font-bold mb-4">Scenario 2: Adjusted Trial Balance</h1>
+                <p class="mb-6 text-gray-600">Prepare the Debit column of the Adjusted Trial Balance for LMN Services as of June 30, 2025, based on the following unadjusted balances and adjustments.</p>
+                
+                <h3 class="text-xl font-semibold mb-2">Unadjusted Trial Balance (Excerpts)</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Cash: 500,000 (Debit)</li>
+                    <li>Accounts Receivable: 350,000 (Debit)</li>
+                    <li>Prepaid Rent: 120,000 (Debit)</li>
+                    <li>Supplies: 80,000 (Debit)</li>
+                    <li>Equipment: 1,200,000 (Debit)</li>
+                    <li>Accumulated Depreciation: 240,000 (Credit)</li>
+                    <li>Service Revenue: 900,000 (Credit)</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-2">Adjustment Data:</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Services performed but unbilled at June 30 were Taka 65,000.</li>
+                    <li>Depreciation for the period is Taka 60,000.</li>
+                    <li>One-fourth of the prepaid rent has expired.</li>
+                    <li>A count shows Taka 25,000 of supplies remaining.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-4">Answer Sheet: Adjusted Trial Balance (Debit Column)</h3>
+                <table class="w-full text-sm data-table">
+                    <thead><tr><th>Account</th><th>Adjusted Debit (Taka)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cash</td><td><input id="s2-1" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Accounts Receivable</td><td><input id="s2-2" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Prepaid Rent</td><td><input id="s2-3" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Supplies</td><td><input id="s2-4" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Equipment</td><td><input id="s2-5" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Depreciation Expense</td><td><input id="s2-6" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Rent Expense</td><td><input id="s2-7" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td>Supplies Expense</td><td><input id="s2-8" type="text" class="input-field" placeholder="Answer"></td></tr>
+                    </tbody>
+                </table>
+                 <button class="submit-btn" onclick="completeScenario(2)">Complete Scenario 2 & Proceed</button>
+            </div>
+
+            <!-- Scenario 3: Statement of Financial Position -->
+            <div id="scenario-3" class="scenario">
+                <h1 class="text-3xl font-bold mb-4">Scenario 3: Statement of Financial Position</h1>
+                <p class="mb-6 text-gray-600">Using the adjusted trial balance for PQR Trading, prepare the Assets section of the classified Statement of Financial Position as at December 31, 2024.</p>
+                
+                <h3 class="text-xl font-semibold mb-2">Adjusted Trial Balance (Excerpts)</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Cash: 250,000</li>
+                    <li>Accounts Receivable: 480,000</li>
+                    <li>Allowance for Doubtful Accounts: 24,000</li>
+                    <li>Inventory: 610,000</li>
+                    <li>Prepaid Insurance: 30,000</li>
+                    <li>Land: 2,000,000</li>
+                    <li>Building: 5,000,000</li>
+                    <li>Accumulated Depreciation - Building: 1,000,000</li>
+                    <li>Patents: 400,000</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-4">Answer Sheet: Statement of Financial Position (Assets)</h3>
+                <table class="w-full text-sm data-table">
+                     <tbody>
+                        <tr><td class="font-bold">Current Assets</td><td></td></tr>
+                        <tr><td class="pl-8">Cash</td><td><input id="s3-1" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Accounts Receivable, Net</td><td><input id="s3-2" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Inventory</td><td><input id="s3-3" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Prepaid Insurance</td><td><input id="s3-4" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-4">Total Current Assets</td><td><input id="s3-5" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold">Non-Current Assets</td><td></td></tr>
+                        <tr><td class="font-bold pl-4">Property, Plant, and Equipment</td><td></td></tr>
+                        <tr><td class="pl-12">Land</td><td><input id="s3-6" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Building, Net</td><td><input id="s3-7" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-8">Total PPE</td><td><input id="s3-8" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-4">Intangible Assets</td><td></td></tr>
+                        <tr><td class="pl-12">Patents</td><td><input id="s3-9" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-4">Total Non-Current Assets</td><td><input id="s3-10" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold text-lg">Total Assets</td><td class="font-bold text-lg"><input id="s3-11" type="text" class="input-field" placeholder="Answer"></td></tr>
+                    </tbody>
+                </table>
+                 <button class="submit-btn" onclick="completeScenario(3)">Complete Scenario 3 & Proceed</button>
+            </div>
+            
+            <!-- Scenario 4: Statement of Cash Flows -->
+            <div id="scenario-4" class="scenario">
+                <h1 class="text-3xl font-bold mb-4">Scenario 4: Statement of Cash Flows (Operating Activities)</h1>
+                <p class="mb-6 text-gray-600">Prepare the Cash Flows from Operating Activities section (indirect method) for ABC Ltd. for the year ended June 30, 2025.</p>
+                
+                <h3 class="text-xl font-semibold mb-2">Financial Data:</h3>
+                <ul class="list-disc list-inside mb-6 text-gray-700">
+                    <li>Net Income: 1,200,000</li>
+                    <li>Depreciation Expense: 350,000</li>
+                    <li>Amortization of Patent: 50,000</li>
+                    <li>Loss on Sale of Plant Assets: 30,000</li>
+                    <li>Increase in Accounts Receivable: 180,000</li>
+                    <li>Decrease in Inventory: 90,000</li>
+                    <li>Increase in Accounts Payable: 110,000</li>
+                    <li>Decrease in Salaries Payable: 25,000</li>
+                    <li>Increase in Interest Payable: 15,000</li>
+                    <li>Interest Paid: 70,000</li>
+                    <li>Taxes Paid: 210,000</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold mb-4">Answer Sheet: Cash Flows from Operating Activities</h3>
+                <table class="w-full text-sm data-table">
+                     <tbody>
+                        <tr><td class="font-bold">Cash flows from operating activities</td><td></td></tr>
+                        <tr><td class="pl-8">Net Income</td><td><input id="s4-1" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8 font-semibold">Adjustments to reconcile net income:</td><td></td></tr>
+                        <tr><td class="pl-12">Depreciation Expense</td><td><input id="s4-2" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Amortization of Patent</td><td><input id="s4-3" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Loss on Sale of Plant Assets</td><td><input id="s4-4" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Increase in Accounts Receivable</td><td><input id="s4-5" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Decrease in Inventory</td><td><input id="s4-6" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Increase in Accounts Payable</td><td><input id="s4-7" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-12">Decrease in Salaries Payable</td><td><input id="s4-8" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold pl-8">Cash Generated from Operations</td><td><input id="s4-9" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Interest Paid</td><td><input id="s4-10" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="pl-8">Taxes Paid</td><td><input id="s4-11" type="text" class="input-field" placeholder="Answer"></td></tr>
+                        <tr><td class="font-bold text-lg">Net Cash from Operating Activities</td><td class="font-bold text-lg"><input id="s4-12" type="text" class="input-field" placeholder="Answer"></td></tr>
+                    </tbody>
+                </table>
+                 <button class="submit-btn" onclick="submitQuiz()">Submit Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Overlay -->
+    <div id="results-overlay" class="results-overlay">
+        <div id="results-content" class="results-content">
+            <h1 class="text-4xl font-bold mb-6 text-center">Quiz Results & Analysis</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-center">
+                <div class="bg-green-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800">Correct</h3>
+                    <p id="correct-percentage" class="text-4xl font-bold text-green-600">0%</p>
+                </div>
+                <div class="bg-red-100 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-red-800">Incorrect</h3>
+                    <p id="incorrect-percentage" class="text-4xl font-bold text-red-600">0%</p>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-4 border-b pb-2">Topics to Review</h2>
+            <ul id="review-topics" class="list-disc list-inside mb-8 text-gray-700">
+                <!-- Topics will be dynamically inserted here -->
+            </ul>
+
+            <div id="solutions-container">
+                <!-- Solutions will be dynamically inserted here -->
+            </div>
+
+            <div class="footer">
+                <p><strong>Prepared by:</strong></p>
+                <p>K. M. Mahafuzul Alam</p>
+                <p>
+                    <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-600 hover:underline">🔗 LinkedIn</a> | 
+                    📞 01728-928984 | 
+                    📧 kmmhafuzulalam@gmail.com
+                </p>
+            </div>
+             <button class="submit-btn mt-8" onclick="closeResults()">Close</button>
+        </div>
+    </div>
+
+
+    <script>
+        let currentScenario = 1;
+        const totalScenarios = 4;
+        let timerInterval;
+        let timeLeft = 30 * 60; // 30 minutes in seconds
+
+        const solutions = {
+            s1: { 1: 9350000, 2: 5200000, 3: 4150000, 4: 810000, 5: 2115000, 6: 2925000, 7: 1225000, 8: 80000, 9: -120000, 10: 1185000, 11: -296250, 12: 888750 },
+            s2: { 1: 500000, 2: 415000, 3: 90000, 4: 25000, 5: 1200000, 6: 60000, 7: 30000, 8: 55000 },
+            s3: { 1: 250000, 2: 456000, 3: 610000, 4: 30000, 5: 1346000, 6: 2000000, 7: 4000000, 8: 6000000, 9: 400000, 10: 6400000, 11: 7746000 },
+            s4: { 1: 1200000, 2: 350000, 3: 50000, 4: 30000, 5: -180000, 6: 90000, 7: 110000, 8: -25000, 9: 1625000, 10: -70000, 11: -210000, 12: 1345000 }
+        };
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-IN').format(num);
+        }
+
+        function switchScenario(scenarioNum) {
+            document.getElementById(`scenario-${currentScenario}`).classList.remove('active');
+            document.getElementById(`sidebar-${currentScenario}`).classList.remove('active');
+            
+            currentScenario = scenarioNum;
+            
+            document.getElementById(`scenario-${currentScenario}`).classList.add('active');
+            document.getElementById(`sidebar-${currentScenario}`).classList.add('active');
+            
+            resetTimer();
+        }
+
+        function completeScenario(scenarioNum) {
+            document.getElementById(`sidebar-${scenarioNum}`).classList.add('completed');
+            document.getElementById(`sidebar-${scenarioNum}`).classList.remove('active');
+            
+            updateProgress();
+
+            if (currentScenario < totalScenarios) {
+                switchScenario(currentScenario + 1);
+            } else {
+                // Last scenario completed, prompt to submit
+                alert("All scenarios completed. Please click 'Submit Quiz' to see your results.");
+            }
+        }
+        
+        function updateProgress() {
+            const completedCount = document.querySelectorAll('.sidebar-item.completed').length;
+            const percentage = (completedCount / totalScenarios) * 100;
+            document.getElementById('progress-percentage').textContent = `${Math.round(percentage)}%`;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time's up for this scenario!");
+                    if(currentScenario < totalScenarios) {
+                        completeScenario(currentScenario);
+                    } else {
+                        submitQuiz();
+                    }
+                }
+            }, 1000);
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 30 * 60;
+            startTimer();
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            let totalQuestions = 0;
+            let correctAnswers = 0;
+            let reviewTopics = new Set();
+
+            // Scenario 1 Evaluation
+            const s1Answers = {};
+            let s1Correct = 0;
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`s1-${i}`);
+                const userAnswer = parseFloat(input.value.replace(/,/g, '')) || 0;
+                s1Answers[i] = userAnswer;
+                totalQuestions++;
+                if (Math.abs(userAnswer - solutions.s1[i]) < 0.01) {
+                    correctAnswers++;
+                    s1Correct++;
+                    input.classList.add('correct-answer');
+                } else {
+                    input.classList.add('incorrect-answer');
+                }
+            }
+            if (s1Correct < 12) reviewTopics.add("Statement of Profit and Loss preparation, including expense allocation and tax calculation.");
+
+            // Scenario 2 Evaluation
+            const s2Answers = {};
+            let s2Correct = 0;
+            for (let i = 1; i <= 8; i++) {
+                const input = document.getElementById(`s2-${i}`);
+                const userAnswer = parseFloat(input.value.replace(/,/g, '')) || 0;
+                s2Answers[i] = userAnswer;
+                totalQuestions++;
+                if (Math.abs(userAnswer - solutions.s2[i]) < 0.01) {
+                    correctAnswers++;
+                    s2Correct++;
+                    input.classList.add('correct-answer');
+                } else {
+                    input.classList.add('incorrect-answer');
+                }
+            }
+            if (s2Correct < 8) reviewTopics.add("Making adjusting entries and preparing an Adjusted Trial Balance.");
+            
+            // Scenario 3 Evaluation
+            const s3Answers = {};
+            let s3Correct = 0;
+            for (let i = 1; i <= 11; i++) {
+                const input = document.getElementById(`s3-${i}`);
+                const userAnswer = parseFloat(input.value.replace(/,/g, '')) || 0;
+                s3Answers[i] = userAnswer;
+                totalQuestions++;
+                if (Math.abs(userAnswer - solutions.s3[i]) < 0.01) {
+                    correctAnswers++;
+                    s3Correct++;
+                    input.classList.add('correct-answer');
+                } else {
+                    input.classList.add('incorrect-answer');
+                }
+            }
+            if (s3Correct < 11) reviewTopics.add("Classification of assets and preparing the Statement of Financial Position.");
+
+            // Scenario 4 Evaluation
+            const s4Answers = {};
+            let s4Correct = 0;
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`s4-${i}`);
+                const userAnswer = parseFloat(input.value.replace(/,/g, '')) || 0;
+                s4Answers[i] = userAnswer;
+                totalQuestions++;
+                if (Math.abs(userAnswer - solutions.s4[i]) < 0.01) {
+                    correctAnswers++;
+                    s4Correct++;
+                    input.classList.add('correct-answer');
+                } else {
+                    input.classList.add('incorrect-answer');
+                }
+            }
+            if (s4Correct < 12) reviewTopics.add("Preparing the Statement of Cash Flows (Operating Activities) using the indirect method.");
+
+            // Display Results
+            const correctPercentage = (correctAnswers / totalQuestions) * 100;
+            document.getElementById('correct-percentage').textContent = `${correctPercentage.toFixed(1)}%`;
+            document.getElementById('incorrect-percentage').textContent = `${(100 - correctPercentage).toFixed(1)}%`;
+            
+            const reviewList = document.getElementById('review-topics');
+            reviewList.innerHTML = '';
+            reviewTopics.forEach(topic => {
+                const li = document.createElement('li');
+                li.textContent = topic;
+                reviewList.appendChild(li);
+            });
+
+            generateSolutionsHTML(s1Answers, s2Answers, s3Answers, s4Answers);
+
+            document.getElementById('results-overlay').classList.add('visible');
+        }
+        
+        function generateSolutionsHTML(s1, s2, s3, s4) {
+            const container = document.getElementById('solutions-container');
+            container.innerHTML = `
+                <!-- Scenario 1 Solution -->
+                <div class="mb-8 p-4 border rounded-lg">
+                    <h3 class="text-xl font-bold mb-2">✅ Solution: Scenario 1 (Profit & Loss)</h3>
+                    <p class="mb-4 text-sm text-gray-600">This is a regular ✅ question testing standard P&L structure. The expense allocation is a slightly tricky ⚠ part.</p>
+                    <table class="w-full text-sm data-table">
+                        ${generateSolutionRow('Net Sales', s1[1], solutions.s1[1])}
+                        ${generateSolutionRow('Less: Cost of Goods Sold', s1[2], solutions.s1[2])}
+                        ${generateSolutionRow('<b>Gross Profit</b>', s1[3], solutions.s1[3])}
+                        <tr><td class="font-bold">Operating Expenses:</td><td></td></tr>
+                        ${generateSolutionRow('<span class="pl-4">Selling Expenses (W1)</span>', s1[4], solutions.s1[4])}
+                        ${generateSolutionRow('<span class="pl-4">Administrative Expenses (W2)</span>', s1[5], solutions.s1[5])}
+                        ${generateSolutionRow('<b>Total Operating Expenses</b>', s1[6], solutions.s1[6])}
+                        ${generateSolutionRow('<b>Profit from Operations</b>', s1[7], solutions.s1[7])}
+                        <tr><td class="font-bold">Other Income and Expenses:</td><td></td></tr>
+                        ${generateSolutionRow('<span class="pl-4">Gain on Sale of Equipment</span>', s1[8], solutions.s1[8])}
+                        ${generateSolutionRow('<span class="pl-4">Interest Expense</span>', s1[9], solutions.s1[9])}
+                        ${generateSolutionRow('<b>Profit Before Tax</b>', s1[10], solutions.s1[10])}
+                        ${generateSolutionRow('Less: Income Tax Expense (W3)', s1[11], solutions.s1[11])}
+                        ${generateSolutionRow('<b class="text-lg">Net Profit</b>', s1[12], solutions.s1[12])}
+                    </table>
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold">Workings:</h4>
+                        <p class="text-sm"><b>(W1) Selling Expenses:</b> Advertising (450,000) + Rent (60% of 600,000 = 360,000) = 810,000</p>
+                        <p class="text-sm"><b>(W2) Administrative Expenses:</b> Salaries (1,800,000 + 75,000) + Rent (40% of 600,000 = 240,000) = 2,115,000</p>
+                        <p class="text-sm"><b>(W3) Income Tax:</b> Profit Before Tax (1,185,000) * 25% = 296,250</p>
+                    </div>
+                </div>
+
+                <!-- Scenario 2 Solution -->
+                <div class="mb-8 p-4 border rounded-lg">
+                    <h3 class="text-xl font-bold mb-2">✅ Solution: Scenario 2 (Adjusted Trial Balance)</h3>
+                     <table class="w-full text-sm data-table">
+                        <thead><tr><th>Account</th><th>Your Answer</th><th>Correct Debit</th></tr></thead>
+                        ${generateSolutionRowATB('Cash', s2[1], solutions.s2[1])}
+                        ${generateSolutionRowATB('Accounts Receivable', s2[2], solutions.s2[2])}
+                        ${generateSolutionRowATB('Prepaid Rent', s2[3], solutions.s2[3])}
+                        ${generateSolutionRowATB('Supplies', s2[4], solutions.s2[4])}
+                        ${generateSolutionRowATB('Equipment', s2[5], solutions.s2[5])}
+                        ${generateSolutionRowATB('Depreciation Expense', s2[6], solutions.s2[6])}
+                        ${generateSolutionRowATB('Rent Expense', s2[7], solutions.s2[7])}
+                        ${generateSolutionRowATB('Supplies Expense', s2[8], solutions.s2[8])}
+                    </table>
+                     <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold">Workings:</h4>
+                        <p class="text-sm"><b>A/R:</b> 350,000 (unadj) + 65,000 (unbilled) = 415,000</p>
+                        <p class="text-sm"><b>Prepaid Rent:</b> 120,000 (unadj) - 30,000 (expired) = 90,000</p>
+                        <p class="text-sm"><b>Supplies:</b> Given as 25,000 remaining.</p>
+                        <p class="text-sm"><b>Rent Expense:</b> 1/4 of 120,000 = 30,000</p>
+                        <p class="text-sm"><b>Supplies Expense:</b> 80,000 (unadj) - 25,000 (remaining) = 55,000</p>
+                    </div>
+                </div>
+
+                <!-- Scenario 3 Solution -->
+                <div class="mb-8 p-4 border rounded-lg">
+                    <h3 class="text-xl font-bold mb-2">✅ Solution: Scenario 3 (Statement of Financial Position)</h3>
+                    <p class="mb-4 text-sm text-gray-600">This is a regular ✅ question. A tricky ⚠ point is remembering to calculate the net book value for assets.</p>
+                     <table class="w-full text-sm data-table">
+                        ${generateSolutionRow('<b>Current Assets</b>', '', '')}
+                        ${generateSolutionRow('<span class="pl-4">Cash</span>', s3[1], solutions.s3[1])}
+                        ${generateSolutionRow('<span class="pl-4">Accounts Receivable, Net (W1)</span>', s3[2], solutions.s3[2])}
+                        ${generateSolutionRow('<span class="pl-4">Inventory</span>', s3[3], solutions.s3[3])}
+                        ${generateSolutionRow('<span class="pl-4">Prepaid Insurance</span>', s3[4], solutions.s3[4])}
+                        ${generateSolutionRow('<b>Total Current Assets</b>', s3[5], solutions.s3[5])}
+                        ${generateSolutionRow('<b>Non-Current Assets</b>', '', '')}
+                        ${generateSolutionRow('<b class="pl-4">Property, Plant, and Equipment</b>', '', '')}
+                        ${generateSolutionRow('<span class="pl-8">Land</span>', s3[6], solutions.s3[6])}
+                        ${generateSolutionRow('<span class="pl-8">Building, Net (W2)</span>', s3[7], solutions.s3[7])}
+                        ${generateSolutionRow('<b class="pl-4">Total PPE</b>', s3[8], solutions.s3[8])}
+                        ${generateSolutionRow('<b class="pl-4">Intangible Assets</b>', '', '')}
+                        ${generateSolutionRow('<span class="pl-8">Patents</span>', s3[9], solutions.s3[9])}
+                        ${generateSolutionRow('<b>Total Non-Current Assets</b>', s3[10], solutions.s3[10])}
+                        ${generateSolutionRow('<b class="text-lg">Total Assets</b>', s3[11], solutions.s3[11])}
+                    </table>
+                     <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold">Workings:</h4>
+                        <p class="text-sm"><b>(W1) A/R, Net:</b> 480,000 - 24,000 = 456,000</p>
+                        <p class="text-sm"><b>(W2) Building, Net:</b> 5,000,000 - 1,000,000 = 4,000,000</p>
+                    </div>
+                </div>
+
+                 <!-- Scenario 4 Solution -->
+                <div class="mb-8 p-4 border rounded-lg">
+                    <h3 class="text-xl font-bold mb-2">✅ Solution: Scenario 4 (Statement of Cash Flows)</h3>
+                    <p class="mb-4 text-sm text-gray-600">This is a regular ✅ question. The tricky ⚠ part is remembering the correct treatment (add or subtract) for changes in working capital accounts.</p>
+                     <table class="w-full text-sm data-table">
+                        ${generateSolutionRow('<b>Cash flows from operating activities</b>', '', '')}
+                        ${generateSolutionRow('<span class="pl-4">Net Income</span>', s4[1], solutions.s4[1])}
+                        ${generateSolutionRow('<span class="pl-4 font-semibold">Adjustments:</span>', '', '')}
+                        ${generateSolutionRow('<span class="pl-8">Depreciation Expense</span>', s4[2], solutions.s4[2])}
+                        ${generateSolutionRow('<span class="pl-8">Amortization of Patent</span>', s4[3], solutions.s4[3])}
+                        ${generateSolutionRow('<span class="pl-8">Loss on Sale of Plant Assets</span>', s4[4], solutions.s4[4])}
+                        ${generateSolutionRow('<span class="pl-8">Increase in Accounts Receivable</span>', s4[5], solutions.s4[5])}
+                        ${generateSolutionRow('<span class="pl-8">Decrease in Inventory</span>', s4[6], solutions.s4[6])}
+                        ${generateSolutionRow('<span class="pl-8">Increase in Accounts Payable</span>', s4[7], solutions.s4[7])}
+                        ${generateSolutionRow('<span class="pl-8">Decrease in Salaries Payable</span>', s4[8], solutions.s4[8])}
+                        ${generateSolutionRow('<b>Cash Generated from Operations</b>', s4[9], solutions.s4[9])}
+                        ${generateSolutionRow('<span class="pl-4">Interest Paid</span>', s4[10], solutions.s4[10])}
+                        ${generateSolutionRow('<span class="pl-4">Taxes Paid</span>', s4[11], solutions.s4[11])}
+                        ${generateSolutionRow('<b class="text-lg">Net Cash from Operating Activities</b>', s4[12], solutions.s4[12])}
+                    </table>
+                </div>
+            `;
+        }
+        
+        function generateSolutionRow(label, userAnswer, correctAnswer) {
+            if (correctAnswer === '') return `<tr><td>${label}</td><td></td><td></td></tr>`;
+            const isCorrect = Math.abs(userAnswer - correctAnswer) < 0.01;
+            const userDisplay = `<td class="${isCorrect ? 'correct-answer' : 'incorrect-answer'}">${formatNumber(userAnswer)}</td>`;
+            const correctDisplay = `<td class="solution-value">${formatNumber(correctAnswer)}</td>`;
+            return `<tr><td>${label}</td>${userDisplay}${correctDisplay}</tr>`;
+        }
+
+        function generateSolutionRowATB(label, userAnswer, correctAnswer) {
+            const isCorrect = Math.abs(userAnswer - correctAnswer) < 0.01;
+            const userDisplay = `<td class="${isCorrect ? 'correct-answer' : 'incorrect-answer'}">${formatNumber(userAnswer)}</td>`;
+            const correctDisplay = `<td class="solution-value">${formatNumber(correctAnswer)}</td>`;
+            return `<tr><td>${label}</td>${userDisplay}${correctDisplay}</tr>`;
+        }
+
+        function closeResults() {
+            document.getElementById('results-overlay').classList.remove('visible');
+        }
+
+        // Initial setup
+        window.onload = () => {
+            updateProgress();
+            startTimer();
+        };
+    </script>
+</body>
+</html>

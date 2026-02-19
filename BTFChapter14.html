@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB MCQ Exam – Developments in technology</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-tracker-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .question-tracker-btn.answered {
+            background-color: #10B981; /* Green-500 */
+            color: white;
+            border-color: #059669;
+        }
+        .question-tracker-btn.flagged {
+            background-color: #EF4444; /* Red-500 */
+            color: white;
+            border-color: #DC2626;
+        }
+        .question-tracker-btn.current {
+            transform: scale(1.1);
+            border-color: #3B82F6; /* Blue-500 */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
+        }
+        /* Custom scrollbar for better aesthetics */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Home Page -->
+        <div id="home-page" class="text-center bg-white p-8 rounded-xl shadow-lg">
+            <h1 class="text-3xl sm:text-4xl font-bold text-blue-700 mb-4">ICAB MCQ Exam – Business, Technology and Finance</h1>
+            <h2 class="text-xl sm:text-2xl font-semibold text-gray-600 mb-8">(Chapter 14: Developments in technology)</h2>
+            
+            <div class="max-w-2xl mx-auto bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <h3 class="text-lg font-bold mb-4 text-left text-gray-700">Instructions:</h3>
+                <ul class="list-disc list-inside text-left space-y-3 text-gray-600">
+                    <li><b>Total Questions:</b> 50 Multiple Choice Questions</li>
+                    <li><b>Time Limit:</b> 45 minutes</li>
+                    <li><b>Marks:</b> 2 marks per correct question</li>
+                    <li><b>Content:</b> Exam-standard, tricky questions based strictly on the provided PDF syllabus. References to foreign laws have been adapted to the Bangladeshi context.</li>
+                    <li>You can submit the quiz at any time during the test.</li>
+                    <li>Use the question tracker to navigate, and flag questions for review.</li>
+                </ul>
+            </div>
+
+            <button id="start-quiz-btn" class="mt-10 bg-blue-600 text-white font-bold py-3 px-12 rounded-lg text-lg hover:bg-blue-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                Start Quiz
+            </button>
+        </div>
+
+        <!-- Quiz Page -->
+        <div id="quiz-page" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Panel: Question Tracker -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-xl shadow-lg h-full">
+                    <h3 class="font-bold text-lg mb-4 text-center">Question Tracker</h3>
+                    <div id="question-tracker" class="grid grid-cols-5 gap-2">
+                        <!-- Tracker buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Center Panel: Question -->
+                <div class="lg:col-span-6 bg-white p-6 rounded-xl shadow-lg">
+                    <div id="question-container">
+                        <!-- Question will be loaded here -->
+                    </div>
+                    <div class="flex justify-between mt-6">
+                        <button id="prev-btn" class="bg-gray-300 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition">Previous</button>
+                        <button id="next-btn" class="bg-blue-600 text-white font-bold py-2 px-8 rounded-lg hover:bg-blue-700 transition">Next</button>
+                    </div>
+                </div>
+
+                <!-- Right Panel: Timer & Controls -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center h-full">
+                    <h3 class="font-bold text-lg mb-2">Time Remaining</h3>
+                    <div id="timer" class="text-4xl font-bold text-red-600 bg-gray-100 px-4 py-2 rounded-lg mb-6">45:00</div>
+                    
+                    <button id="flag-btn" class="w-full bg-yellow-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-yellow-600 transition mb-4">Flag for Review</button>
+                    
+                    <button id="submit-quiz-btn" class="w-full bg-green-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-700 transition">Submit Quiz</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="results-page" class="hidden bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-center mb-6">Quiz Results</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center mb-8">
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold">Total Score</p>
+                    <p id="total-score" class="text-3xl font-bold text-blue-700">--/100</p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold">Correct Answers</p>
+                    <p id="correct-answers" class="text-3xl font-bold text-green-700">-- (0%)</p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <p class="text-lg font-semibold">Incorrect Answers</p>
+                    <p id="incorrect-answers" class="text-3xl font-bold text-red-700">-- (0%)</p>
+                </div>
+            </div>
+
+            <div class="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-xl font-bold mb-2">Topics for Improvement:</h3>
+                <ul id="improvement-topics" class="list-disc list-inside text-yellow-800">
+                    <!-- Topics will be listed here -->
+                </ul>
+            </div>
+            
+            <div class="mb-8 text-center">
+                 <p class="text-lg font-semibold">Quiz Difficulty Level: <span class="font-bold text-red-600">Tricky</span></p>
+            </div>
+
+            <h3 class="text-2xl font-bold mb-4">Review Your Answers</h3>
+            <div id="review-container" class="space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar pr-4 border-t pt-4">
+                <!-- Review content will be generated here -->
+            </div>
+
+            <div class="flex justify-center mt-8 space-x-4">
+                <button id="retake-quiz-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition">Retake Quiz</button>
+                <button id="back-to-home-btn" class="bg-gray-500 text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition">Back to Home</button>
+            </div>
+            
+            <footer class="text-center mt-12 pt-6 border-t text-gray-500 text-sm">
+                <p class="font-semibold">Prepared by:</p>
+                <p>🔗 <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-600 hover:underline">K. M. Mahafuzul Alam</a></p>
+                <p>📞 WhatsApp: 01728-928984</p>
+                <p>📧 Email: kmmhafuzulalam@gmail.com</p>
+            </footer>
+        </div>
+
+    </div>
+
+    <script>
+        const quizData = [
+            // Questions based on Chapter 14: Developments in technology
+            {
+                question: "Which of the following is NOT a distinct characteristic of a cloud service as described in the syllabus?",
+                options: [
+                    "It is sold on demand, typically by the minute or the hour.",
+                    "It is elastic, allowing users to scale usage up or down.",
+                    "The service requires the user to manage the underlying infrastructure.",
+                    "The service is fully managed by the provider."
+                ],
+                answer: "The service requires the user to manage the underlying infrastructure.",
+                type: 'single',
+                topic: 'Cloud Computing'
+            },
+            {
+                question: "A company uses small tags containing chips attached to its products to monitor their location throughout the supply chain. This technology is a key component of:",
+                options: [
+                    "Cloud Accounting",
+                    "The Internet of Things (IoT)",
+                    "Fintech",
+                    "Robotic Process Automation (RPA)"
+                ],
+                answer: "The Internet of Things (IoT)",
+                type: 'single',
+                topic: 'Internet of Things'
+            },
+            {
+                question: "According to the definition provided, which of the following would be considered a 'digital asset'?",
+                options: [
+                    "A screenshot of a copyrighted image taken without permission.",
+                    "A company's proprietary software code that it licenses to customers.",
+                    "A temporary data file created by an application.",
+                    "A publicly available news article on a website."
+                ],
+                answer: "A company's proprietary software code that it licenses to customers.",
+                type: 'single',
+                topic: 'Digital Assets',
+                explanation: "A digital asset is a text or media file in a binary source that includes the right to use it. Proprietary software licensed to customers fits this definition, whereas files without usage rights (like unauthorized screenshots or public articles) do not."
+            },
+            {
+                question: "Distributed Ledger Technology (DLT) primarily aims to solve the problem of:",
+                options: [
+                    "Needing a central authority to manage and store data.",
+                    "Processing large volumes of transactions quickly.",
+                    "Automating repetitive accounting tasks.",
+                    "Providing customer service through online chatbots."
+                ],
+                answer: "Needing a central authority to manage and store data.",
+                type: 'single',
+                topic: 'Distributed Ledger Technology',
+                explanation: "DLT allows multiple parties who do not know each other to trust a shared, immutable record of events without a central intermediary, changing the notions of centralization."
+            },
+            {
+                question: "In a blockchain system, what is the primary purpose of the 'hash' attached to each block?",
+                options: [
+                    "To store the transaction data itself.",
+                    "To link the block to the user's digital wallet.",
+                    "To serve as a cryptographic code for validating the block's integrity.",
+                    "To timestamp the transaction for auditing purposes."
+                ],
+                answer: "To serve as a cryptographic code for validating the block's integrity.",
+                type: 'single',
+                topic: 'Blockchain',
+                explanation: "The hash is a cryptographic code based on the transaction data. Other members of the community check this hash to validate the block before it is added to the chain, ensuring its integrity."
+            },
+            {
+                question: "Which of the following are examples of Fintech? (Choose TWO)",
+                options: [
+                    "A traditional bank offering online account statements.",
+                    "A peer-to-peer lending platform connecting borrowers directly with savers.",
+                    "An accounting firm using cloud-based software.",
+                    "A digital wallet app like Apple Pay or Google Pay."
+                ],
+                answer: ["A peer-to-peer lending platform connecting borrowers directly with savers.", "A digital wallet app like Apple Pay or Google Pay."],
+                type: 'multiple',
+                topic: 'Fintech'
+            },
+            {
+                question: "A significant risk associated with crypto currencies that distinguishes them from traditional currencies is their:",
+                options: [
+                    "High transaction costs due to bank involvement.",
+                    "Lack of privacy in transactions.",
+                    "Extreme price volatility.",
+                    "Regulation by central banks."
+                ],
+                answer: "Extreme price volatility.",
+                type: 'single',
+                topic: 'Crypto Currencies',
+                explanation: "The syllabus explicitly lists volatility (large price swings) as a key risk of crypto currencies. They are known for low transaction costs (no banks), high privacy, and lack of central bank regulation."
+            },
+            {
+                question: "A system that uses computer algorithms that improve automatically through experience with large data sets, without being explicitly programmed for every scenario, is best described as:",
+                options: [
+                    "Robotic Process Automation (RPA)",
+                    "An Expert System",
+                    "Machine Learning",
+                    "Cloud Computing"
+                ],
+                answer: "Machine Learning",
+                type: 'single',
+                topic: 'Artificial Intelligence & Machine Learning'
+            },
+            {
+                question: "True or False: Robotic Process Automation (RPA) is limited to performing pre-programmed, repetitive tasks and cannot learn new processes by observing humans.",
+                options: ["True", "False"],
+                answer: "False",
+                type: 'true_false',
+                topic: 'Robotic Process Automation',
+                explanation: "The definition of RPA includes a combination of process automation and machine learning, allowing robots to learn manual tasks by observing humans at work."
+            },
+            {
+                question: "How has the automation of transaction-level accounting primarily impacted the role of accountants?",
+                options: [
+                    "It has made the accountant's role redundant.",
+                    "It has shifted the accountant's focus to more value-adding tasks like providing advice.",
+                    "It has increased the need for manual data entry skills.",
+                    "It has reduced the need for professional scepticism."
+                ],
+                answer: "It has shifted the accountant's focus to more value-adding tasks like providing advice.",
+                type: 'single',
+                topic: 'Impact on Accountancy Profession'
+            },
+            // Scenario Based Questions (11-13)
+            {
+                question: "Scenario: 'Delta Logistics Ltd.', a Bangladeshi company, wants to improve its procurement process. They decide to implement a system that allows them to use internet-based technologies to identify and select suppliers from a wider pool by reviewing electronic catalogues. This system is best described as:",
+                options: [
+                    "Electronic Data Interchange (EDI)",
+                    "E-procurement",
+                    "Internet of Things (IoT)",
+                    "A Knowledge Work System (KWS)"
+                ],
+                answer: "E-procurement",
+                type: 'single',
+                topic: 'Technology in Business Functions (Scenario)'
+            },
+            {
+                question: "Scenario: To further enhance their operations, Delta Logistics attaches RFID tags to high-value shipments. These tags send real-time location and temperature data over the internet to their central monitoring system. This application of technology primarily leverages:",
+                options: [
+                    "Fintech",
+                    "Blockchain",
+                    "The Internet of Things (IoT)",
+                    "An Executive Support System (ESS)"
+                ],
+                answer: "The Internet of Things (IoT)",
+                type: 'single',
+                topic: 'Technology in Business Functions (Scenario)'
+            },
+            {
+                question: "Scenario: Delta Logistics' senior managers use a system that pools data from internal sources (like shipment tracking) and external sources (like fuel price trends and weather forecasts) to make strategic decisions about opening new routes. This type of information system is an:",
+                options: [
+                    "Office Automation System (OAS)",
+                    "Expert System",
+                    "Transaction Processing System (TPS)",
+                    "Executive Support System (ESS)"
+                ],
+                answer: "Executive Support System (ESS)",
+                type: 'single',
+                topic: 'Information Systems (Scenario)',
+                explanation: "An ESS is defined as software that pools data from internal and external sources to help senior managers make strategic, unstructured decisions, which perfectly matches the scenario."
+            },
+            {
+                question: "A bank uses a system to process straightforward loan applications. It captures the applicant's details, checks them against a database, performs affordability calculations, and suggests a decision. This is a classic example of:",
+                options: [
+                    "A Decision Support System (DSS)",
+                    "An Expert System",
+                    "A Knowledge Work System (KWS)",
+                    "Robotic Process Automation (RPA)"
+                ],
+                answer: "An Expert System",
+                type: 'single',
+                topic: 'Information Systems'
+            },
+            {
+                question: "The risk that a company's significant investment in a new technology quickly becomes outdated due to rapid innovation is known as:",
+                options: [
+                    "Inexplicability Risk",
+                    "Automation Risk",
+                    "Obsolescence Risk",
+                    "Cyber Risk"
+                ],
+                answer: "Obsolescence Risk",
+                type: 'single',
+                topic: 'Risks and Ethical Issues'
+            },
+            {
+                question: "A bank uses a machine learning model to approve or deny loan applications. When a customer is denied and asks for a specific reason, the bank is unable to explain the model's complex decision-making process. This situation highlights:",
+                options: [
+                    "Obsolescence Risk",
+                    "Inexplicability Risk",
+                    "Data Bias",
+                    "A DDoS attack"
+                ],
+                answer: "Inexplicability Risk",
+                type: 'single',
+                topic: 'Risks and Ethical Issues',
+                explanation: "Inexplicability risk is the risk that humans do not understand the algorithms developed by a machine, making it difficult to justify or explain decisions, as required by regulations like the Data Protection Act, 2024 of Bangladesh."
+            },
+            {
+                question: "Which of the following is a deliberate action through the internet intended to cause loss, damage, or disruption to an organization's activities?",
+                options: [
+                    "Poor systems integrity",
+                    "An accidental breach of security",
+                    "A cyber-attack",
+                    "Hardware failure"
+                ],
+                answer: "A cyber-attack",
+                type: 'single',
+                topic: 'Cyber Risk'
+            },
+            {
+                question: "A bogus email that asks a user to click a link and enter their security information and personal details is a form of cyber-attack known as:",
+                options: [
+                    "Hacking",
+                    "Phishing",
+                    "A DDoS attack",
+                    "Keylogging"
+                ],
+                answer: "Phishing",
+                type: 'single',
+                topic: 'Cyber Risk'
+            },
+            {
+                question: "A criminal overwhelms a company's website with a massive volume of internet traffic from a network of compromised computers, causing the website to crash. This is a ________ attack.",
+                options: [
+                    "Phishing",
+                    "Malware",
+                    "Hacking",
+                    "Distributed Denial of Service (DDoS)"
+                ],
+                answer: "Distributed Denial of Service (DDoS)",
+                type: 'fill_in',
+                topic: 'Cyber Risk'
+            },
+            {
+                question: "Which THREE of the following are fundamental controls recommended by the 'Cyber Essentials' scheme?",
+                options: [
+                    "Using a firewall to secure the internet connection.",
+                    "Conducting annual employee satisfaction surveys.",
+                    "Keeping devices and software up to date (patching).",
+                    "Controlling who has access to data and services.",
+                    "Outsourcing all IT functions to a third party."
+                ],
+                answer: ["Using a firewall to secure the internet connection.", "Keeping devices and software up to date (patching).", "Controlling who has access to data and services."],
+                type: 'multiple',
+                topic: 'Cyber Security'
+            },
+            {
+                question: "Cyber-resilience is best defined as:",
+                options: [
+                    "The ability to prevent 100% of all cyber-attacks.",
+                    "The exclusive use of firewalls and anti-virus software.",
+                    "The ability to ensure data is reliable, available, has integrity, and is protected, including having recovery plans.",
+                    "The process of reporting all cyber incidents to law enforcement."
+                ],
+                answer: "The ability to ensure data is reliable, available, has integrity, and is protected, including having recovery plans.",
+                type: 'single',
+                topic: 'Cyber Resilience'
+            },
+            {
+                question: "According to the ICAEW report on cyber-resilience, the risk that mobile devices containing sensitive company data are lost or stolen is categorized as a:",
+                options: [
+                    "Networking and cloud consideration",
+                    "Mobile threat",
+                    "Access control threat",
+                    "Hardware failure threat"
+                ],
+                answer: "Mobile threat",
+                type: 'single',
+                topic: 'Cyber Resilience'
+            },
+            {
+                question: "The Payment Card Industry Data Security Standard (PCI-DSS) is a highly prescriptive standard that applies specifically to organizations that:",
+                options: [
+                    "Are listed on a public stock exchange.",
+                    "Operate in the defense sector.",
+                    "Process payment card transactions.",
+                    "Handle government contracts."
+                ],
+                answer: "Process payment card transactions.",
+                type: 'single',
+                topic: 'Cyber Security Standards'
+            },
+            {
+                question: "Which type of Artificial Intelligence has cognitive, emotional, and social intelligence, allowing it to be self-conscious and self-aware when interacting with humans?",
+                options: [
+                    "Analytical type of AI",
+                    "Human-inspired type of AI",
+                    "Humanised type of AI",
+                    "Machine Learning AI"
+                ],
+                answer: "Humanised type of AI",
+                type: 'single',
+                topic: 'Artificial Intelligence'
+            },
+            {
+                question: "Triple entry bookkeeping, where every transaction is also posted to a public ledger, is a concept closely associated with which technology?",
+                options: [
+                    "Cloud Accounting",
+                    "Artificial Intelligence",
+                    "Distributed Ledger Technology (DLT)",
+                    "Robotic Process Automation (RPA)"
+                ],
+                answer: "Distributed Ledger Technology (DLT)",
+                type: 'single',
+                topic: 'Impact on Accountancy Profession'
+            },
+            {
+                question: "The use of audit analytics and machine learning allows auditors to:",
+                options: [
+                    "Completely eliminate the need for professional judgment.",
+                    "Focus only on a small sample of transactions.",
+                    "Check 100% of transactions automatically on a continuous basis.",
+                    "Outsource the entire audit process to a machine."
+                ],
+                answer: "Check 100% of transactions automatically on a continuous basis.",
+                type: 'single',
+                topic: 'Impact on Auditing'
+            },
+            {
+                question: "A system that facilitates the creation and integration of new knowledge into an organisation is known as a:",
+                options: [
+                    "Decision Support System (DSS)",
+                    "Knowledge Work System (KWS)",
+                    "Office Automation System (OAS)",
+                    "Executive Support System (ESS)"
+                ],
+                answer: "Knowledge Work System (KWS)",
+                type: 'single',
+                topic: 'Information Systems'
+            },
+            {
+                question: "Which of the following is a key ethical risk associated with the rise of AI?",
+                options: [
+                    "Machines becoming too expensive to maintain.",
+                    "Difficulty in assigning responsibility when a machine makes a mistake.",
+                    "A decrease in the amount of data available for analysis.",
+                    "The obsolescence of older, non-AI technologies."
+                ],
+                answer: "Difficulty in assigning responsibility when a machine makes a mistake.",
+                type: 'single',
+                topic: 'Risks and Ethical Issues'
+            },
+            {
+                question: "Two-factor authentication is a security measure that helps to:",
+                options: [
+                    "Encrypt all data on a hard drive.",
+                    "Prevent DDoS attacks.",
+                    "Verify the identity of a user at log in using a second device.",
+                    "Automatically update software to the latest version."
+                ],
+                answer: "Verify the identity of a user at log in using a second device.",
+                type: 'single',
+                topic: 'Cyber Security'
+            },
+            {
+                question: "True or False: A private cloud sells services to anyone on the internet, while a public cloud is a proprietary network for a limited number of people.",
+                options: ["True", "False"],
+                answer: "False",
+                type: 'true_false',
+                topic: 'Cloud Computing',
+                explanation: "It's the other way around. A public cloud sells to anyone on the internet, while a private cloud is proprietary and serves a limited number of people."
+            },
+            {
+                question: "Which technology allows for 'smart contracts' that automatically execute defined rules to securely hold and transfer legal title to an asset?",
+                options: [
+                    "Cloud Accounting",
+                    "Artificial Intelligence",
+                    "Distributed Ledger Technology",
+                    "Internet of Things"
+                ],
+                answer: "Distributed Ledger Technology",
+                type: 'single',
+                topic: 'Impact on Accountancy Profession'
+            },
+            {
+                question: "The Data Protection Act, 2024 of Bangladesh requires companies to be able to explain how automated decisions about individuals are made. This regulation directly challenges the issue of __________ in AI.",
+                options: [
+                    "Obsolescence risk",
+                    "Automation risk",
+                    "Inexplicability risk",
+                    "Data bias"
+                ],
+                answer: "Inexplicability risk",
+                type: 'fill_in',
+                topic: 'Risks and Ethical Issues'
+            },
+            {
+                question: "Which information system is designed to increase the productivity of data and information workers through tools like word processing and email?",
+                options: [
+                    "Knowledge Work System (KWS)",
+                    "Executive Support System (ESS)",
+                    "Office Automation System (OAS)",
+                    "Expert System"
+                ],
+                answer: "Office Automation System (OAS)",
+                type: 'single',
+                topic: 'Information Systems'
+            },
+            {
+                question: "Which two of the following are significant impacts of technology on the auditing profession?",
+                options: [
+                    "Increased focus on manual transaction verification.",
+                    "The ability to use predictive analytics to better target audit risks.",
+                    "A reduced need for auditors to understand software controls.",
+                    "A shift in focus towards validating controls within accounting software."
+                ],
+                answer: ["The ability to use predictive analytics to better target audit risks.", "A shift in focus towards validating controls within accounting software."],
+                type: 'multiple',
+                topic: 'Impact on Auditing'
+            },
+            {
+                question: "A key advantage of using crypto currencies for transactions, as mentioned in the text, is:",
+                options: [
+                    "The involvement of a trusted third party like a bank.",
+                    "The stability of their value.",
+                    "The avoidance of a third-party intermediary, which can save costs and increase privacy.",
+                    "The ease of recovering lost or stolen currency."
+                ],
+                answer: "The avoidance of a third-party intermediary, which can save costs and increase privacy.",
+                type: 'single',
+                topic: 'Crypto Currencies'
+            },
+            {
+                question: "A 'challenger bank' primarily competes with traditional banks by:",
+                options: [
+                    "Having a large number of physical branches.",
+                    "Using technology to operate with a lower cost base, often as online-only banks.",
+                    "Focusing exclusively on high-net-worth individuals.",
+                    "Avoiding all forms of government regulation."
+                ],
+                answer: "Using technology to operate with a lower cost base, often as online-only banks.",
+                type: 'single',
+                topic: 'Fintech'
+            },
+            {
+                question: "The process of ensuring that the latest updates to software are installed to fix security weaknesses is known as:",
+                options: [
+                    "Patch management",
+                    "Access control",
+                    "Secure configuration",
+                    "Penetration testing"
+                ],
+                answer: "Patch management",
+                type: 'single',
+                topic: 'Cyber Security'
+            },
+            {
+                question: "What is the primary function of a Decision Support System (DSS)?",
+                options: [
+                    "To capture the expertise of a human in a limited domain.",
+                    "To facilitate the creation of new knowledge.",
+                    "To combine data and analytical models to support semi-structured and unstructured decision making.",
+                    "To automate routine office tasks like correspondence."
+                ],
+                answer: "To combine data and analytical models to support semi-structured and unstructured decision making.",
+                type: 'single',
+                topic: 'Information Systems'
+            },
+            {
+                question: "The risk that controls like segregation of duties might be threatened by new technology falls under the category of:",
+                options: [
+                    "Obsolescence risk",
+                    "Inexplicability risk",
+                    "Automation risks",
+                    "Ethical risks"
+                ],
+                answer: "Automation risks",
+                type: 'single',
+                topic: 'Risks and Ethical Issues'
+            },
+            {
+                question: "In blockchain, the fact that each subsequent block contains the closing hash from the previous block makes it:",
+                options: [
+                    "Easy to alter previous transactions without detection.",
+                    "Very difficult to alter a recorded block without invalidating the rest of the chain.",
+                    "Faster to process new transactions.",
+                    "Possible to operate without community validation."
+                ],
+                answer: "Very difficult to alter a recorded block without invalidating the rest of the chain.",
+                type: 'single',
+                topic: 'Blockchain'
+            },
+            {
+                question: "Which of the following is NOT a way technology has been applied to the marketing function?",
+                options: [
+                    "Using cognitive systems to adjust flight prices based on demand.",
+                    "Using machine learning to recommend products to online shoppers.",
+                    "Using EDI to automatically send purchase orders to suppliers.",
+                    "Using AI-powered chatbots for customer service."
+                ],
+                answer: "Using EDI to automatically send purchase orders to suppliers.",
+                type: 'single',
+                topic: 'Technology in Business Functions',
+                explanation: "Using EDI for purchase orders is an application of technology in the procurement and operations function, not marketing."
+            },
+            {
+                question: "An organization's ability to continue functioning even if its primary cyber security controls fail is a key aspect of:",
+                options: [
+                    "Cyber hygiene",
+                    "Cyber-resilience",
+                    "Patch management",
+                    "Access control"
+                ],
+                answer: "Cyber-resilience",
+                type: 'single',
+                topic: 'Cyber Resilience'
+            },
+            {
+                question: "Which of the following tasks is LEAST likely to be fully automated by current technology?",
+                options: [
+                    "Maintaining ledgers and preparing reconciliations.",
+                    "Auditing 100% of bank transactions for anomalies.",
+                    "Exercising professional scepticism and critical thinking in a novel situation.",
+                    "Sending standard email replies to job applicants."
+                ],
+                answer: "Exercising professional scepticism and critical thinking in a novel situation.",
+                type: 'single',
+                topic: 'Impact on Accountancy Profession'
+            },
+            {
+                question: "A company's information security plan, as part of its cyber-resilience strategy, should cover which of the following areas? (Choose TWO)",
+                options: [
+                    "Marketing budget allocation.",
+                    "User education and awareness on security.",
+                    "Policies for home and mobile working.",
+                    "The company's dividend policy."
+                ],
+                answer: ["User education and awareness on security.", "Policies for home and mobile working."],
+                type: 'multiple',
+                topic: 'Cyber Resilience'
+            },
+            {
+                question: "A key difference between Artificial Intelligence (AI) and traditional programming is that AI systems can:",
+                options: [
+                    "Only follow a pre-determined set of rules.",
+                    "Learn, reason, and solve problems in a way that mimics human intelligence.",
+                    "Operate without any hardware.",
+                    "Never make mistakes."
+                ],
+                answer: "Learn, reason, and solve problems in a way that mimics human intelligence.",
+                type: 'single',
+                topic: 'Artificial Intelligence'
+            },
+            {
+                question: "A significant problem with traditional accounting software that cloud accounting aims to solve is:",
+                options: [
+                    "The data is always up-to-date and accessible from anywhere.",
+                    "It only works on one computer and data is not easily accessible to key people.",
+                    "Backups are automatically and securely handled by the provider.",
+                    "Software upgrades are complex and expensive."
+                ],
+                answer: "It only works on one computer and data is not easily accessible to key people.",
+                type: 'single',
+                topic: 'Cloud Computing',
+                explanation: "The question asks for a problem with TRADITIONAL software. Options A and C are benefits of cloud accounting. Option B correctly identifies a key limitation of traditional, desktop-based software."
+            },
+            {
+                question: "The US-based NIST framework for cyber security is described as:",
+                options: [
+                    "A management system with a long list of potential controls (ISO 27001).",
+                    "A baseline of cyber hygiene for all organizations.",
+                    "A framework incorporating risk-based standards based on different industry sectors.",
+                    "A specific standard for processing payment card transactions (PCI-DSS)."
+                ],
+                answer: "A framework incorporating risk-based standards based on different industry sectors.",
+                type: 'single',
+                topic: 'Cyber Security Standards'
+            },
+            {
+                question: "Which of the following is an example of 'prescriptive analytics' used in machine learning?",
+                options: [
+                    "Analyzing past sales data to identify the busiest day of the week.",
+                    "Anticipating which customers are likely to churn based on their behavior.",
+                    "Providing recommendations on the optimal price to set for a new product to maximize profit.",
+                    "Generating a report of total revenue for the last quarter."
+                ],
+                answer: "Providing recommendations on the optimal price to set for a new product to maximize profit.",
+                type: 'single',
+                topic: 'Machine Learning',
+                explanation: "Prescriptive analytics goes beyond predicting what will happen (predictive) and provides recommendations for what to do to achieve a goal."
+            },
+            {
+                question: "True or False: According to the syllabus, the digital revolution has decreased the need for accountants to exercise professional scepticism because systems are more reliable.",
+                options: ["True", "False"],
+                answer: "False",
+                type: 'true_false',
+                topic: 'Impact on Accountancy Profession',
+                explanation: "The text explicitly states that the digital revolution has INCREASED the need for accountants to exercise professional scepticism and critical thinking, especially when interpreting system outputs and mitigating new risks."
+            },
+            {
+                question: "A primary goal of promoting cyber security awareness among employees is to:",
+                options: [
+                    "Ensure the company complies with ISO 27001.",
+                    "Reduce the risk of unintentional security breaches caused by human error, like falling for phishing scams.",
+                    "Eliminate the need for technical controls like firewalls.",
+                    "Allow the IT department to focus solely on hardware maintenance."
+                ],
+                answer: "Reduce the risk of unintentional security breaches caused by human error, like falling for phishing scams.",
+                type: 'single',
+                topic: 'Cyber Security'
+            }
+        ];
+
+        // Application State
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
+        let timerInterval;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        let flaggedQuestions = new Array(quizData.length).fill(false);
+
+        // DOM Elements
+        const homePage = document.getElementById('home-page');
+        const quizPage = document.getElementById('quiz-page');
+        const resultsPage = document.getElementById('results-page');
+        const startQuizBtn = document.getElementById('start-quiz-btn');
+        const questionTracker = document.getElementById('question-tracker');
+        const questionContainer = document.getElementById('question-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const timerEl = document.getElementById('timer');
+        const flagBtn = document.getElementById('flag-btn');
+        const submitQuizBtn = document.getElementById('submit-quiz-btn');
+        const retakeQuizBtn = document.getElementById('retake-quiz-btn');
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+
+        function initializeQuiz() {
+            // Reset state
+            currentQuestionIndex = 0;
+            userAnswers.fill(null);
+            flaggedQuestions.fill(false);
+            timeLeft = 45 * 60;
+
+            // Setup UI
+            homePage.classList.add('hidden');
+            resultsPage.classList.add('hidden');
+            quizPage.classList.remove('hidden');
+
+            createQuestionTracker();
+            loadQuestion(currentQuestionIndex);
+            startTimer();
+        }
+
+        function createQuestionTracker() {
+            questionTracker.innerHTML = '';
+            for (let i = 0; i < quizData.length; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i + 1;
+                btn.classList.add('question-tracker-btn', 'w-10', 'h-10', 'border-2', 'rounded-md', 'font-semibold', 'bg-white', 'border-gray-300');
+                btn.addEventListener('click', () => {
+                    loadQuestion(i);
+                });
+                questionTracker.appendChild(btn);
+            }
+        }
+
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const question = quizData[index];
+            let optionsHTML = '';
+
+            if (question.type === 'single' || question.type === 'true_false') {
+                optionsHTML = question.options.map((option, i) => `
+                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                        <input type="radio" name="option" value="${option}" class="mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300" ${userAnswers[index] === option ? 'checked' : ''}>
+                        <span>${option}</span>
+                    </label>
+                `).join('');
+            } else if (question.type === 'multiple') {
+                optionsHTML = question.options.map((option, i) => `
+                    <label class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                        <input type="checkbox" name="option" value="${option}" class="mr-3 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" ${userAnswers[index] && userAnswers[index].includes(option) ? 'checked' : ''}>
+                        <span>${option}</span>
+                    </label>
+                `).join('');
+            } else if (question.type === 'fill_in') {
+                optionsHTML = `
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="fill-in-input" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Type your answer here..." value="${userAnswers[index] || ''}">
+                    </div>
+                `;
+            }
+
+            questionContainer.innerHTML = `
+                <p class="text-sm text-gray-500 mb-2">Question ${index + 1} of ${quizData.length} (2 Marks)</p>
+                <h2 class="text-xl font-semibold mb-4">${question.question.replace(/________/g, '<span class="font-bold text-blue-600">[BLANK]</span>')}</h2>
+                <div class="space-y-3">${optionsHTML}</div>
+            `;
+
+            // Add event listeners for new inputs
+            const inputs = questionContainer.querySelectorAll('input[name="option"], #fill-in-input');
+            inputs.forEach(input => {
+                input.addEventListener('change', handleAnswerSelection);
+            });
+            
+            updateNavigation();
+        }
+
+        function handleAnswerSelection(event) {
+            const question = quizData[currentQuestionIndex];
+            if (question.type === 'single' || question.type === 'true_false') {
+                userAnswers[currentQuestionIndex] = event.target.value;
+            } else if (question.type === 'multiple') {
+                const checkedOptions = Array.from(questionContainer.querySelectorAll('input[name="option"]:checked')).map(el => el.value);
+                userAnswers[currentQuestionIndex] = checkedOptions.length > 0 ? checkedOptions : null;
+            } else if (question.type === 'fill_in') {
+                 userAnswers[currentQuestionIndex] = event.target.value.trim();
+            }
+            updateTrackerButton(currentQuestionIndex);
+        }
+
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === quizData.length - 1;
+            prevBtn.classList.toggle('opacity-50', prevBtn.disabled);
+            nextBtn.classList.toggle('opacity-50', nextBtn.disabled);
+            updateTrackerButton(currentQuestionIndex, true);
+            updateFlagButton();
+        }
+        
+        function updateTrackerButton(index, isCurrent = false) {
+            const buttons = questionTracker.children;
+            const button = buttons[index];
+            if (!button) return;
+
+            // Reset all buttons from 'current' state
+            Array.from(buttons).forEach(btn => btn.classList.remove('current'));
+
+            button.classList.remove('answered', 'flagged');
+
+            if (userAnswers[index] !== null && (!Array.isArray(userAnswers[index]) || userAnswers[index].length > 0)) {
+                button.classList.add('answered');
+            }
+            if (flaggedQuestions[index]) {
+                button.classList.add('flagged');
+            }
+            if (isCurrent) {
+                button.classList.add('current');
+            }
+        }
+
+        function updateFlagButton() {
+            if (flaggedQuestions[currentQuestionIndex]) {
+                flagBtn.textContent = 'Unflag Question';
+                flagBtn.classList.replace('bg-yellow-500', 'bg-red-600');
+                flagBtn.classList.replace('hover:bg-yellow-600', 'hover:bg-red-700');
+            } else {
+                flagBtn.textContent = 'Flag for Review';
+                flagBtn.classList.replace('bg-red-600', 'bg-yellow-500');
+                flagBtn.classList.replace('hover:bg-red-700', 'hover:bg-yellow-600');
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizPage.classList.add('hidden');
+            resultsPage.classList.remove('hidden');
+            calculateAndShowResults();
+        }
+
+        function calculateAndShowResults() {
+            let score = 0;
+            let correctCount = 0;
+            const incorrectTopics = new Set();
+
+            quizData.forEach((q, i) => {
+                let isCorrect = false;
+                if (q.type === 'multiple') {
+                    const userAnswer = userAnswers[i] || [];
+                    isCorrect = q.answer.length === userAnswer.length && q.answer.every(val => userAnswer.includes(val));
+                } else if (q.type === 'fill_in') {
+                    isCorrect = userAnswers[i]?.toLowerCase() === q.answer.toLowerCase();
+                }
+                else {
+                    isCorrect = userAnswers[i] === q.answer;
+                }
+
+                if (isCorrect) {
+                    score += 2;
+                    correctCount++;
+                } else {
+                    incorrectTopics.add(q.topic);
+                }
+            });
+
+            const totalQuestions = quizData.length;
+            const incorrectCount = totalQuestions - correctCount;
+            const percentage = (correctCount / totalQuestions * 100).toFixed(1);
+
+            document.getElementById('total-score').textContent = `${score}/${totalQuestions * 2}`;
+            document.getElementById('correct-answers').textContent = `${correctCount} (${percentage}%)`;
+            document.getElementById('incorrect-answers').textContent = `${incorrectCount} (${(100 - parseFloat(percentage)).toFixed(1)}%)`;
+
+            const improvementTopicsEl = document.getElementById('improvement-topics');
+            improvementTopicsEl.innerHTML = '';
+            if (incorrectTopics.size > 0) {
+                 incorrectTopics.forEach(topic => {
+                    const li = document.createElement('li');
+                    li.textContent = topic;
+                    improvementTopicsEl.appendChild(li);
+                });
+            } else {
+                 improvementTopicsEl.innerHTML = '<li>Congratulations! You answered all questions correctly.</li>';
+            }
+           
+            renderReview();
+        }
+
+        function renderReview() {
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+            quizData.forEach((q, i) => {
+                const userAnswer = userAnswers[i];
+                let isCorrect = false;
+                 if (q.type === 'multiple') {
+                    const userAnswerSet = new Set(userAnswer || []);
+                    isCorrect = q.answer.length === userAnswerSet.size && q.answer.every(val => userAnswerSet.has(val));
+                } else if (q.type === 'fill_in') {
+                    isCorrect = userAnswer?.toLowerCase() === q.answer.toLowerCase();
+                }
+                else {
+                    isCorrect = userAnswer === q.answer;
+                }
+
+                const resultClass = isCorrect ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50';
+                const userAnswerText = Array.isArray(userAnswer) ? userAnswer.join(', ') : (userAnswer || 'Not Answered');
+                const correctAnswerText = Array.isArray(q.answer) ? q.answer.join(', ') : q.answer;
+
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `p-4 border-l-4 rounded-r-lg ${resultClass}`;
+                reviewItem.innerHTML = `
+                    <p class="font-bold">${i + 1}. ${q.question}</p>
+                    <p class="mt-2 text-sm">Your Answer: <span class="font-semibold ${isCorrect ? 'text-green-700' : 'text-red-700'}">${userAnswerText}</span></p>
+                    <p class="mt-1 text-sm">✅ Correct Answer: <span class="font-semibold text-green-800">${correctAnswerText}</span></p>
+                    ${q.explanation ? `<div class="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md text-sm">
+                        <p>📖 <strong>Explanation:</strong> ${q.explanation}</p>
+                    </div>` : ''}
+                `;
+                reviewContainer.appendChild(reviewItem);
+            });
+        }
+
+        // Event Listeners
+        startQuizBtn.addEventListener('click', initializeQuiz);
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        });
+
+        flagBtn.addEventListener('click', () => {
+            flaggedQuestions[currentQuestionIndex] = !flaggedQuestions[currentQuestionIndex];
+            updateTrackerButton(currentQuestionIndex, true);
+            updateFlagButton();
+        });
+        
+        submitQuizBtn.addEventListener('click', () => {
+            // Directly call submitQuiz without a confirmation dialog,
+            // as confirm() does not work reliably in the iframe environment.
+            submitQuiz();
+        });
+
+        retakeQuizBtn.addEventListener('click', initializeQuiz);
+
+        backToHomeBtn.addEventListener('click', () => {
+            resultsPage.classList.add('hidden');
+            homePage.classList.remove('hidden');
+        });
+
+    </script>
+</body>
+</html>

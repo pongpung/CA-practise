@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICAB BTF Exam – Chapter 12: External Regulation of Business</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" xintegrity="sha512-Fo3rlrZj/k7ujlY4F/Qn2g21tL8/k5N0jKz4oK1L9F7ZJ9T/4v0t7a4H1F0f0mJ3Zf4S2k/d5F5N1Q2/3uP5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #374151;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .question-tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .question-tracker-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .question-tracker-item.answered {
+            background-color: #10b981; /* Green */
+            color: white;
+        }
+        .question-tracker-item.flagged {
+            background-color: #ef4444; /* Red */
+            color: white;
+        }
+        .question-tracker-item.current {
+            border: 2px solid #3b82f6; /* Blue border for current question */
+            transform: scale(1.1);
+        }
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .option-label:hover {
+            background-color: #eff6ff;
+            border-color: #93c5fd;
+        }
+        .option-label.selected {
+            background-color: #dbeafe;
+            border-color: #3b82f6;
+        }
+        .option-label input[type="radio"], .option-label input[type="checkbox"] {
+            margin-top: 4px;
+            margin-right: 12px;
+            accent-color: #3b82f6;
+        }
+        .submit-button {
+            background-color: #10b981;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        .submit-button:hover {
+            background-color: #059669;
+        }
+        .flag-button {
+            background-color: #f97316;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .flag-button.unflag {
+            background-color: #ef4444;
+        }
+        .nav-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #2563eb;
+        }
+        .nav-button:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+        .result-question-card {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+        }
+        .correct-answer-text {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .incorrect-answer-text {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .explanation {
+            background-color: #e0f2fe;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .retake-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: background-color 0.2s ease-in-out;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+        .retake-button:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-10">
+    <div id="quiz-container" class="container grid grid-cols-1 md:grid-cols-4 gap-6">
+        <!-- Quiz will be rendered here -->
+    </div>
+
+    <script>
+        const quizQuestions = [
+            {
+                id: 1,
+                type: 'single',
+                question: "Regulation of financial reporting is an example of government intervention to alleviate market failure caused by:",
+                options: {
+                    A: "Market imperfection",
+                    B: "Externalities",
+                    C: "Asymmetric information",
+                    D: "Lack of equity"
+                },
+                correctAnswer: "C",
+                explanation: "Regulation of financial reporting addresses asymmetric information, where one party (e.g., management) has more information than another (e.g., investors), leading to inefficient market outcomes. By standardizing financial reporting, information asymmetry is reduced.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 2,
+                type: 'single',
+                question: "Which of the following is NOT a primary reason why regulation of businesses is necessary?",
+                options: {
+                    A: "To address market failure",
+                    B: "To protect the public interest",
+                    C: "To promote shareholder self-interest",
+                    D: "To deal with irreversibility"
+                },
+                correctAnswer: "C",
+                explanation: "Regulation primarily aims to address market failures, protect the public interest, and deal with irreversibility. Promoting shareholder self-interest is generally the objective of the business itself, which regulation seeks to balance, not promote.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 3,
+                type: 'single',
+                question: "In the context of market failure, government provision of public goods such as street lighting is an intervention to address problems caused by:",
+                options: {
+                    A: "Market imperfection",
+                    B: "Externalities",
+                    C: "Asymmetric information",
+                    D: "Lack of equity"
+                },
+                correctAnswer: "B",
+                explanation: "Public goods are a classic example of market failure due to externalities (non-excludability and non-rivalry). The market alone typically underprovides them, requiring government intervention.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 4,
+                type: 'multiple',
+                question: "Which of the following are examples of how governments may intervene to influence supply and demand through subsidies?",
+                options: {
+                    A: "To encourage more production",
+                    B: "To keep prices lower for socially desirable goods",
+                    C: "To protect a vital industry",
+                    D: "To restrict supply to raise prices"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "Subsidies are government payments to suppliers to encourage production, keep prices low for desirable goods, or protect key industries, shifting the supply curve to the right. Restricting supply to raise prices is typically achieved through indirect taxation or quotas, not subsidies.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 5,
+                type: 'single',
+                question: "A market where one business is able to behave independently of competitive pressures is defined as having a:",
+                options: {
+                    A: "Competitive advantage",
+                    B: "Dominant position",
+                    C: "Market imperfection",
+                    D: "Strategic monopoly"
+                },
+                correctAnswer: "B",
+                explanation: "A dominant position is defined as one where the business is able to behave independently of competitive pressures, often due to high market share.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 6,
+                type: 'single',
+                question: "Under Bangladeshi competition law, a business will generally be considered dominant if it controls more than what percentage of the market?",
+                options: {
+                    A: "20%",
+                    B: "30%",
+                    C: "40%",
+                    D: "50%"
+                },
+                correctAnswer: "C",
+                explanation: "The provided text indicates that 'a business will not be considered dominant unless it controls 40% of the market.' This serves as a general guideline for assessing dominance under relevant national laws.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 7,
+                type: 'multiple',
+                question: "Which of the following are examples of anti-competitive agreements prohibited under relevant national laws?",
+                options: {
+                    A: "Fixing purchase or selling prices",
+                    B: "Agreeing to limit or control production",
+                    C: "Sharing markets or supply sources",
+                    D: "Implementing a new marketing strategy"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "Anti-competitive agreements involve collusion between businesses to prevent, restrict, or distort competition. Fixing prices, limiting production, and sharing markets are explicit examples provided in the text. A new marketing strategy, if not collusive, is not inherently anti-competitive.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 8,
+                type: 'single',
+                question: "A business found to be party to an anti-competitive agreement or abusing a dominant position may face a fine of up to what percentage of its worldwide annual revenue?",
+                options: {
+                    A: "5%",
+                    B: "10%",
+                    C: "15%",
+                    D: "20%"
+                },
+                correctAnswer: "B",
+                explanation: "The text states that 'A business that is found to be party to an anti-competitive agreement can be fined up to 10% of its annual worldwide revenue.' The same applies to abusing a dominant position.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 9,
+                type: 'single',
+                question: "Which government body in Bangladesh would typically be responsible for promoting effective competition in markets and enforcing consumer protection legislation, similar to the CMA in the UK?",
+                options: {
+                    A: "Bangladesh Bank",
+                    B: "Ministry of Commerce",
+                    C: "Bangladesh Competition Commission (BCC)",
+                    D: "National Board of Revenue (NBR)"
+                },
+                correctAnswer: "C",
+                explanation: "The Bangladesh Competition Commission (BCC) is the primary government body responsible for promoting and ensuring competition in the markets of Bangladesh, akin to the role of the CMA in the UK.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 10,
+                type: 'single',
+                question: "The Porter hypothesis suggests that strict environmental regulations can lead to:",
+                options: {
+                    A: "Increased compliance costs only",
+                    B: "A decrease in commercial competitiveness",
+                    C: "Innovation and improved commercial competitiveness",
+                    D: "Immediate market failure"
+                },
+                correctAnswer: "C",
+                explanation: "The Porter hypothesis posits that strict environmental regulations trigger innovation, leading to cleaner and more efficient technologies, ultimately improving commercial competitiveness.",
+                topic: "What form does the regulation of businesses take?"
+            },
+            {
+                id: 11,
+                type: 'single',
+                question: "Which of the following is an example of 'mere compliance' as a business response to regulation?",
+                options: {
+                    A: "Implementing new, greener production processes and products.",
+                    B: "Passing on the cost of compliance to clients and consumers without changing behavior.",
+                    C: "Ignoring the regulation completely.",
+                    D: "Actively lobbying against new regulations."
+                },
+                correctAnswer: "B",
+                explanation: "Mere compliance involves meeting the regulatory outcome simply by passing on the cost to clients and consumers, without fundamentally altering business practices beyond the minimum required.",
+                topic: "What form does the regulation of businesses take?"
+            },
+            {
+                id: 12,
+                type: 'multiple',
+                question: "Governments can use which of the following methods to intervene in markets with external costs and benefits, such as pollution?",
+                options: {
+                    A: "Price regulations (setting maximum or minimum selling prices)",
+                    B: "Direct or indirect taxation",
+                    C: "Subsidies to suppliers",
+                    D: "Quotas, standards, and fines"
+                },
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "The text lists all these as methods governments can use to intervene in markets with external costs and benefits to affect the level of supply.",
+                topic: "Direct regulation of externalities"
+            },
+            {
+                id: 13,
+                type: 'single',
+                question: "The problem of 'irreversibility' in regulation refers to:",
+                options: {
+                    A: "Regulations that cannot be changed once enacted.",
+                    B: "Current activities leading to outcomes from which future generations may not recover.",
+                    C: "The inability of markets to correct themselves.",
+                    D: "The irreversible decline of certain industries due to regulation."
+                },
+                correctAnswer: "B",
+                explanation: "Irreversibility refers to current activities that will result in outcomes from which future generations may not recover at all, highlighting the need for regulation in areas like environmental protection.",
+                topic: "What form does the regulation of businesses take?"
+            },
+            {
+                id: 14,
+                type: 'single',
+                question: "A 'cartel' is best defined as:",
+                options: {
+                    A: "A formal merger between two competing businesses.",
+                    B: "An agreement between businesses not to compete with each other, often informal.",
+                    C: "A government body regulating market competition.",
+                    D: "A supply chain where a single entity controls all stages."
+                },
+                correctAnswer: "B",
+                explanation: "A cartel is defined as 'An agreement between businesses not to compete with each other. The agreement is usually verbal and often informal.'",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 15,
+                type: 'multiple',
+                question: "Which of the following conditions make an industry more susceptible to cartels or collusive behavior?",
+                options: {
+                    A: "Few competitors",
+                    B: "Products with similar characteristics",
+                    C: "Established communication channels between competitors",
+                    D: "Rapid technological advancement"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "Industries with few competitors, similar products, and established communication channels are more prone to cartel formation. Rapid technological advancement often increases competition and innovation, making collusion harder.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 16,
+                type: 'single',
+                question: "In Bangladesh, if an individual is involved in cartel activity, they may face:",
+                options: {
+                    A: "Only civil penalties.",
+                    B: "Only fines against the business.",
+                    C: "Criminal sanctions.",
+                    D: "Mandatory public apology."
+                },
+                correctAnswer: "C",
+                explanation: "The text indicates that participation in horizontal agreements (like cartels) 'may expose individuals responsible for those agreements to criminal sanctions' under relevant national laws, similar to the Enterprise Act 2002 mentioned.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 17,
+                type: 'single',
+                question: "Regulation in respect of sustainability might include governments introducing legislation on disclosures in annual reports relating to greenhouse gas emissions. This is an example of:",
+                options: {
+                    A: "Direct taxation",
+                    B: "Reporting requirements",
+                    C: "Subsidies",
+                    D: "Quotas"
+                },
+                correctAnswer: "B",
+                explanation: "The text explicitly mentions 'Reporting - governments can introduce legislation on what disclosures should be provided in the annual reports of companies relating to greenhouse gas emissions and sustainability reports.'",
+                topic: "What form does the regulation of businesses take?"
+            },
+            {
+                id: 18,
+                type: 'truefalse',
+                question: "True or False: A business that is found to be a member of a cartel can be fined up to 10% of its annual worldwide revenue, regardless of whether dishonesty was involved.",
+                options: {
+                    A: "True",
+                    B: "False"
+                },
+                correctAnswer: "True",
+                explanation: "The text states, 'A business that is found to be a member of a cartel can be fined up to 10% of its annual worldwide revenue, whether there was dishonesty involved or not.'",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 19,
+                type: 'fillin',
+                question: "____ is any form of state interference with the operation of the free market.",
+                options: {
+                    A: "Privatization",
+                    B: "Deregulation",
+                    C: "Regulation",
+                    D: "Laissez-faire"
+                },
+                correctAnswer: "C",
+                explanation: "The definition provided in the text states: 'Regulation: Any form of state interference with the operation of the free market.'",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 20,
+                type: 'multiple',
+                question: "Which of the following are typically included in the functions of a competition authority (like the BCC in Bangladesh)?",
+                options: {
+                    A: "Investigating mergers which could restrict competition",
+                    B: "Bringing criminal proceedings against individuals who commit cartel offences",
+                    C: "Enforcing consumer protection legislation",
+                    D: "Directly setting market prices for all goods"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "The roles of a competition authority include investigating mergers, prosecuting cartel offenses, and enforcing consumer protection. Directly setting market prices is generally not a function of a competition authority in a free market economy.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 21,
+                type: 'single',
+                question: "Insider dealing is a crime committed by individuals who use knowledge they have as business 'insiders' to make a profit or avoid a loss. This falls under the category of direct regulation of:",
+                options: {
+                    A: "Competition",
+                    B: "Externalities",
+                    C: "People in business",
+                    D: "International trade"
+                },
+                correctAnswer: "C",
+                explanation: "Insider dealing is a specific example of the direct regulation of people engaged in business activities, aiming to protect the fairness and integrity of the market.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 22,
+                type: 'multiple',
+                question: "Directors of companies must be careful of the danger of continuing to trade when the company is insolvent. If a company that is being liquidated as insolvent is found to have been carried on with the intent to defraud creditors, directors and managers who were knowingly party to this are said to have engaged in:",
+                options: {
+                    A: "Wrongful trading",
+                    B: "Fraudulent trading",
+                    C: "Market manipulation",
+                    D: "Money laundering"
+                },
+                correctAnswer: ["B"],
+                explanation: "The text specifies that if trading continues with 'the intent to defraud creditors, or indeed for any fraudulent purpose', it is fraudulent trading. Wrongful trading occurs even without intent to defraud, but where directors should have known insolvency was unavoidable.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 23,
+                type: 'single',
+                question: "Even if there is no fraud involved, a director engaged in wrongful trading may still be required to make a contribution to an insolvent company’s assets if they knew, or should have known, there was no reasonable prospect of the company avoiding insolvent liquidation. This typically falls under:",
+                options: {
+                    A: "Companies Act",
+                    B: "Insolvency law",
+                    C: "Competition law",
+                    D: "Taxation law"
+                },
+                correctAnswer: "B",
+                explanation: "Wrongful trading provisions are generally found within insolvency laws, such as the Insolvency Act mentioned in the text, to protect creditors when a company becomes insolvent.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 24,
+                type: 'multiple',
+                question: "Which of the following reasons could lead to the disqualification of a director under relevant national laws?",
+                options: {
+                    A: "Insider dealing",
+                    B: "Fraudulent or wrongful trading",
+                    C: "Violating competition laws",
+                    D: "Failing to read the company's accounts"
+                },
+                correctAnswer: ["A", "B", "C", "D"],
+                explanation: "The text lists all these as reasons for director disqualification, including being unfit to act (such as failing to read accounts) and violating competition laws.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 25,
+                type: 'single',
+                question: "The primary purpose of regulations related to money laundering is to:",
+                options: {
+                    A: "Increase government tax revenue.",
+                    B: "Prevent the use of illegally obtained funds by disguising their origins.",
+                    C: "Promote international trade.",
+                    D: "Regulate stock market transactions."
+                },
+                correctAnswer: "B",
+                explanation: "Money laundering regulations are designed to prevent the process of concealing the origins of illegally obtained money, typically by means of transfers involving foreign banks or legitimate businesses.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 26,
+                type: 'truefalse',
+                question: "True or False: The effect of international legislation is generally global and regulates all markets equally.",
+                options: {
+                    A: "True",
+                    B: "False"
+                },
+                correctAnswer: "False",
+                explanation: "The text explicitly states: 'International legislation regulates some markets more than others; the effect is generally not global.' It gives examples like gambling being regulated differently by states, while prescription drugs have largely global effects.",
+                topic: "The effect of international legislation"
+            },
+            {
+                id: 27,
+                type: 'multiple',
+                question: "Which of the following factors have significant influence over the globalization of regulation?",
+                options: {
+                    A: "Major economic powers (e.g., US, EU)",
+                    B: "International organizations (e.g., WTO, IMF)",
+                    C: "Large multinational corporations",
+                    D: "Local community groups"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "The text identifies major economic powers, international organizations like the WTO and IMF, and large corporations as having significant influence on the development of global regulations.",
+                topic: "The effect of international legislation"
+            },
+            {
+                id: 28,
+                type: 'single',
+                question: "A country aims to produce manufactured goods which it previously imported by protecting local producers. This economic strategy is known as:",
+                options: {
+                    A: "Export-led growth",
+                    B: "Comparative advantage",
+                    C: "Import substitution",
+                    D: "Free trade"
+                },
+                correctAnswer: "C",
+                explanation: "Import substitution is described as 'a country aims to produce manufactured goods which it previously imported. It does this by protecting local producers.'",
+                topic: "International trade"
+            },
+            {
+                id: 29,
+                type: 'multiple',
+                question: "Which of the following are economic advantages of international free trade?",
+                options: {
+                    A: "Countries specialize in items they produce most efficiently",
+                    B: "Increased competition among suppliers",
+                    C: "Larger markets created for business output, leading to economies of scale",
+                    D: "Increased political isolation"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "Free trade encourages specialization, increases competition, and creates larger markets allowing for economies of scale. It also provides a foundation for closer political links, rather than isolation.",
+                topic: "International trade"
+            },
+            {
+                id: 30,
+                type: 'single',
+                question: "A tax on imported goods, designed to raise their price for domestic consumers, is known as a:",
+                options: {
+                    A: "Subsidy",
+                    B: "Quota",
+                    C: "Tariff",
+                    D: "Embargo"
+                },
+                correctAnswer: "C",
+                explanation: "Tariffs or customs duties are explicitly defined as 'taxes on imported goods' that raise their price for domestic consumers.",
+                topic: "International trade"
+            },
+            {
+                id: 31,
+                type: 'single',
+                question: "A restriction on the quantity of a product that is allowed to be imported into a country is called an:",
+                options: {
+                    A: "Ad valorem tariff",
+                    B: "Import quota",
+                    C: "Specific tariff",
+                    D: "Export credit guarantee"
+                },
+                correctAnswer: "B",
+                explanation: "Import quotas are defined as 'restrictions on the quantity of a product that is allowed to be imported into the country.'",
+                topic: "International trade"
+            },
+            {
+                id: 32,
+                type: 'multiple',
+                question: "Which of the following are considered barriers to free international trade (protectionism)?",
+                options: {
+                    A: "Tariffs or customs duties",
+                    B: "Import quotas",
+                    C: "Hidden subsidies for domestic producers",
+                    D: "Open border policies"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "The text lists tariffs, import quotas, and hidden subsidies as forms of protectionism. Open border policies would be a feature of free trade, not a barrier.",
+                topic: "International trade"
+            },
+            {
+                id: 33,
+                type: 'truefalse',
+                question: "True or False: An embargo on imports from one particular country is effectively a zero quota.",
+                options: {
+                    A: "True",
+                    B: "False"
+                },
+                correctAnswer: "True",
+                explanation: "The text states, 'An embargo on imports from one particular country is a total ban, ie, effectively a zero quota.'",
+                topic: "International trade"
+            },
+            {
+                id: 34,
+                type: 'single',
+                question: "Government action to devalue a nation’s currency is a form of protectionism intended to:",
+                options: {
+                    A: "Make imports cheaper.",
+                    B: "Make exports cheaper and more competitive.",
+                    C: "Increase the foreign exchange value of the currency.",
+                    D: "Encourage international investment."
+                },
+                correctAnswer: "B",
+                explanation: "Devaluing a currency (reducing its foreign exchange value) makes a country's exports cheaper for foreign buyers and imports more expensive for domestic buyers, thereby boosting exports and discouraging imports, a form of protectionism.",
+                topic: "International trade"
+            },
+            {
+                id: 35,
+                type: 'fillin',
+                question: "The process where a company cannot pay its debts as they fall due is known as being ____.",
+                options: {
+                    A: "Solvent",
+                    B: "Liquidated",
+                    C: "Insolvent",
+                    D: "Bankrupt"
+                },
+                correctAnswer: "C",
+                explanation: "The text describes an insolvent company as 'when the company cannot pay its debts as they fall due.'",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 36,
+                type: 'single',
+                question: "Scenario: 'AgroFarm Ltd.' and 'GreenHarvest Co.' are the two dominant suppliers of organic vegetables in a local market, each holding approximately 45% market share. They verbally agree to set a minimum price for their produce, ensuring neither undercuts the other. This agreement is likely an example of:",
+                options: {
+                    A: "Healthy competition",
+                    B: "An anti-competitive agreement",
+                    C: "Market-driven pricing",
+                    D: "A strategic alliance"
+                },
+                correctAnswer: "B",
+                explanation: "This scenario describes price-fixing between competitors, which is a classic example of an anti-competitive agreement intended to restrict or distort competition, as mentioned under the prohibition of anti-competitive agreements.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 37,
+                type: 'multiple',
+                question: "Based on the scenario above (AgroFarm Ltd. and GreenHarvest Co. agreeing on minimum prices), which of the following could be potential consequences for the companies under relevant national laws?",
+                options: {
+                    A: "Fines up to 10% of their worldwide annual revenue.",
+                    B: "Increased market share due to collaboration.",
+                    C: "Criminal sanctions for individuals responsible.",
+                    D: "Adverse publicity."
+                },
+                correctAnswer: ["A", "C", "D"],
+                explanation: "Such anti-competitive agreements (cartels) can lead to substantial fines, criminal sanctions for individuals involved, and significant adverse publicity, as detailed in the section on prohibiting cartels and the CMA's role.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 38,
+                type: 'single',
+                question: "Scenario: 'Tech Innovations Inc.' develops a groundbreaking new software. To protect its intellectual property and ensure product quality, it requires all distributors to sell the software at a minimum specified price and to bundle it with a mandatory support package. From a competition regulation perspective, this could be scrutinized as:",
+                options: {
+                    A: "A legitimate business practice to protect brand image.",
+                    B: "An example of market abuse through price distortion.",
+                    C: "Potentially an abuse of a dominant position or anti-competitive agreement.",
+                    D: "Standard product differentiation."
+                },
+                correctAnswer: "C",
+                explanation: "While protecting IP is valid, imposing minimum resale prices and mandatory supplementary obligations (like a support package) can be considered an abuse of a dominant position or part of an anti-competitive agreement if it restricts competition or prejudices consumers. The text explicitly lists 'imposing unfair purchase or selling prices' and 'attaching unrelated supplementary conditions to contracts' as examples of abuse of dominant position.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 39,
+                type: 'single',
+                question: "Calculation: A company has an annual worldwide revenue of BDT 500 million. It is found guilty of an anti-competitive agreement. The maximum fine it could face under relevant national competition laws would be:",
+                options: {
+                    A: "BDT 25 million",
+                    B: "BDT 50 million",
+                    C: "BDT 75 million",
+                    D: "BDT 100 million"
+                },
+                correctAnswer: "B",
+                explanation: "The maximum fine for an anti-competitive agreement is up to 10% of worldwide annual revenue. So, 10% of BDT 500 million is BDT 50 million.",
+                topic: "Direct regulation of competition in a market"
+            },
+            {
+                id: 40,
+                type: 'multiple',
+                question: "The 'Code of Market Conduct' applies to people engaged in the stock market and embodies the standard of behaviour expected. Which of the following are examples of market abuse described by the Code?",
+                options: {
+                    A: "Improper disclosure creating an unfair marketplace",
+                    B: "Spreading misleading information to distort prices",
+                    C: "Manipulating transactions to create a false impression of supply/demand",
+                    D: "Issuing a prospectus for a new share offering"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "The Code of Market Conduct explicitly lists improper disclosure, spreading misleading information (dissemination), and manipulating transactions as forms of market abuse. Issuing a prospectus is a legitimate part of a share offering, not market abuse.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 41,
+                type: 'single',
+                question: "Scenario: A director continues to allow a company to take on new credit and place orders with suppliers, despite knowing that the company is experiencing severe financial difficulties and is highly unlikely to be able to pay its debts. There is no explicit intention to defraud, but the director fails to take reasonable steps to minimize potential loss to creditors. This situation most accurately describes:",
+                options: {
+                    A: "Fraudulent trading",
+                    B: "Wrongful trading",
+                    C: "Insider dealing",
+                    D: "Market manipulation"
+                },
+                correctAnswer: "B",
+                explanation: "Wrongful trading occurs when a director knew, or should have known, that there was no reasonable prospect of the company avoiding insolvent liquidation, and they failed to take sufficient steps to minimize potential loss to creditors, even without explicit intent to defraud.",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 42,
+                type: 'multiple',
+                question: "Government grants provided to businesses to install solar panels would be an example of regulation aiming to deal with externalities by:",
+                options: {
+                    A: "Direct taxation",
+                    B: "Subsidies",
+                    C: "Quotas",
+                    D: "Laws and regulations on emissions"
+                },
+                correctAnswer: ["B"],
+                explanation: "Grants are a form of subsidy paid by the government to encourage businesses to invest in systems that reduce carbon emissions, directly impacting external environmental costs.",
+                topic: "Direct regulation of externalities"
+            },
+            {
+                id: 43,
+                type: 'truefalse',
+                question: "True or False: Professional accountants are judged by higher standards than non-professionals when it comes to wrongful trading rules, due to their skills and experience.",
+                options: {
+                    A: "True",
+                    B: "False"
+                },
+                correctAnswer: "True",
+                explanation: "The text states, 'Professional accountants are more at risk of falling foul of these rules than anyone else, as their skills, knowledge and experience mean they are judged by higher standards than those applied to non-professionals.'",
+                topic: "Direct regulation of people in business"
+            },
+            {
+                id: 44,
+                type: 'single',
+                question: "Which of the following is an example of an 'import restriction' that a government might impose?",
+                options: {
+                    A: "Providing financial aid to domestic exporters.",
+                    B: "Complex import regulations and documentation or special safety standards demanded on imported goods.",
+                    C: "Reducing tariffs on certain imported goods.",
+                    D: "Promoting international free trade agreements."
+                },
+                correctAnswer: "B",
+                explanation: "Complex import regulations, documentation, or special safety standards for imported goods are examples of non-tariff barriers that act as import restrictions.",
+                topic: "International trade"
+            },
+            {
+                id: 45,
+                type: 'single',
+                question: "Scenario: A large technology company, operating across multiple countries, is found to be shifting its profits to a subsidiary in a low-tax jurisdiction to minimize its global tax liability, despite the revenues being earned in other countries. This practice has led to international governments trying to agree on taxation policies. This issue relates most directly to:",
+                options: {
+                    A: "Direct regulation of competition",
+                    B: "The effect of international legislation and taxation of large technology companies",
+                    C: "Direct regulation of people in business (e.g., insider dealing)",
+                    D: "Barriers to international trade"
+                },
+                correctAnswer: "B",
+                explanation: "Interactive Question 2 in the PDF specifically mentions 'Taxation of large technology companies has also been an area that international governments are trying to agree on to ensure that revenues are taxed in the countries that they are earned in,' directly linking this scenario to the effect of international legislation.",
+                topic: "The effect of international legislation"
+            },
+            {
+                id: 46,
+                type: 'single',
+                question: "The phrase 'market imperfection' in the context of market failure primarily refers to situations where:",
+                options: {
+                    A: "There is perfect competition.",
+                    B: "Monopoly power is leading to inefficiency.",
+                    C: "Information is perfectly symmetrical.",
+                    D: "Externalities are fully internalized."
+                },
+                correctAnswer: "B",
+                explanation: "Market imperfection is described as 'where monopoly power is leading to inefficiency, government will intervene through controls on, say, prices or profits in order to try to reduce the effects of the monopoly.'",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 47,
+                type: 'multiple',
+                question: "Which of the following are typically stakeholders whose interests regulation aims to protect from the self-interest of shareholders, directors, and managers?",
+                options: {
+                    A: "Employees",
+                    B: "Suppliers",
+                    C: "Customers",
+                    D: "Competitors"
+                },
+                correctAnswer: ["A", "B", "C"],
+                explanation: "The text states that external regulations are designed to ensure the needs of 'employees, suppliers, customers, the local community and the public at large' can be met, balancing against the self-interest of shareholders, directors, and managers. While competitors are part of the market, the primary focus of this protection is on those directly impacted by the business's operations beyond its ownership/management.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 48,
+                type: 'single',
+                question: "If the government provides 'merit goods' such as education, it is doing so because these goods are considered to be in the long-term interests of society. This is an example of government intervention aimed at:",
+                options: {
+                    A: "Redistributing wealth",
+                    B: "Addressing market failure",
+                    C: "Creating demand",
+                    D: "Controlling means of production"
+                },
+                correctAnswer: "B",
+                explanation: "Providing merit goods like education is a way governments intervene to address market failure, specifically when the free market might under-provide goods that have significant positive externalities for society.",
+                topic: "Why is regulation of businesses necessary?"
+            },
+            {
+                id: 49,
+                type: 'fillin',
+                question: "The principle of ____ states that countries should stick to what they are best at producing.",
+                options: {
+                    A: "Absolute advantage",
+                    B: "Comparative advantage",
+                    C: "Competitive advantage",
+                    D: "Strategic advantage"
+                },
+                correctAnswer: "B",
+                explanation: "The text states: 'The doctrine of comparative advantage states that countries should stick to what they are best at'.",
+                topic: "International trade"
+            },
+            {
+                id: 50,
+                type: 'single',
+                question: "Which response to regulation involves businesses fundamentally changing their behavior and adjusting products and processes to comply, rather than just passing on costs or ignoring regulations?",
+                options: {
+                    A: "Mere compliance",
+                    B: "Non-response",
+                    C: "Full compliance",
+                    D: "Innovation (Porter hypothesis)"
+                },
+                correctAnswer: "C",
+                explanation: "Full compliance involves 'behaviour is changed and products and processes are adjusted to comply with regulations,' which is a more proactive and fundamental change than mere compliance.",
+                topic: "What form does the regulation of businesses take?"
+            },
+        ];
+
+        let currentQuestionIndex = 0;
+        let userAnswers = {}; // { qId: selectedOption(s), qType: 'single'/'multiple'/'truefalse'/'fillin' }
+        let flaggedQuestions = {}; // { qId: true/false }
+        let timerInterval;
+        let timeLeft = 45 * 60; // 45 minutes in seconds
+        const quizContainer = document.getElementById('quiz-container');
+
+        // Function to shuffle array for options
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                    // Time is up, quiz submitted. The results page will now show directly.
+                }
+            }, 1000);
+        }
+
+        function displayQuestion() {
+            const questionData = quizQuestions[currentQuestionIndex];
+            const qId = questionData.id;
+
+            const quizContent = `
+                <div class="col-span-1 md:col-span-1">
+                    <div class="card p-4">
+                        <h3 class="text-lg font-bold mb-4 text-gray-700">Question Tracker</h3>
+                        <div class="question-tracker-grid">
+                            ${quizQuestions.map((q, index) => `
+                                <div class="question-tracker-item ${userAnswers[q.id] ? 'answered' : ''} ${flaggedQuestions[q.id] ? 'flagged' : ''} ${index === currentQuestionIndex ? 'current' : ''}"
+                                     onclick="goToQuestion(${index})">
+                                    ${index + 1}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-1 md:col-span-3">
+                    <div class="card">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="text-xl font-bold text-blue-600">Time Left: <span id="timer"></span></div>
+                            <button id="flag-button" class="flag-button ${flaggedQuestions[qId] ? 'unflag' : ''}" onclick="toggleFlag(${qId})">
+                                <i class="fas ${flaggedQuestions[qId] ? 'fa-flag' : 'fa-bookmark'}"></i>
+                                ${flaggedQuestions[qId] ? 'Unflag' : 'Flag Question'}
+                            </button>
+                        </div>
+
+                        <div class="mb-8">
+                            <h2 class="text-2xl font-semibold mb-4">${questionData.id}. ${questionData.question} <span class="text-gray-500 text-base">(2 Marks)</span></h2>
+                            <div class="space-y-3">
+                                ${questionData.type === 'single' || questionData.type === 'truefalse' || questionData.type === 'fillin'
+                                    ? Object.entries(questionData.options).map(([key, value]) => `
+                                        <label class="option-label ${userAnswers[qId] === key ? 'selected' : ''}">
+                                            <input type="radio" name="question-${qId}" value="${key}" onchange="selectAnswer(${qId}, this.value, '${questionData.type}')" ${userAnswers[qId] === key ? 'checked' : ''}>
+                                            <span class="font-medium text-gray-800">${key}. ${value}</span>
+                                        </label>
+                                    `).join('')
+                                    : Object.entries(questionData.options).map(([key, value]) => `
+                                        <label class="option-label ${userAnswers[qId] && userAnswers[qId].includes(key) ? 'selected' : ''}">
+                                            <input type="checkbox" name="question-${qId}" value="${key}" onchange="selectAnswer(${qId}, this.value, '${questionData.type}', this.checked)" ${userAnswers[qId] && userAnswers[qId].includes(key) ? 'checked' : ''}>
+                                            <span class="font-medium text-gray-800">${key}. ${value}</span>
+                                        </label>
+                                    `).join('')
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-8">
+                            <button id="prev-button" class="nav-button" onclick="prevQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>Previous</button>
+                            <button class="submit-button" onclick="submitQuiz()">Submit Quiz</button>
+                            <button id="next-button" class="nav-button" onclick="nextQuestion()" ${currentQuestionIndex === quizQuestions.length - 1 ? 'disabled' : ''}>Next</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            quizContainer.innerHTML = quizContent;
+            if (!timerInterval) {
+                startTimer();
+            }
+        }
+
+        function goToQuestion(index) {
+            currentQuestionIndex = index;
+            displayQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        function selectAnswer(qId, value, type, isChecked = true) {
+            if (type === 'single' || type === 'truefalse' || type === 'fillin') {
+                userAnswers[qId] = value;
+            } else if (type === 'multiple') {
+                if (!userAnswers[qId]) {
+                    userAnswers[qId] = [];
+                }
+                if (isChecked) {
+                    if (!userAnswers[qId].includes(value)) {
+                        userAnswers[qId].push(value);
+                    }
+                } else {
+                    userAnswers[qId] = userAnswers[qId].filter(ans => ans !== value);
+                    if (userAnswers[qId].length === 0) {
+                        delete userAnswers[qId]; // Remove if no options selected
+                    }
+                }
+            }
+            // Update tracker item color
+            const trackerItem = document.querySelector(`.question-tracker-item:nth-child(${quizQuestions.findIndex(q => q.id === qId) + 1})`);
+            if (trackerItem) {
+                if (userAnswers[qId]) {
+                    trackerItem.classList.add('answered');
+                } else {
+                    trackerItem.classList.remove('answered');
+                }
+            }
+        }
+
+        function toggleFlag(qId) {
+            if (flaggedQuestions[qId]) {
+                delete flaggedQuestions[qId];
+            } else {
+                flaggedQuestions[qId] = true;
+            }
+            displayQuestion(); // Re-render to update flag button and tracker
+        }
+
+        function calculateResults() {
+            let correctAnswersCount = 0;
+            let incorrectAnswersCount = 0;
+            let score = 0;
+            const incorrectTopics = {};
+
+            quizQuestions.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                let isCorrect = false;
+
+                if (q.type === 'single' || q.type === 'truefalse' || q.type === 'fillin') {
+                    isCorrect = userAnswer === q.correctAnswer;
+                } else if (q.type === 'multiple') {
+                    if (userAnswer && userAnswer.length === q.correctAnswer.length) {
+                        isCorrect = q.correctAnswer.every(ans => userAnswer.includes(ans));
+                    }
+                }
+
+                if (isCorrect) {
+                    correctAnswersCount++;
+                    score += 2;
+                } else {
+                    incorrectAnswersCount++;
+                    if (q.topic) {
+                        incorrectTopics[q.topic] = (incorrectTopics[q.topic] || 0) + 1;
+                    }
+                }
+            });
+
+            const totalQuestions = quizQuestions.length;
+            const totalMarks = totalQuestions * 2;
+            const percentageScore = (score / totalMarks) * 100;
+            const percentageIncorrect = (incorrectAnswersCount / totalQuestions) * 100;
+
+            let difficultyAssessment = "Regular";
+            if (incorrectAnswersCount > totalQuestions * 0.4) { // More than 40% incorrect
+                difficultyAssessment = "Tricky";
+            } else if (incorrectAnswersCount < totalQuestions * 0.1) { // Less than 10% incorrect
+                difficultyAssessment = "Easy"; // Though prompt asks for 'Tricky' or 'Regular'
+            }
+
+
+            return {
+                correctAnswersCount,
+                incorrectAnswersCount,
+                score,
+                totalMarks,
+                percentageScore,
+                percentageIncorrect,
+                incorrectTopics,
+                difficultyAssessment
+            };
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval); // Stop the timer
+            const results = calculateResults();
+
+            const resultsContent = `
+                <div class="col-span-full">
+                    <div class="card text-center p-8">
+                        <h1 class="text-4xl font-bold text-blue-700 mb-6">Quiz Results</h1>
+                        <p class="text-xl mb-3"><span class="font-semibold">Total Score:</span> ${results.score} / ${results.totalMarks} Marks</p>
+                        <p class="text-xl mb-3"><span class="font-semibold">Percentage Score:</span> ${results.percentageScore.toFixed(2)}%</p>
+                        <p class="text-xl mb-3"><span class="font-semibold text-green-600">Correct Answers:</span> ${results.correctAnswersCount}</p>
+                        <p class="text-xl mb-3"><span class="font-semibold text-red-600">Incorrect Answers:</span> ${results.incorrectAnswersCount}</p>
+                        <p class="text-xl mb-6"><span class="font-semibold">Percentage Incorrect:</span> ${results.percentageIncorrect.toFixed(2)}%</p>
+                        <p class="text-xl mb-8"><span class="font-semibold">Quiz Difficulty Assessment:</span> <span class="${results.difficultyAssessment === 'Tricky' ? 'text-red-600' : 'text-green-600'}">${results.difficultyAssessment}</span></p>
+
+                        ${Object.keys(results.incorrectTopics).length > 0 ? `
+                            <div class="mt-8 mb-6 p-6 bg-yellow-100 border-l-4 border-yellow-500 rounded-lg text-left">
+                                <h3 class="text-2xl font-bold text-yellow-800 mb-4">Topics Needing More Practice:</h3>
+                                <ul class="list-disc list-inside text-lg text-yellow-700 space-y-2">
+                                    ${Object.entries(results.incorrectTopics).map(([topic, count]) => `
+                                        <li><span class="font-semibold">${topic}</span> (Mistakes: ${count})</li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        ` : `<p class="mt-8 text-lg font-medium text-green-700">Great job! No specific topics highlighted for practice.</p>`}
+
+                        <button class="retake-button mt-10" onclick="retakeQuiz()">Retake Quiz</button>
+                    </div>
+
+                    <div class="mt-10">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-6">Detailed Review of Questions</h2>
+                        ${quizQuestions.map(q => {
+                            const userAnswer = userAnswers[q.id];
+                            let isCorrect = false;
+                            let userAnswerDisplay = '';
+                            let correctAnswerDisplay = '';
+
+                            if (q.type === 'single' || q.type === 'truefalse' || q.type === 'fillin') {
+                                isCorrect = userAnswer === q.correctAnswer;
+                                userAnswerDisplay = userAnswer ? `${userAnswer}. ${q.options[userAnswer]}` : 'Not Answered';
+
+                                // Corrected logic for truefalse questions to map 'True'/'False' to 'A'/'B'
+                                let correctOptionKeyForDisplay = '';
+                                if (q.type === 'truefalse') {
+                                    for (const key in q.options) {
+                                        if (q.options[key] === q.correctAnswer) {
+                                            correctOptionKeyForDisplay = key;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    correctOptionKeyForDisplay = q.correctAnswer;
+                                }
+                                correctAnswerDisplay = `${correctOptionKeyForDisplay}. ${q.options[correctOptionKeyForDisplay]}`;
+
+                            } else if (q.type === 'multiple') {
+                                if (userAnswer && userAnswer.length === q.correctAnswer.length) {
+                                    isCorrect = q.correctAnswer.every(ans => userAnswer.includes(ans));
+                                }
+                                userAnswerDisplay = userAnswer && userAnswer.length > 0
+                                    ? userAnswer.map(ansKey => `${ansKey}. ${q.options[ansKey]}`).join('; ')
+                                    : 'Not Answered';
+                                correctAnswerDisplay = q.correctAnswer.map(ansKey => `${ansKey}. ${q.options[ansKey]}`).join('; ');
+                            }
+
+                            return `
+                                <div class="result-question-card">
+                                    <h3 class="text-xl font-semibold mb-3">${q.id}. ${q.question}</h3>
+                                    <div class="space-y-2 text-lg mb-4">
+                                        ${Object.entries(q.options).map(([key, value]) => {
+                                            const isUserSelected = (userAnswer === key || (Array.isArray(userAnswer) && userAnswer.includes(key)));
+                                            const isCorrectOption = (q.correctAnswer === key || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(key))) || (q.type === 'truefalse' && q.options[key] === q.correctAnswer);
+                                            let optionClass = '';
+                                            if (isCorrectOption) {
+                                                optionClass = 'text-green-600 font-bold';
+                                            } else if (isUserSelected && !isCorrectOption) {
+                                                optionClass = 'text-red-600 font-medium';
+                                            }
+                                            return `<div class="${optionClass}">${key}. ${value}</div>`;
+                                        }).join('')}
+                                    </div>
+                                    <p class="text-lg mb-2"><span class="font-semibold">Your Answer:</span> <span class="${isCorrect ? 'correct-answer-text' : 'incorrect-answer-text'}">${userAnswerDisplay}</span></p>
+                                    <p class="text-lg mb-2"><span class="font-semibold">Correct Answer:</span> <span class="correct-answer-text">${correctAnswerDisplay}</span></p>
+                                    <div class="explanation">
+                                        <p class="font-semibold text-blue-800">Explanation:</p>
+                                        <p>${q.explanation}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <footer class="mt-10 text-center text-gray-600 text-sm py-4 border-t border-gray-300 rounded-b-lg card">
+                        Prepared by: K. M. Mahafuzul Alam<br>
+                        <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="text-blue-500 hover:underline">🔗 LinkedIn</a><br>
+                        📞 WhatsApp: 01728-928984<br>
+                        📧 Email: kmmhafuzulalam@gmail.com
+                    </footer>
+                </div>
+            `;
+            quizContainer.innerHTML = resultsContent;
+        }
+
+        function retakeQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            flaggedQuestions = {};
+            timeLeft = 45 * 60; // Reset time
+            clearInterval(timerInterval);
+            timerInterval = null; // Clear interval to restart timer
+            displayQuestion();
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', displayQuestion);
+    </script>
+</body>
+</html>

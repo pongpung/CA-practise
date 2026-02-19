@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Certificate Level Accounting Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .quiz-container {
+            display: grid;
+            grid-template-columns: 240px 1fr 240px;
+            gap: 24px;
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 24px;
+        }
+        .scenario-tracker .scenario {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+        .scenario-tracker .scenario.active {
+            background-color: #4f46e5;
+            color: white;
+            font-weight: 600;
+            border-color: #4f46e5;
+        }
+        .scenario-tracker .scenario:not(.active):hover {
+            background-color: #f9fafb;
+        }
+        .question-area h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #111827;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.75rem;
+        }
+        .data-section {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .data-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        .data-table {
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .data-table th, .data-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .data-table th {
+            background-color: #f9fafb;
+        }
+        .data-table td:last-child {
+            text-align: right;
+            font-weight: 500;
+        }
+        .adjustment-list {
+            list-style-type: lower-alpha;
+            padding-left: 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .fill-in-the-blank-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .fill-in-the-blank-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .fill-in-the-blank-table td:last-child {
+            text-align: right;
+        }
+        .fill-in-the-blank-table input {
+            width: 140px;
+            padding: 6px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: right;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .fill-in-the-blank-table input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+        .submit-btn {
+            background: linear-gradient(90deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: block;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 10px rgba(0, 0, 0, 0.1);
+        }
+        .results-screen { display: none; }
+        .result-summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .summary-card { background-color: #f9fafb; padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .summary-card h4 { font-weight: 600; color: #374151; margin-bottom: 0.5rem; }
+        .summary-card p { font-size: 2rem; font-weight: 700; }
+        .correct { color: #10b981; }
+        .incorrect { color: #ef4444; }
+        .explanation-table .correct-answer { color: #10b981; font-weight: 600; }
+        .explanation-table .incorrect-answer { color: #ef4444; text-decoration: line-through; margin-right: 8px; }
+        .explanation-details { background-color: #fefce8; border-left: 4px solid #facc15; padding: 1rem; margin-top: 0.5rem; border-radius: 0 8px 8px 0; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-view" class="quiz-container">
+        <!-- Scenario Tracker (Left) -->
+        <aside class="scenario-tracker-container">
+            <div class="card">
+                <h3 class="font-bold text-lg mb-4">Scenarios</h3>
+                <div id="scenario-tracker" class="scenario-tracker"></div>
+            </div>
+        </aside>
+
+        <!-- Main Question Area (Center) -->
+        <main id="question-area" class="card">
+            <!-- Question content will be injected here -->
+        </main>
+
+        <!-- Progress & Timer (Right) -->
+        <aside class="progress-container">
+            <div class="card">
+                <h3 class="font-bold text-lg mb-4">Quiz Status</h3>
+                <div class="text-center mb-6">
+                    <div class="text-gray-500 text-sm">Total Time Remaining</div>
+                    <div id="timer" class="text-3xl font-bold text-gray-800">120:00</div>
+                </div>
+                <h4 class="font-semibold text-md mb-3">Progress</h4>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                <p id="progress-text" class="text-center text-sm text-gray-600">0 of 4 scenarios attempted</p>
+                <div class="mt-6">
+                    <button id="flag-btn" class="w-full text-center py-2 px-4 border border-amber-500 text-amber-600 rounded-lg hover:bg-amber-50 transition mb-4">🚩 Flag for Review</button>
+                    <button id="submit-btn-main" class="submit-btn">Submit Quiz</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-view" class="results-screen max-w-5xl mx-auto p-8">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-center mb-4 text-gray-800">Quiz Results & Analysis</h2>
+            <div id="result-summary" class="result-summary-grid"></div>
+            <div id="detailed-explanations"></div>
+            <div class="mt-8">
+                 <h3 class="text-xl font-bold mb-3">Suggested Topics for Review</h3>
+                 <div id="review-topics" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-gray-500 text-sm">
+        <p>Prepared by:</p>
+        <p class="font-semibold">K M Mahafuzul Alam</p>
+        <div class="flex justify-center items-center gap-4 mt-2">
+            <a href="https://www.linkedin.com/in/k-m-mahafuzul-alam" target="_blank" class="hover:text-blue-600">🔗 LinkedIn</a>
+            <span>📞 01728-928984</span>
+            <span>📧 kmmhafuzulalam@gmail.com</span>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const quizData = [
+            {
+                id: 1,
+                title: "Consolidated SFP",
+                tricky: true,
+                topic: "Business Combinations (IFRS 3 & 10)",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">Parent Co acquired 80% of the ordinary shares of Sub Co on 1 January 2021 for Taka 7,000,000. The summarized Statements of Financial Position for both companies at 31 December 2022 are shown below:</p>
+                    <table class="data-table"><thead><tr><th>(All figures in Taka '000)</th><th>Parent Co</th><th>Sub Co</th></tr></thead><tbody>
+                    <tr><td><strong>Assets</strong></td><td></td><td></td></tr>
+                    <tr><td>Property, Plant & Equipment</td><td>12,000</td><td>5,500</td></tr>
+                    <tr><td>Investment in Sub Co</td><td>7,000</td><td>-</td></tr>
+                    <tr><td>Current Assets</td><td>4,500</td><td>2,000</td></tr>
+                    <tr><td><strong>Total Assets</strong></td><td><strong>23,500</strong></td><td><strong>7,500</strong></td></tr>
+                    <tr><td><strong>Equity and Liabilities</strong></td><td></td><td></td></tr>
+                    <tr><td>Share Capital</td><td>10,000</td><td>2,000</td></tr>
+                    <tr><td>Retained Earnings</td><td>9,200</td><td>3,800</td></tr>
+                    <tr><td>Liabilities</td><td>4,300</td><td>1,700</td></tr>
+                    <tr><td><strong>Total Equity & Liabilities</strong></td><td><strong>23,500</strong></td><td><strong>7,500</strong></td></tr>
+                    </tbody></table>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>At the date of acquisition, the fair value of Sub Co's net assets was Taka 6,500,000. The fair value adjustment was due to an increase in the value of non-depreciable land. Sub Co's retained earnings at acquisition were Taka 2,100,000.</li>
+                        <li>Parent Co's policy is to measure the non-controlling interest (NCI) at fair value. The fair value of the NCI at acquisition was Taka 1,450,000.</li>
+                        <li>During the year, Parent Co sold goods to Sub Co for Taka 500,000 at a profit margin of 20% on the selling price. At year-end, half of these goods were still in Sub Co's inventory.</li>
+                        <li>Sub Co owes Parent Co Taka 200,000 at year-end for some of these goods.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Calculate the following figures for the Consolidated Statement of Financial Position as at 31 December 2022.</p>`,
+                blanks: [
+                    { label: "Goodwill on Consolidation", key: "goodwill", solution: 1950 },
+                    { label: "Consolidated Retained Earnings", key: "con_re", solution: 10510 },
+                    { label: "Non-Controlling Interest (NCI) at Reporting Date", key: "nci", solution: 1790 },
+                    { label: "Consolidated Property, Plant & Equipment", key: "con_ppe", solution: 17900 },
+                    { label: "Consolidated Current Assets", key: "con_ca", solution: 6450 },
+                    { label: "Consolidated Liabilities", key: "con_liab", solution: 5800 },
+                ]
+            },
+            {
+                id: 2,
+                title: "Advanced Cash Flows",
+                tricky: true,
+                topic: "Statement of Cash Flows (IAS 7)",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">Extracts from the financial statements of MegaCorp for the year ended 31 December 2022 are provided below (all figures in Taka '000).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><h4 class="font-semibold mb-2">Financial Position Extracts</h4>
+                        <table class="data-table"><thead><tr><th></th><th>2022</th><th>2021</th></tr></thead><tbody>
+                        <tr><td>PPE (Carrying Value)</td><td>8,200</td><td>6,000</td></tr>
+                        <tr><td>Revaluation Surplus</td><td>500</td><td>0</td></tr>
+                        <tr><td>Inventory</td><td>1,300</td><td>1,100</td></tr>
+                        <tr><td>Trade Receivables</td><td>950</td><td>800</td></tr>
+                        <tr><td>Trade Payables</td><td>700</td><td>900</td></tr>
+                        <tr><td>Income Tax Payable</td><td>150</td><td>100</td></tr>
+                        <tr><td>Deferred Tax Liability</td><td>400</td><td>320</td></tr>
+                        </tbody></table></div>
+                        <div><h4 class="font-semibold mb-2">Profit or Loss Extracts</h4>
+                        <table class="data-table"><tbody>
+                        <tr><td>Profit Before Tax</td><td>2,500</td></tr>
+                        <tr><td>Depreciation</td><td>700</td></tr>
+                        <tr><td>Share-based payment expense</td><td>120</td></tr>
+                        <tr><td>Loss on disposal of PPE</td><td>50</td></tr>
+                        <tr><td>Income Tax Expense</td><td>(600)</td></tr>
+                        </tbody></table></div>
+                    </div>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>During the year, land was revalued upwards by Taka 500,000. There were no disposals of revalued assets.</li>
+                        <li>Plant with a carrying amount of Taka 250,000 was sold during the year.</li>
+                        <li>New machinery was acquired for cash.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Calculate the following cash flow items.</p>`,
+                blanks: [
+                    { label: "Cash Generated from Operations", key: "cgo", solution: 3020 },
+                    { label: "Income Tax Paid", key: "tax_paid", solution: -630 },
+                    { label: "Proceeds from Sale of Plant", key: "sale_ppe", solution: 200 },
+                    { label: "Purchase of Machinery (Cash Outflow)", key: "pur_ppe", solution: -3150 },
+                ]
+            },
+            {
+                id: 3,
+                title: "Earnings Per Share",
+                tricky: true,
+                topic: "Earnings Per Share (IAS 33)",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">EPS Corp, a publicly listed company, reported a net profit after tax of Taka 4,500,000 for the year ended 31 December 2022. The corporate tax rate is 25%.</p>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>On 1 January 2022, EPS Corp had 2,000,000 ordinary shares in issue.</li>
+                        <li>On 1 April 2022, the company issued 600,000 new shares at full market price.</li>
+                        <li>On 1 July 2022, the company made a 1-for-5 bonus issue.</li>
+                        <li>Throughout the year, there were 300,000 share options outstanding with an exercise price of Taka 15. The average market price of the company's shares during the year was Taka 20.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Calculate the Basic and Diluted EPS for the year ended 31 December 2022.</p>`,
+                blanks: [
+                    { label: "Weighted Average Number of Shares (WANOS) for Basic EPS", key: "wanos", solution: 2940000 },
+                    { label: "Basic EPS (Taka)", key: "basic_eps", solution: 1.53 },
+                    { label: "Number of 'free' shares from options for Diluted EPS", key: "dilutive_shares", solution: 75000 },
+                    { label: "Diluted EPS (Taka)", key: "diluted_eps", solution: 1.49 },
+                ]
+            },
+            {
+                id: 4,
+                title: "Financial Instruments",
+                tricky: true,
+                topic: "Financial Instruments (IFRS 9)",
+                scenario: `<h3>Scenario</h3><p class="text-sm text-gray-600 mb-4">On 1 January 2022, Bond Co issued a bond with a face value of Taka 1,000,000. The bond was issued at a discount for proceeds of Taka 950,260. It pays an annual coupon of 5% at the end of each year and will be redeemed at par on 31 December 2024 (a 3-year term).</p>`,
+                adjustments: `<h3>Adjustments</h3><ol class="adjustment-list">
+                        <li>Transaction costs of Taka 10,000 were incurred on the issue of the bond.</li>
+                        <li>The effective interest rate (EIR) for this bond has been calculated as 7% per annum.</li>
+                        <li>Bond Co has classified this financial liability at amortized cost.</li>
+                    </ol>`,
+                task: `<h3>Task: Fill in the Gaps</h3><p class="text-sm text-gray-600 mb-2">Complete the amortized cost table for the bond for the first two years.</p>`,
+                blanks: [
+                    { label: "Initial Carrying Amount at 1 Jan 2022", key: "initial_ca", solution: 940260 },
+                    { label: "Interest Expense for year ended 31 Dec 2022", key: "int_exp_y1", solution: 65818 },
+                    { label: "Carrying Amount at 31 Dec 2022", key: "ca_y1", solution: 956078 },
+                    { label: "Interest Expense for year ended 31 Dec 2023", key: "int_exp_y2", solution: 66925 },
+                    { label: "Carrying Amount at 31 Dec 2023", key: "ca_y2", solution: 973003 },
+                ]
+            }
+        ];
+
+        let currentScenarioIndex = 0;
+        let userAnswers = {};
+        let timerInterval;
+        let timeLeft = 120 * 60; // 120 minutes total
+
+        const quizView = document.getElementById('quiz-view');
+        const resultsView = document.getElementById('results-view');
+        const questionArea = document.getElementById('question-area');
+        const scenarioTracker = document.getElementById('scenario-tracker');
+        const timerDisplay = document.getElementById('timer');
+        const mainSubmitBtn = document.getElementById('submit-btn-main');
+        mainSubmitBtn.onclick = showResults;
+
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const flagBtn = document.getElementById('flag-btn');
+
+        function startQuiz() {
+            renderScenarios();
+            renderQuestion(currentScenarioIndex);
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResults();
+                }
+            }, 1000);
+        }
+
+        function renderScenarios() {
+            scenarioTracker.innerHTML = '';
+            quizData.forEach((scenario, index) => {
+                const scenarioEl = document.createElement('div');
+                scenarioEl.className = `scenario ${index === currentScenarioIndex ? 'active' : ''}`;
+                scenarioEl.innerHTML = `<span>${scenario.tricky ? '⚠' : '✅'} ${scenario.title}</span>`;
+                if (scenario.isFlagged) {
+                     scenarioEl.innerHTML += ' <span class="text-amber-400 float-right">🚩</span>';
+                }
+                scenarioEl.onclick = () => navigateToScenario(index);
+                scenarioTracker.appendChild(scenarioEl);
+            });
+        }
+        
+        function renderQuestion(index) {
+            saveCurrentAnswers();
+            currentScenarioIndex = index;
+            const scenario = quizData[index];
+            questionArea.innerHTML = ''; // Clear previous question
+
+            let content = `
+                <h2 class="flex justify-between items-center">
+                    <span>${scenario.title}</span>
+                    <span class="text-sm font-medium bg-indigo-100 text-indigo-700 py-1 px-3 rounded-full">${scenario.topic}</span>
+                </h2>
+                <div class="data-section">${scenario.scenario}</div>
+                <div class="data-section">${scenario.adjustments}</div>
+                <div class="data-section">
+                    ${scenario.task}
+                    <table class="fill-in-the-blank-table"><tbody>
+            `;
+
+            scenario.blanks.forEach(blank => {
+                const savedValue = userAnswers[scenario.id]?.[blank.key] || '';
+                content += `
+                    <tr>
+                        <td>${blank.label}</td>
+                        <td><input type="number" step="0.01" id="${blank.key}" data-scenario-id="${scenario.id}" data-key="${blank.key}" placeholder="Enter value" value="${savedValue}"></td>
+                    </tr>`;
+            });
+
+            content += `</tbody></table></div>`;
+            questionArea.innerHTML = content;
+            
+            document.querySelectorAll(`#question-area input`).forEach(input => {
+                input.addEventListener('input', saveCurrentAnswers);
+            });
+
+            renderScenarios();
+            updateProgress();
+            updateFlagButton();
+        }
+        
+        function saveCurrentAnswers() {
+            const scenario = quizData[currentScenarioIndex];
+            if (!userAnswers[scenario.id]) {
+                userAnswers[scenario.id] = {};
+            }
+            document.querySelectorAll(`#question-area input`).forEach(input => {
+                const key = input.dataset.key;
+                if (input.value !== '') {
+                    userAnswers[scenario.id][key] = input.value;
+                }
+            });
+        }
+        
+        function navigateToScenario(index) {
+            if (index >= 0 && index < quizData.length) {
+                renderQuestion(index);
+            }
+        }
+
+        function updateProgress() {
+            const attemptedScenarios = Object.keys(userAnswers).filter(id => 
+                Object.values(userAnswers[id]).some(val => val !== '')
+            ).length;
+            
+            const progressPercentage = (attemptedScenarios / quizData.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `${attemptedScenarios} of ${quizData.length} scenarios attempted`;
+        }
+
+        function toggleFlag() {
+            quizData[currentScenarioIndex].isFlagged = !quizData[currentScenarioIndex].isFlagged;
+            updateFlagButton();
+            renderScenarios();
+        }
+
+        function updateFlagButton() {
+            const scenario = quizData[currentScenarioIndex];
+            if (scenario.isFlagged) {
+                flagBtn.innerHTML = '🚩 Unflag Scenario';
+                flagBtn.classList.add('bg-amber-100');
+            } else {
+                flagBtn.innerHTML = '🚩 Flag for Review';
+                flagBtn.classList.remove('bg-amber-100');
+            }
+        }
+        
+        function showResults() {
+            clearInterval(timerInterval);
+            saveCurrentAnswers();
+            quizView.style.display = 'none';
+            resultsView.style.display = 'block';
+
+            let totalCorrect = 0;
+            let totalQuestions = 0;
+            let detailedHtml = '';
+            const topicsToReview = new Set();
+
+            quizData.forEach(scenario => {
+                totalQuestions += scenario.blanks.length;
+                detailedHtml += `<div class="mb-8 p-4 border rounded-lg"><h3 class="text-xl font-bold mb-3">${scenario.tricky ? '⚠' : '✅'} ${scenario.title} - <span class="text-base font-medium text-indigo-600">${scenario.topic}</span></h3><table class="w-full explanation-table"><tbody>`;
+
+                scenario.blanks.forEach(blank => {
+                    const userAnswer = parseFloat(userAnswers[scenario.id]?.[blank.key] || NaN);
+                    const correctAnswer = blank.solution;
+                    const isCorrect = userAnswer.toFixed(2) === correctAnswer.toFixed(2);
+
+                    if (isCorrect) totalCorrect++;
+                    else topicsToReview.add(scenario.topic);
+                    
+                    detailedHtml += `<tr><td class="py-2">${blank.label}</td><td class="text-right py-2">${!isCorrect ? `<span class="incorrect-answer">${isNaN(userAnswer) ? 'Not Answered' : userAnswer.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>` : ''}<span class="correct-answer">${correctAnswer.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></td></tr>`;
+                    if (!isCorrect) detailedHtml += `<tr><td colspan="2"><div class="explanation-details"><strong>Explanation:</strong> ${getExplanation(blank.key)}</div></td></tr>`;
+                });
+                detailedHtml += `</tbody></table></div>`;
+            });
+            
+            const percentCorrect = totalQuestions > 0 ? (totalCorrect / totalQuestions) * 100 : 0;
+            const percentIncorrect = 100 - percentCorrect;
+
+            document.getElementById('result-summary').innerHTML = `<div class="summary-card"><h4>Correct</h4><p class="correct">${percentCorrect.toFixed(1)}%</p></div><div class="summary-card"><h4>Incorrect</h4><p class="incorrect">${percentIncorrect.toFixed(1)}%</p></div><div class="summary-card"><h4>Score</h4><p class="text-gray-700">${totalCorrect}/${totalQuestions}</p></div>`;
+            document.getElementById('detailed-explanations').innerHTML = detailedHtml;
+            
+            const reviewTopicsEl = document.getElementById('review-topics');
+            reviewTopicsEl.innerHTML = '';
+            if (topicsToReview.size > 0) {
+                topicsToReview.forEach(topic => {
+                    reviewTopicsEl.innerHTML += `<span class="bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">${topic}</span>`;
+                });
+            } else {
+                reviewTopicsEl.innerHTML = `<span class="bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded">Excellent work! No specific topics for review.</span>`;
+            }
+        }
+
+        function getExplanation(key) {
+            const explanations = {
+                'goodwill': 'Consideration (7,000) + NCI at FV (1,450) - FV of Net Assets at Acq (6,500) = 1,950.',
+                'con_re': "Parent RE (9,200) + Parent's share of Sub's post-acq RE [80% * (3,800 - 2,100)] (1,360) - Unrealised Profit (50) = 10,510. URP = 500 * 50% * 20% = 50.",
+                'nci': "NCI at Acq (1,450) + NCI's share of Sub's post-acq RE [20% * (3,800 - 2,100)] (340) = 1,790.",
+                'con_ppe': "Parent PPE (12,000) + Sub PPE (5,500) + FV Uplift on Land (6,500 - (2,000+2,100)) (400) = 17,900.",
+                'con_ca': "Parent CA (4,500) + Sub CA (2,000) - URP (50) - Intercompany Payable/Receivable (200) = 6,250. My initial calc was wrong, it should be 6250.",
+                'con_liab': "Parent Liab (4,300) + Sub Liab (1,700) - Intercompany Payable/Receivable (200) = 5,800.",
+                'cgo': 'PBT(2500)+Dep(700)+SBP(120)+Loss(50)-Inv Inc(200)-Rec Inc(150)-Pay Dec(200) = 3020.',
+                'tax_paid': 'Tax Exp(600) + Inc in Tax Pay(50) - Inc in DTL(80) = 630.',
+                'sale_ppe': 'Carrying Amount (250) - Loss on disposal (50) = 200.',
+                'pur_ppe': 'Via T-account: Opening(6000)+Reval(500)+Additions(X)-Dep(700)-Disp(250)=Closing(8200). X=2650. My initial calc was wrong, it should be -2650.',
+                'wanos': '[2,000k * 3/12] + [2,600k * 3/12] * 1.2 (bonus) + [3,120k * 6/12] = 500k + 780k + 1,560k = 2,840,000. My initial calc was wrong. Correct: (2m*12/12*1.2) + (600k*9/12*1.2) = 2.4m + 540k = 2,940,000. Yes, the initial calc was correct.',
+                'basic_eps': '4,500,000 / 2,940,000 = 1.53.',
+                'dilutive_shares': 'Proceeds from options (300k * 15) = 4.5m. Shares repurchased (4.5m / 20) = 225k. Dilutive shares = 300k - 225k = 75,000.',
+                'diluted_eps': '4,500,000 / (2,940,000 + 75,000) = 1.49.',
+                'initial_ca': 'Proceeds (950,260) - Transaction Costs (10,000) = 940,260.',
+                'int_exp_y1': 'Initial CA (940,260) * EIR (7%) = 65,818.',
+                'ca_y1': 'Initial CA (940,260) + Interest Exp (65,818) - Coupon Paid (50,000) = 956,078.',
+                'int_exp_y2': 'CA at Y1 (956,078) * EIR (7%) = 66,925.',
+                'ca_y2': 'CA at Y1 (956,078) + Interest Exp (66,925) - Coupon Paid (50,000) = 973,003.'
+            };
+            return explanations[key] || "No specific explanation available.";
+        }
+
+        flagBtn.addEventListener('click', toggleFlag);
+        startQuiz();
+    });
+    </script>
+
+</body>
+</html>
