@@ -3,214 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accounting Study Portal</title>
-    <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        /* Responsive Header */
-        header {
-            padding: 2rem 1rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(99,102,241,0.1) 0%, rgba(15,23,42,0) 100%);
-        }
-
-        h1 {
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            margin-bottom: 0.5rem;
-        }
-
-        .search-container {
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            padding: 0 1rem;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            max-width: 500px;
-            padding: 12px 20px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            background: var(--card-bg);
-            color: white;
-            font-size: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        /* The Grid System */
-        .grid {
-            display: grid;
-            gap: 1.5rem;
-            padding: 1.5rem;
-            /* 1 column on mobile, 2 on tablets, 3 on desktop */
-            grid-template-columns: repeat(1, 1fr);
-        }
-
-        @media (min-width: 768px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (min-width: 1024px) {
-            .grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        .category-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid #334155;
-            transition: transform 0.2s ease;
-        }
-
-        h2 {
-            font-size: 1.1rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 0;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 0.75rem;
-        }
-
-        .link-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .file-link {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        /* Visual indicator for mobile touch */
-        .file-link:active {
-            transform: scale(0.98);
-            background: var(--primary);
-        }
-
-        @media (hover: hover) {
-            .file-link:hover {
-                background: rgba(99,102,241,0.2);
-                padding-left: 18px;
-                color: var(--primary);
-            }
-        }
-
-        .icon { margin-right: 12px; opacity: 0.7; }
-
-        /* Hide items via search */
-        .hidden { display: none !important; }
-    </style>
+    <title>Dark Mode Toggle</title>
+    <link id="theme-style" rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>Dark Mode Toggle Example</h1>
+    <button id="toggle-btn">Toggle Dark Mode</button>
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const themeStyle = document.getElementById('theme-style');
 
-<header>
-    <h1>Course Directory</h1>
-    <p style="color: var(--text-muted)">Access your modules anywhere, anytime.</p>
-</header>
+        // Check for saved user preference, if any, and apply it
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            themeStyle.href = currentTheme;
+        }
 
-<div class="search-container">
-    <center><input type="text" id="search" placeholder="🔍 Search chapters or scenarios..."></center>
-</div>
-
-<main class="grid">
-    <section class="category-card" data-group="primary">
-        <h2>Primary Chapters</h2>
-        <div class="link-list">
-            <a href="1st_Chapter.html" class="file-link"><span class="icon">📄</span> 1st Chapter</a>
-            <a href="1stChapter.html" class="file-link"><span class="icon">📄</span> 1st Chapter (Alt)</a>
-            <a href="2nd_Chapter.html" class="file-link"><span class="icon">📄</span> 2nd Chapter</a>
-            <a href="3rd_Chapter.html" class="file-link"><span class="icon">📄</span> 3rd Chapter</a>
-            <a href="4th_Chapter.html" class="file-link"><span class="icon">📄</span> 4th Chapter</a>
-            <a href="5th_Chapter.html" class="file-link"><span class="icon">📄</span> 5th Chapter</a>
-            <a href="6th_Chapter.html" class="file-link"><span class="icon">📄</span> 6th Chapter</a>
-            <a href="7th_Chapter.html" class="file-link"><span class="icon">📄</span> 7th Chapter</a>
-            <a href="8th_Chapter.html" class="file-link"><span class="icon">📄</span> 8th Chapter</a>
-            <a href="10th_Chapter.html" class="file-link"><span class="icon">📄</span> 10th Chapter</a>
-            <a href="11th_Chapter.html" class="file-link"><span class="icon">📄</span> 11th Chapter</a>
-            <a href="12th_Chapter.html" class="file-link"><span class="icon">📄</span> 12th Chapter</a>
-            <a href="13th_Chapter.html" class="file-link"><span class="icon">📄</span> 13th Chapter</a>
-            <a href="14th_Chapter.html" class="file-link"><span class="icon">📄</span> 14th Chapter</a>
-            <a href="15th_Chapter.html" class="file-link"><span class="icon">📄</span> 15th Chapter</a>
-        </div>
-    </section>
-
-    <section class="category-card" data-group="btf">
-        <h2>BTF Series</h2>
-        <div class="link-list">
-            <a href="BTFChapter2.html" class="file-link"><span class="icon">📘</span> BTF Chapter 2</a>
-            <a href="BTFChapter4.html" class="file-link"><span class="icon">📘</span> BTF Chapter 4</a>
-            <a href="BTFChapter5.html" class="file-link"><span class="icon">📘</span> BTF Chapter 5</a>
-            <a href="BTFChapter6.html" class="file-link"><span class="icon">📘</span> BTF Chapter 6</a>
-            <a href="BTFChapter7.html" class="file-link"><span class="icon">📘</span> BTF Chapter 7</a>
-            <a href="BTFChapter8.html" class="file-link"><span class="icon">📘</span> BTF Chapter 8</a>
-            <a href="BTFChapter9.html" class="file-link"><span class="icon">📘</span> BTF Chapter 9</a>
-            <a href="BTFChapter10.html" class="file-link"><span class="icon">📘</span> BTF Chapter 10</a>
-            <a href="BTFChapter11.HTML" class="file-link"><span class="icon">📘</span> BTF Chapter 11</a>
-            <a href="BTFChapter12.html" class="file-link"><span class="icon">📘</span> BTF Chapter 12</a>
-            <a href="BTFChapter13.html" class="file-link"><span class="icon">📘</span> BTF Chapter 13</a>
-            <a href="BTFChapter14.html" class="file-link"><span class="icon">📘</span> BTF Chapter 14</a>
-        </div>
-    </section>
-
-    <section class="category-card" data-group="scenarios">
-        <h2>Specialized Content</h2>
-        <div class="link-list">
-            <a href="Accounting_Scenario_1.html" class="file-link"><span class="icon">💡</span> Scenario 1</a>
-            <a href="Accounting_Scenario_3.html" class="file-link"><span class="icon">💡</span> Scenario 3</a>
-            <a href="Accounting_Scenario_4.html" class="file-link"><span class="icon">💡</span> Scenario 4</a>
-            <a href="Accounting_Scenario_5.html" class="file-link"><span class="icon">💡</span> Scenario 5</a>
-            <a href="Accounting_Scenario_6.html" class="file-link"><span class="icon">💡</span> Scenario 6</a>
-            <a href="Cash.html" class="file-link" style="border: 1px solid var(--primary);"><span class="icon">💰</span> Cash Management</a>
-        </div>
-    </section>
-</main>
-
-<script>
-    const searchInput = document.getElementById('search');
-    const links = document.querySelectorAll('.file-link');
-
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        links.forEach(link => {
-            const text = link.textContent.toLowerCase();
-            if(text.includes(term)) {
-                link.classList.remove('hidden');
-            } else {
-                link.classList.add('hidden');
-            }
+        toggleBtn.addEventListener('click', () => {
+            let theme = themeStyle.href.includes('style.css') ? 'dark.css' : 'style.css';
+            themeStyle.href = theme;
+            localStorage.setItem('theme', theme);
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
